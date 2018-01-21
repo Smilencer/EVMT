@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="/favicon.ico" rel="icon" type="image/x-icon" />
+    <title>Create Atomic Component</title>
+    <link href="codemirror-5.30.0/lib/codemirror.css" rel="stylesheet" />
+    <script src="codemirror-5.30.0/mode/clike/clike.js"></script>
+    <link href="codemirror-5.30.0/addon/fold/foldgutter.css" rel="stylesheet" />
+    <script src="codemirror-5.30.0/addon/fold/brace-fold.js"></script>
+    <script src="codemirror-5.30.0/addon/fold/foldcode.js"></script>
+    <script src="codemirror-5.30.0/addon/fold/foldgutter.js"></script>
+    <script src="codemirror-5.30.0/addon/fold/comment-fold.js"></script>
+    <script src="codemirror-5.30.0/addon/edit/matchbrackets.js"></script>
+    <link href="codemirror-5.30.0/addon/hint/show-hint.css" rel="stylesheet" />
+    <script src="codemirror-5.30.0/addon/hint/show-hint.js"></script>
+    <script src="codemirror-5.30.0/addon/hint/anyword-hint.js"></script>
+    <link href="css/common.css" rel="stylesheet" />
+    <link href="css/atomic.css" rel="stylesheet" />
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/atomic.js"></script>
+    <script src="js/base64.min.js"></script>
+    <script src="js/jquery.blockUI.js"></script>
+    <script src="js/repository.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+</head>
+<body>
+    <div id="header">
+        <div id="topmenu">
+            <div id="logo"><a>Enumerative Variability Modelling Tool</a></div>
+            <div id="urls"><a href="#">Feature Model</a>|<a href="javascript:void(0)">Atomic Component</a>|<a href="composite.html" target="_blank">Composite Component</a>|<a href="">Family Model</a></div>
+        </div>
+    </div>
+    <div id="container">
+        <div id="tabmenu">
+            <button type="button" id="newService" onclick="popDialog()">
+                <object data="css/images/component.svg" type="image/svg+xml"></object>
+                New Component</button>
+            <button type="button" id="clean" onclick="reset()">
+                <object data="css/images/cleaning.svg" type="image/svg+xml"></object>
+                Clean</button>
+            <button type="button" id="execute" onclick="runCode()">
+                <object data="css/images/play.svg" type="image/svg+xml"></object>
+                Execute</button>
+            <button type="button" id="deposit" onclick="deposit()">
+                <object data="css/images/save.svg" type="image/svg+xml"></object>
+                Deposit</button>
+        </div>
+        <div id="codingArea">
+            <div class="partArea">
+                <textarea id="code"></textarea>
+                <textarea id="feedback"></textarea>
+            </div>
+            <div class="partArea">
+                <div id="dataTree">
+                    <div id="dataTitle"><span>Repository</span></div>
+                    <div id="repoButton">
+                        <button type="button" onclick="refreshConnection()">
+                            <object data="css/images/refresh.svg" type="image/svg+xml"></object>
+                            Refresh</button>
+                        <button type="button" onclick="removeFromDB()">
+                            <object data="css/images/delete.svg" type="image/svg+xml"></object>
+                            Remove</button>
+                    </div>
+                    <div id="categoryDiv">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="NewServiceDialog">
+        <div class="DialogTitle"><span>New Component</span></div>
+        <div class="row" id="row1"><span>Component Name:</span><input type="text" id="ipt_sname" onkeyup="generateServiceName(this)" /></div>
+        <div class="row" id="row4"><span>Service Name:</span><input type="text" id="ipt_srvname" readonly="true" /><input type="checkbox" id="ipt_srvdefault" checked="checked" onclick="nodefault()" />default</div>
+        <div class="row" id="row2"><span>Data Name:</span><input type="text" id="ipt_dname" /><input type="radio" name="datatype" class="ipt_radio" value="input" />input&nbsp;&nbsp;<input type="radio" name="datatype" class="ipt_radio" value="output" />output</div>
+        <div class="row" id="row3">
+            <span>Data Type:</span><input type="text" id="ipt_dtype" />
+            <button type="button" id="add" onclick="addData()">
+                <object data="css/images/add.svg" type="image/svg+xml"></object>
+                Add</button>
+        </div>
+        <div id="tabler">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Data</th>
+                        <th>Type</th>
+                        <th>I/O</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="exiter">
+            <button onclick="startCoding()">
+                <object data="css/images/create.svg" type="image/svg+xml"></object>
+                Create</button>
+            <button onclick="closeDialog()">
+                <object data="css/images/cancel.svg" type="image/svg+xml"></object>
+                Cancel</button>
+        </div>
+    </div>
+    <div class="NewDomainDialogTemplate">
+        <div class="DialogTitle"><span>Select Domain</span></div>
+        <div class="row"><span>Please select or create a domain:</span><input type="text" id="ipt_domain" list="domain_list" /><datalist></datalist></div>
+        <div class="exiter">
+            <button onclick="saveNewService()">
+                <object data="css/images/create.svg" type="image/svg+xml"></object>
+                Create</button>
+            <button onclick="closeDialog()">
+                <object data="css/images/cancel.svg" type="image/svg+xml"></object>
+                Cancel</button>
+        </div>
+    </div>
+</body>
+</html>
