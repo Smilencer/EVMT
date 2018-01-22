@@ -1,0 +1,45 @@
+#palette { border: 1px solid #d4d4d4; width: 150px; height: 467px; position: relative; float: left; border-right: 0; }
+#accordion { margin: 0; padding: 0; font-family: "Helvetica"; font-size: 14px; }
+    #accordion li {list-style: none;}
+.link { width: 100%; height: 35px; line-height: 35px; background-color: #96b97d; color: #fff; font-weight: bold; font-size: 16px; }
+    .link object { height: 18px; margin-top: 8px; position: relative; margin-right: 10px; }
+    .link .paint { float: left; margin-left: 10px; }
+    .link .down { float: right; }
+.submenu { padding-left: 20px; margin: 3px 0; }
+    .submenu li { padding: 5px 0; }
+    .submenu object { height: 14px; position: relative; margin-right: 5px; top: 2px; }
+    .submenu a { color: inherit; text-decoration: none; }
+        .submenu a:hover { color: red; }
+
+canvas { border: 1px solid #d4d4d4; position: relative; float: left; }
+
+.contextmenu { border: 1px solid #96b97d; border-bottom: 0; background: #eee; position: absolute; list-style: none; margin: 0; padding: 0; display: none; }
+    .contextmenu li a { display: block; padding: 5px 10px; border-bottom: 1px solid #aaa; cursor: pointer; font-family: "Helvetica"; font-size: 14px; text-decoration: none; color: inherit; }
+        .contextmenu li a:hover { background: #fff; color: red; }
+
+.IOproperty { position: absolute; margin: 0; padding: 2px 5px; border: 1px solid #96b97d; width: fit-content; font-family: "Helvetica"; font-size: 12px; background-color: #D6FFC3; font-weight: bold; display: none; }
+    .IOproperty i { text-decoration: underline; font-weight: normal; }
+
+#NewConnectorDialog { width: 275px; height: 155px; border: 1px solid #96b97d; display: none; }
+    #NewConnectorDialog .row { margin-top: 15px; }
+        #NewConnectorDialog .row span { width: inherit; }
+    #NewConnectorDialog .exiter { margin-top: 15px; }
+    #NewConnectorDialog button { margin: 0 5px; }
+    #NewConnectorDialog #ipt_domain { width: 150px; margin-left: 10px; }
+.DialogTitle { width: 100%; height: 45px; line-height: 45px; background-color: #96b97d; text-align: center; margin-bottom: 10px; }
+    .DialogTitle span { font: 22px Verdana; color: #fff; }
+.row { font: 14px Verdana; padding: 0 15px; height: 30px; line-height: 30px; }
+    .row span { width: 110px; display: inline-block; }
+.exiter { width: 100%; text-align: center; margin-bottom: 15px; }
+    .exiter button { display: inline-block; cursor: pointer; height: 32px; line-height: 32px; color: #333; border-radius: 4px; border: 1px solid #96b97d; background-color: #fff; font-size: 14px; font-family: "Helvetica"; padding: 0 10px; margin: 0 15px; }
+        .exiter button object { height: 20px; margin-top: 5px; position: relative; float: left; margin-right: 10px; }
+
+#NewDataDialog { width: 293px; height: 185px; border: 1px solid #96b97d; display: none; }
+    #NewDataDialog #row1 { margin-top: 15px; }
+    #NewDataDialog #row2 input { margin-left: 18px; }
+    #NewDataDialog .row span { width: inherit; }
+    #NewDataDialog .exiter { margin-top: 15px; }
+    #NewDataDialog button { margin: 0 5px; }
+    #NewDataDialog input { width: 150px; margin-left: 10px; }
+
+#jtopo_textfield { display: none; width: 100px; position: absolute; }

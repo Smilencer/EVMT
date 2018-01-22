@@ -1,0 +1,13 @@
+﻿#NewFMDialog { width: 423px; height: 147px; border: 1px solid #96b97d; display: none; }
+    #NewFMDialog .DialogTitle { width: 100%; height: 45px; line-height: 45px; background-color: #96b97d; text-align: center; margin-bottom: 10px; }
+        #NewFMDialog .DialogTitle span { font: 22px Verdana; color: #fff; }
+.nrow { font: 14px Verdana; padding: 0 15px; height: 30px; line-height: 30px; }
+    .nrow span { width: 140px; display: inline-block; }
+#nrow1 #ipt_sname { width: 150px; }
+.exiter { width: 100%; text-align: center; margin-bottom: 15px; margin-top: 15px; margin-bottom: 15px; }
+    .exiter button { display: inline-block; cursor: pointer; height: 32px; line-height: 32px; color: #333; border-radius: 4px; border: 1px solid #96b97d; background-color: #fff; font-size: 14px; font-family: "Helvetica"; padding: 0 10px; margin: 0 15px; }
+        .exiter button object { height: 20px; margin-top: 5px; position: relative; float: left; margin-right: 10px; }
+#featureMenu { z-index: 1000; }
+#jtopo_textfield { z-index: 1000; }
+#categoryDiv ol { margin: 0 10px 0 40px; padding: 0 }
+    #categoryDiv ol li { padding: 3px 0; }

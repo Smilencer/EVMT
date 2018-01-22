@@ -1,0 +1,15 @@
+#product_summary { width: 100%; height: 35px; line-height: 35px; font: 20px Verdana; border-bottom: 2px solid #ddd; margin-bottom: 10px; font-weight: bold; }
+#product_main { width: 1168px; height: 424px; overflow-x: auto; overflow-y: auto; }
+#product_list { display: block; margin: 0 10px 0 10px; font: 16px Verdana; padding: 0; }
+    #product_list li { line-height: 25px; list-style: none; margin: 5px 0; }
+        #product_list li a { text-decoration: none; color: black; }
+            #product_list li a:hover { text-decoration: underline; color: red; }
+    #product_list input[type=checkbox] { display: inline-block; vertical-align: middle; margin: 0px; zoom: 140%; margin-right: 5px; margin-bottom: 1px; }
+    #product_list font { margin: 0 2px; }
+    #product_list span { font-family: Garamond; font-weight: bold; }
+
+#download { float: right; margin-right: 15px; }
+    #download a { text-decoration: none; color: #000; }
+
+#batch { float: right; margin-right: 15px; }
+    #batch a { text-decoration: none; color: #000; }

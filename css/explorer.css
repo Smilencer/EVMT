@@ -1,0 +1,23 @@
+﻿#download { float: right; margin-right: 15px; }
+    #download a { text-decoration: none; color: #000; }
+
+#batch { float: right; margin-right: 15px; }
+    #batch a { text-decoration: none; color: #000; }
+
+.submenu { height: 425px; overflow-x: auto; overflow-y: auto; }
+#categoryDiv p.db-table { display: block; }
+#categoryDiv ul { display: block; margin: 0 0 0 25px; }
+    #categoryDiv ul li { line-height: 25px; list-style: none; }
+    #categoryDiv ul input[type=checkbox] { display: inline-block; vertical-align: middle; margin: 0px; zoom: 150%; margin-right: 3px; margin-bottom: 1px; }
+#categoryDiv span { cursor: default; }
+#accordion ul { padding: 0; }
+    #accordion ul li { padding-left: 20px; }
+
+.redlight { color: red; }
+
+#progressDiv { text-align: center; background-color: #fff; display: none; }
+progress { width: 400px; height: 30px; color: #96b97d; border: none; background: #d7d7d7; margin-bottom: 5px; }
+    progress::-webkit-progress-bar { background: #d7d7d7; }
+    progress::-webkit-progress-value,
+    progress::-moz-progress-bar { background: #96b97d; }
+#progressDiv p { margin: 0; }

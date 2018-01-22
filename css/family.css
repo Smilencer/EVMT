@@ -1,0 +1,55 @@
+.link2 { height: fit-content; }
+.sub-link { margin: 0 0 8px 38px; line-height: 1.0; }
+#palette { height: 574px; }
+#codingArea { height: 576px; }
+#dataTree { height: 574px; }
+
+.filterDialog { width: 496px; height: 392px; border: 1px solid #96b97d; background-color: #f6f6f6; display: none; }
+.TabMenu { width: 456px; margin: 0 auto; text-align: center; }
+.Tab { height: 30px; width: 150px; border: 1px solid #96b97d; text-align: center; font: 16px Verdana; line-height: 30px; border-top-left-radius: 15px; border-top-right-radius: 15px; cursor: pointer; display: inline-block; font-weight: bold; }
+.tab-on { background-color: #96b97d; color: #fff; }
+.tab-off { background-color: #fff; color: #96b97d; }
+.TabContent { width: 454px; margin: 0 auto; background-color: #fff; border: 1px solid #ddd; margin-top: -1px; }
+.TabArea { width: 100%; height: 100%; text-align: center; display: none; }
+    .TabArea select { font: 16px Verdana; }
+    .TabArea .srv1 { width: 115px; }
+.filterDialog button { display: inline-block; cursor: pointer; height: 32px; line-height: 32px; color: #333; border-radius: 4px; border: 1px solid #96b97d; background-color: #fff; font-size: 14px; font-family: "Helvetica"; padding: 0 10px; margin: 12px 0px 12px 15px; }
+    .filterDialog button object { height: 20px; margin-top: 5px; position: relative; float: left; margin-right: 10px; }
+.TabBody { width: 100%; height: 193px; overflow-y: auto; overflow-x: auto; }
+    .TabBody table { border-collapse: collapse; width: 100%; color: #333; }
+        .TabBody table th { border: 1px solid #ddd; padding: 5px; text-align: center; background-color: #96b97d; color: #fff; }
+        .TabBody table td { border: 1px solid #ddd; padding: 5px; text-align: left; }
+        .TabBody table tbody tr:nth-child(even) { background-color: #f2f2f2; }
+        .TabBody table td:first-child { text-align: center; }
+        .TabBody table td i { text-decoration: underline; padding: 0 12px; }
+    .TabBody ul li { padding-left: 20px; }
+        .TabBody ul li i { margin: 0 12px; }
+.Tab-ul { width: 454px; height: 249px; overflow-y: auto; overflow-x: auto; }
+.Tab-or { font: 16px Verdana; text-align: left; height: 32px; line-height: 32px; color: #fff; background-color: #96b97d; cursor: pointer; border-top: 1px solid #f2f2f2; }
+    .Tab-or object { height: 14px; margin: 0 10px; }
+.TabArea ul { margin: 0; padding: 0; text-align: left; font: 16px Verdana; display: none; }
+.TabArea li { line-height: 32px; list-style: none; }
+    .TabArea li:nth-child(even) { background-color: #f2f2f2; }
+    .TabArea li span { margin: 0 20px; }
+.Tab-or-cond { font: 16px Verdana; margin-left: 10px; }
+.ipt_number { margin-left: 15px; width: 30px; font-size: 16px; margin-right: 5px; }
+.TabHead span { margin-left: 15px; }
+.TabFoot { text-align: center; }
+.Tab-Inter button { display: inline-block; float: right; cursor: pointer; height: 28px; line-height: 26px; color: #333; border-radius: 4px; border: 2px solid #96b97d; background-color: #fff; font-size: 14px; font-family: "Helvetica"; padding: 0 5px; margin: 2px 10px 0 0; border-color: #888; }
+    .Tab-Inter button:hover { color: #f00; }
+    .Tab-Inter button object { height: 14px; position: relative; float: left; margin: 5px 5px 0 5px; }
+
+#NewFamilyDialog { width: 423px; height: 177px; border: 1px solid #96b97d; display: none; }
+    #NewFamilyDialog .DialogTitle { width: 100%; height: 45px; line-height: 45px; background-color: #96b97d; text-align: center; margin-bottom: 10px; }
+        #NewFamilyDialog .DialogTitle span { font: 22px Verdana; color: #fff; }
+.nrow { font: 14px Verdana; padding: 0 15px; height: 30px; line-height: 30px; }
+    .nrow span { width: 140px; display: inline-block; }
+#nrow1 #ipt_sname { width: 150px; }
+#nrow4 #ipt_srvname { width: 150px; }
+#nrow4 #ipt_srvdefault { vertical-align: middle; margin: auto; height: 30px; padding: 0; margin-left: 20px; margin-right: 5px; }
+.exiter { width: 100%; text-align: center; margin-bottom: 15px; margin-top: 15px; margin-bottom: 15px; }
+    .exiter button { display: inline-block; cursor: pointer; height: 32px; line-height: 32px; color: #333; border-radius: 4px; border: 1px solid #96b97d; background-color: #fff; font-size: 14px; font-family: "Helvetica"; padding: 0 10px; margin: 0 15px; }
+        .exiter button object { height: 20px; margin-top: 5px; position: relative; float: left; margin-right: 10px; }
+
+#explorer { float: right; margin-right: 15px; }
+#categoryDiv { height: 468px; }
