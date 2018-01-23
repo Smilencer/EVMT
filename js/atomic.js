@@ -1,4 +1,5 @@
 var editor;
+var request;
 
 $(document).ready(function () {
     editor = CodeMirror.fromTextArea(document.getElementById("code"), {
@@ -74,17 +75,12 @@ function addData() {
         alert("Data name is required.");
         return;
     }
-    var dtype = $("#ipt_dtype").val().trim();
-    if (dtype == "") {
-        alert("Data type is required.");
-        return;
-    }
     var radiolen = $(".ipt_radio:checked").length;
     if (radiolen == 0) {
         alert("Select input or output for the data.");
         return;
     }
-    $("#tabler>table").children("tbody").append("<tr><td><a href='javascript:void(0)' onclick='removeData(this)'><img src='css/images/delete.svg' width='15' /></a></td><td>" + dname + "</td><td>" + dtype + "</td><td>" + $(".ipt_radio:checked").val() + "</td></tr>");
+    $("#tabler>table").children("tbody").append("<tr><td><a href='javascript:void(0)' onclick='removeData(this)'><img src='css/images/delete.svg' width='15' /></a></td><td>" + dname + "</td><td>" + $(".ipt_radio:checked").val() + "</td></tr>");
 }
 
 function removeData(obj) {
@@ -108,7 +104,7 @@ function startCoding() {
     var rows = $("#tabler").find("tr");
     var str = "class " + sname + " {\n";
     for (let i = 1; i < rows.length; i++) {
-        if ($(rows[i]).children("td").eq(3).text() == "input") {
+        if ($(rows[i]).children("td").eq(2).text() == "input") {
             str += "\tset " + $(rows[i]).children("td").eq(1).text() + " (value) {\n"
             str += "\t\tthis._" + $(rows[i]).children("td").eq(1).text() + " = value;\n";
             str += "\t}\n";
@@ -119,7 +115,7 @@ function startCoding() {
     str += "\t\t//TODO\n";
     str += "\t\treturn { "
     for (let i = 1, j = 1; i < rows.length; i++) {
-        if ($(rows[i]).children("td").eq(3).text() == "output") {
+        if ($(rows[i]).children("td").eq(2).text() == "output") {
             str += "\"" + $(rows[i]).children("td").eq(1).text() + "\": arg" + j.toString() + ", ";
             j++;
         }
@@ -139,4 +135,52 @@ function reset() {
     $("#ipt_dtype").val("");
     $(".ipt_radio:checked")[0].checked = false;
     $("#tabler>table").children("tbody").children("tr").empty();
+}
+
+function runCode() {
+    var code = editor.getValue();
+    var testcode=$("#feedback").val();
+    eval(code+testcode);
+}
+
+function deposit() {
+    var sname = $("#ipt_sname").val().trim();
+    if (sname == "") {
+        alert("Component name is required.");
+        closeDialog();
+        return;
+    }
+
+    var rows = $("#tabler").find("tr");
+    var arr_in = [];
+    var arr_out = [];
+    for (var i = 1; i < rows.length; i++) {
+        var dname = $(rows[i]).children("td").eq(1).text();
+        var dio = $(rows[i]).children("td").eq(2).text();
+        if (dio == "input") {
+            arr_in.push(dname);
+        }
+        else if (dio == "output") {
+            arr_out.push(dname);
+        }
+    }
+
+    var srvname = $("#ipt_srvname").val().trim();
+    if (srvname == "") {
+        alert("Service name is required.");
+        closeDialog();
+        return;
+    }
+
+    var code = editor.getValue();
+    if (code == "") {
+        alert("Computation unit is required.");
+        closeDialog();
+        return;
+    }
+
+    var domain = "Component Database";
+
+    request=indexedDB.open(domain);
+    
 }

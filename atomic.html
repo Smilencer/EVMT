@@ -49,7 +49,7 @@
         <div id="codingArea">
             <div class="partArea">
                 <textarea id="code"></textarea>
-                <textarea id="feedback"></textarea>
+                <textarea id="feedback" placeholder="Test your code here..."></textarea>
             </div>
             <div class="partArea">
                 <div id="dataTree">
@@ -74,10 +74,9 @@
         <div class="row" id="row4"><span>Service Name:</span><input type="text" id="ipt_srvname" readonly="true" /><input type="checkbox" id="ipt_srvdefault" checked="checked" onclick="nodefault()" />default</div>
         <div class="row" id="row2"><span>Data Name:</span><input type="text" id="ipt_dname" /><input type="radio" name="datatype" class="ipt_radio" value="input" />input&nbsp;&nbsp;<input type="radio" name="datatype" class="ipt_radio" value="output" />output</div>
         <div class="row" id="row3">
-            <span>Data Type:</span><input type="text" id="ipt_dtype" />
             <button type="button" id="add" onclick="addData()">
                 <object data="css/images/add.svg" type="image/svg+xml"></object>
-                Add</button>
+                Add Data</button>
         </div>
         <div id="tabler">
             <table>
@@ -85,7 +84,6 @@
                     <tr>
                         <th></th>
                         <th>Data</th>
-                        <th>Type</th>
                         <th>I/O</th>
                     </tr>
                 </thead>
@@ -95,18 +93,6 @@
         </div>
         <div class="exiter">
             <button onclick="startCoding()">
-                <object data="css/images/create.svg" type="image/svg+xml"></object>
-                Create</button>
-            <button onclick="closeDialog()">
-                <object data="css/images/cancel.svg" type="image/svg+xml"></object>
-                Cancel</button>
-        </div>
-    </div>
-    <div class="NewDomainDialogTemplate">
-        <div class="DialogTitle"><span>Select Domain</span></div>
-        <div class="row"><span>Please select or create a domain:</span><input type="text" id="ipt_domain" list="domain_list" /><datalist></datalist></div>
-        <div class="exiter">
-            <button onclick="saveNewService()">
                 <object data="css/images/create.svg" type="image/svg+xml"></object>
                 Create</button>
             <button onclick="closeDialog()">
