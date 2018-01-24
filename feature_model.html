@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="css/images/favicon.ico" rel="icon" type="image/x-icon" />
+    <title>Feature Model</title>
+    <link href="css/common.css" rel="stylesheet" />
+    <link href="css/feature_model.css" rel="stylesheet" />
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/jtopo-0.4.8-min.js"></script>
+    <script src="js/jquery.blockUI.js"></script>
+    <link href="css/common2.css" rel="stylesheet" />
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/feature_model.js"></script>
+</head>
+<body>
+    <div id="header">
+        <div id="topmenu">
+            <div id="logo"><a>Enumerative Variability Modelling Tool</a></div>
+            <div id="urls"><a href="#">Feature Model</a>|<a href="atomic.html" target="_blank">Atomic Component</a>|<a href="composite.html" target="_blank">Composite Component</a>|<a href="family.html" target="_blank">Family Model</a></div>
+        </div>
+        <div id="container">
+            <div id="tabmenu">
+                <button type="button" id="newService" onclick="createFeatureModel()">
+                    <object data="css/images/tree.svg" type="image/svg+xml"></object>
+                    New Feature Model
+                </button>
+                <button type="button" id="clean" onclick="reset()">
+                    <object data="css/images/cleaning.svg" type="image/svg+xml"></object>
+                    Clean
+                </button>
+                <button type="button" id="zoomIn" onclick="zoomIn()">
+                    <object data="css/images/zoom-in.svg" type="image/svg+xml"></object>
+                    Zoom In
+                </button>
+                <button type="button" id="zoomOut" onclick="zoomOut()">
+                    <object data="css/images/zoom-out.svg" type="image/svg+xml"></object>
+                    Zoom Out
+                </button>
+            </div>
+            <div id="codingArea">
+                <div class="partArea">
+                    <div id="palette">
+                        <ul id="accordion" class="accordion">
+                            <li>
+                                <div class="link">
+                                    <object class="paint" data="css/images/paint.svg" type="image/svg+xml"></object>
+                                    Feature
+                                </div>
+                                <ul class="submenu">
+                                    <li>
+                                        <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                        <a href="javascript:void(0)" onclick="addNewFeature('Mandatory')">Mandatory</a>
+                                    </li>
+                                    <li>
+                                        <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                        <a href="javascript:void(0)" onclick="addNewFeature('Optional')">Optional</a>
+                                    </li>
+                                    <li>
+                                        <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                        <a href="javascript:void(0)" onclick="addNewFeature('Alternative')">Alternative</a>
+                                    </li>
+                                    <li>
+                                        <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                        <a href="javascript:void(0)" onclick="addNewFeature('Or')">Or</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <div class="link">
+                                    <object class="paint" data="css/images/paint.svg" type="image/svg+xml"></object>
+                                    Relation
+                                </div>
+                                <ul class="submenu">
+                                    <li>
+                                        <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                        <a href="javascript:void(0)" onclick="addNewLink()">Connection</a>
+                                    </li>
+                                    <li>
+                                        <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                        <a href="javascript:void(0)" onclick="setGroup()">Group</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <div class="link">
+                                    <object class="paint" data="css/images/paint.svg" type="image/svg+xml"></object>
+                                    Constraint
+                                </div>
+                                <ul class="submenu">
+                                    <li>
+                                        <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                        <a href="javascript:void(0)" onclick="addNewConstraint('Requires')">Requires</a>
+                                    </li>
+                                    <li>
+                                        <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                        <a href="javascript:void(0)" onclick="addNewConstraint('Excludes')">Excludes</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <canvas id="canvas" width="733" height="467"></canvas>
+                </div>
+                <div class="partArea">
+                    <div id="dataTree">
+                        <div id="dataTitle"><span>Valid Variants</span></div>
+                        <div id="repoButton">
+                            <button type="button" onclick="refreshVariants()">
+                                <object data="css/images/refresh.svg" type="image/svg+xml"></object>
+                                Refresh
+                            </button>
+                        </div>
+                        <div id="categoryDiv">
+                            <ol>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul class="contextmenu" id="featureMenu">
+        <li><a href="javascript:void(0)" onclick="removeFeatureFromCanvas()">Remove</a></li>
+    </ul>
+    <div id="NewFMDialog">
+        <div class="DialogTitle"><span>New Feature Model</span></div>
+        <div class="nrow" id="nrow1"><span>Feature Model:</span><input type="text" id="ipt_sname" /></div>
+        <div class="exiter">
+            <button onclick="startFM()">
+                <object data="css/images/create.svg" type="image/svg+xml"></object>
+                Create
+            </button>
+            <button onclick="closeDialog()">
+                <object data="css/images/cancel.svg" type="image/svg+xml"></object>
+                Cancel
+            </button>
+        </div>
+    </div>
+</body>
+<textarea id="jtopo_textfield" onkeydown="keydownTextarea(this)"></textarea>
+</html>
