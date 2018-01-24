@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link href="css/images/favicon.ico" rel="icon" type="image/x-icon" />
@@ -24,11 +25,19 @@
     <script src="js/repository.js"></script>
     <script src="js/jquery-ui.min.js"></script>
 </head>
+
 <body>
     <div id="header">
         <div id="topmenu">
-            <div id="logo"><a>Enumerative Variability Modelling Tool</a></div>
-            <div id="urls"><a href="#">Feature Model</a>|<a href="javascript:void(0)">Atomic Component</a>|<a href="composite.html" target="_blank">Composite Component</a>|<a href="">Family Model</a></div>
+            <div id="logo">
+                <a>Enumerative Variability Modelling Tool</a>
+            </div>
+            <div id="urls">
+                <a href="#">Feature Model</a>|
+                <a href="javascript:void(0)">Atomic Component</a>|
+                <a href="composite.html" target="_blank">Composite Component</a>|
+                <a href="">Family Model</a>
+            </div>
         </div>
     </div>
     <div id="container">
@@ -53,26 +62,61 @@
             </div>
             <div class="partArea">
                 <div id="dataTree">
-                    <div id="dataTitle"><span>Repository</span></div>
+                    <div id="dataTitle">
+                        <span>Repository</span>
+                    </div>
                     <div id="repoButton">
-                        <button type="button" onclick="refreshConnection()">
+                        <button type="button" onclick="getAll()">
                             <object data="css/images/refresh.svg" type="image/svg+xml"></object>
                             Refresh</button>
                         <button type="button" onclick="removeFromDB()">
                             <object data="css/images/delete.svg" type="image/svg+xml"></object>
                             Remove</button>
                     </div>
-                    <div id="categoryDiv">
+                    <div id="categoryDiv" class="">
+                        <div class="category">
+                            <p class="db">
+                                <object data="css/images/database.svg" type="image/svg+xml"></object>
+                                <font>Component Store</font>
+                            </p>
+                            <p class="db-table" style="display: block;">
+                                <object data="css/images/folder.svg" type="image/svg+xml"></object>
+                                <span state="off" onclick="expandTab(this)" class="">Atomic</span>
+                            </p>
+                            <ul style="display: none;" id="AtomicStore">
+                            </ul>
+                            <p class="db-table" style="display: block;">
+                                <object data="css/images/folder.svg" type="image/svg+xml"></object>
+                                <span state="off" onclick="expandTab(this)" class="">Composite</span>
+                            </p>
+                            <ul style="display: none;" id="CompositeStore">
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div id="NewServiceDialog">
-        <div class="DialogTitle"><span>New Component</span></div>
-        <div class="row" id="row1"><span>Component Name:</span><input type="text" id="ipt_sname" onkeyup="generateServiceName(this)" /></div>
-        <div class="row" id="row4"><span>Service Name:</span><input type="text" id="ipt_srvname" readonly="true" /><input type="checkbox" id="ipt_srvdefault" checked="checked" onclick="nodefault()" />default</div>
-        <div class="row" id="row2"><span>Data Name:</span><input type="text" id="ipt_dname" /><input type="radio" name="datatype" class="ipt_radio" value="input" />input&nbsp;&nbsp;<input type="radio" name="datatype" class="ipt_radio" value="output" />output</div>
+        <div class="DialogTitle">
+            <span>New Component</span>
+        </div>
+        <div class="row" id="row1">
+            <span>Component Name:</span>
+            <input type="text" id="ipt_sname" onkeyup="generateServiceName(this)" />
+        </div>
+        <div class="row" id="row4">
+            <span>Service Name:</span>
+            <input type="text" id="ipt_srvname" readonly="true" />
+            <input type="checkbox" id="ipt_srvdefault" checked="checked" onclick="nodefault()" />default</div>
+        <div class="row" id="row2">
+            <span>Data Name:</span>
+            <input type="text" id="ipt_dname" />
+            <input type="radio" name="datatype" class="ipt_radio" value="input" id="in1" />
+            <label for="in1">input</label>
+            <input type="radio" name="datatype" class="ipt_radio" value="output" id="out1" />
+            <label for="out1">output</label>
+        </div>
         <div class="row" id="row3">
             <button type="button" id="add" onclick="addData()">
                 <object data="css/images/add.svg" type="image/svg+xml"></object>
@@ -101,4 +145,5 @@
         </div>
     </div>
 </body>
+
 </html>

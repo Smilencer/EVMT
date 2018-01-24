@@ -1,5 +1,5 @@
 var editor;
-var request;
+var mydb;
 
 $(document).ready(function () {
     editor = CodeMirror.fromTextArea(document.getElementById("code"), {
@@ -13,6 +13,7 @@ $(document).ready(function () {
         matchBrackets: true,
         extraKeys: { "Ctrl-Space": "autocomplete" }
     });
+    OpenDB();
 });
 
 function popDialog() {
@@ -139,8 +140,8 @@ function reset() {
 
 function runCode() {
     var code = editor.getValue();
-    var testcode=$("#feedback").val();
-    eval(code+testcode);
+    var testcode = $("#feedback").val();
+    eval(code + testcode);
 }
 
 function deposit() {
@@ -179,8 +180,13 @@ function deposit() {
         return;
     }
 
-    var domain = "Component Database";
+    var pack = {
+        "name": sname,
+        "service": srvname,
+        "input": arr_in,
+        "output": arr_out,
+        "code": code
+    };
 
-    request=indexedDB.open(domain);
-    
+    insertAtomic(pack);
 }
