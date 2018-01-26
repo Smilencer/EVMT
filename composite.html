@@ -100,11 +100,11 @@
                             <ul class="submenu">
                                 <li>
                                     <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
-                                    <a href="javascript:void(0)" onclick="addNewData('Input')">Input</a>
+                                    <a href="javascript:void(0)" onclick="addNewInput()">Input</a>
                                 </li>
                                 <li>
                                     <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
-                                    <a href="javascript:void(0)" onclick="addNewData('Output')">Output</a>
+                                    <a href="javascript:void(0)" onclick="addNewOutput()">Output</a>
                                 </li>
                             </ul>
                         </li>
@@ -234,7 +234,7 @@
 </div>
 <div id="NewDataDialog">
     <div class="DialogTitle">
-        <span>Add New&nbsp;
+        <span>Add New
             <font></font>
         </span>
     </div>
@@ -243,16 +243,11 @@
             <font></font>&nbsp;name:</span>
         <input type="text" id="ipt_dataname" />
     </div>
-    <div class="row" id="row2">
-        <span>
-            <font></font>&nbsp;type:</span>
-        <input type="text" id="ipt_datatype" />
-    </div>
     <div class="exiter">
-        <button onclick="drawNewData(this)" id="draw1">
+        <button onclick="addInputInConnector(this)" id="draw1">
             <object data="css/images/create.svg" type="image/svg+xml"></object>
             Create</button>
-        <button onclick="drawNewNewData(this)" id="draw2">
+        <button onclick="addDataInComposite(this)" id="draw2">
             <object data="css/images/create.svg" type="image/svg+xml"></object>
             Create</button>
         <button onclick="closeDialog()">

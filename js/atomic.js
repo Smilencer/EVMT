@@ -106,23 +106,22 @@ function startCoding() {
     var str = "class " + sname + " {\n";
     for (let i = 1; i < rows.length; i++) {
         if ($(rows[i]).children("td").eq(2).text() == "input") {
-            str += "\tset " + $(rows[i]).children("td").eq(1).text() + " (value) {\n"
+            str += "\tset " + $(rows[i]).children("td").eq(1).text() + "(value) {\n"
             str += "\t\tthis._" + $(rows[i]).children("td").eq(1).text() + " = value;\n";
             str += "\t}\n";
         }
     }
 
-    str += "\tget " + srvname + " () {\n";
-    str += "\t\t//TODO\n";
-    str += "\t\treturn { "
-    for (let i = 1, j = 1; i < rows.length; i++) {
+    for (let i = 1; i < rows.length; i++) {
         if ($(rows[i]).children("td").eq(2).text() == "output") {
-            str += "\"" + $(rows[i]).children("td").eq(1).text() + "\": arg" + j.toString() + ", ";
-            j++;
+            str += "\tget " + $(rows[i]).children("td").eq(1).text() + "() {\n"
+            str += "\t\treturn this._" + $(rows[i]).children("td").eq(1).text() + ";\n";
+            str += "\t}\n";
         }
     }
-    str = str.substr(0, str.length - 2);
-    str += " }\n";
+
+    str += "\t" + srvname + "() {\n";
+    str += "\t\t//TODO\n";
     str += "\t}\n}";
     editor.setValue(str);
     $.unblockUI();

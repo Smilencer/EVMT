@@ -208,7 +208,7 @@ canvas {
 
 #NewDataDialog {
     width: 293px;
-    height: 185px;
+    height: 155px;
     border: 1px solid #96b97d;
     display: none;
 }
@@ -234,7 +234,7 @@ canvas {
 }
 
 #NewDataDialog input {
-    width: 150px;
+    width: 140px;
     margin-left: 10px;
 }
 

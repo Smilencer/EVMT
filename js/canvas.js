@@ -7,9 +7,11 @@
     JTopo.Container.prototype.objectStore = null;    //atomic or composite
     JTopo.Container.prototype.objectType = null;   //subcomponent || connector
     JTopo.CircleNode.prototype.objectType = null;   //data
-    JTopo.CircleNode.prototype.objectName = null;   //the name of input/output
-    JTopo.CircleNode.prototype.objectDataType = null;   //input or output
+    JTopo.CircleNode.prototype.objectName = null;   //input or output
+    JTopo.CircleNode.prototype.objectInstance = null;   //the name of input/output
     JTopo.CircleNode.prototype.objectContainer = null;  //container
+    JTopo.Link.prototype.objectType = null;    //coordinator or channel or diversity
+    JTopo.Link.prototype.objectFlow = null;    //data flow
 }
 
 function zoomIn() {
@@ -59,11 +61,11 @@ function drawCurrentObject(name, service, objType) {
 }
 
 function drawCurrentCompositeComponent(name, service) {
-    return drawCurrentObject(name, service, "Composite");
+    return drawCurrentObject(name, service, "composite");
 }
 
 function drawCurrentFamily(name, service) {
-    return drawCurrentObject(name, service, "Family");
+    return drawCurrentObject(name, service, "family");
 }
 
 function drawComponentBlock(name, storeName, instance) {
@@ -115,6 +117,53 @@ function checkData(container, io, name) {
     else { return result[0]; }
 }
 
+function drawDataInComposite(io, name) {
+    var feedback = checkData(currentObject, io, name);
+    if (feedback != null) { return feedback };
+    var data = new JTopo.Node(name);
+    data.setLocation(50 - scene.translateX, 150 - scene.translateY);
+    data.setSize(20, 20);
+    if (io == "Input") {
+        data.setImage("css/images/input.png");
+        data.objectName = "input";
+    }
+    else if (io == "Output") {
+        data.setImage("css/images/output.png");
+        data.objectName = "output";
+    }
+    data.fontColor = "0,0,0";
+    data.objectInstance = name;
+    data.objectType = "data";
+    data.objectContainer = currentObject;
+    scene.add(data);
+    data.mouseover(function (event) {
+        $("#IOdiv").append(name)
+        $("#IOdiv").css({
+            top: event.pageY + 20,
+            left: event.pageX
+        }).show();
+    });
+    data.mouseout(function (event) {
+        $("#IOdiv").hide();
+        $("#IOdiv").children().remove();
+        $("#IOdiv").text("");
+    });
+    data.mouseup(function (event) {
+        if (event.button == 2) {
+            $("#dataMenu").css({
+                top: event.pageY,
+                left: event.pageX
+            }).show();
+        }
+    });
+    stage.click(function (event) {
+        if (event.button == 0) {
+            $("#dataMenu").hide();
+        }
+    });
+    return data;
+}
+
 function drawDataInBlock(container, io, name) {
     var feedback = checkData(container, io, name);
     if (feedback != null) { return feedback };
@@ -125,16 +174,16 @@ function drawDataInBlock(container, io, name) {
     data.alpha = 1.0;
     if (io == "i") {
         data.fillColor = "27,236,10";
-        data.objectDataType = "input";
+        data.objectName = "input";
     }
     else if (io == "o") {
         data.fillColor = "96,149,255";
-        data.objectDataType = "output";
+        data.objectName = "output";
     }
     data.borderColor = "0,0,0";
     data.fontColor = "0,0,0";
     data.textPosition = "Middle_Center";
-    data.objectName = name;
+    data.objectInstance = name;
     data.objectType = "data";
     data.objectContainer = container;
     scene.add(data);
@@ -229,4 +278,57 @@ function removeElementFromCanvas() {
     }
     scene.remove(element);
     $(".contextmenu").hide();
+}
+
+function checkConnectionEdge(source, target) {
+    var result = scene.findElements(function (e) {
+        return e.elementType == "link" && e.nodeA == source && e.nodeZ == target;
+    });
+    if (result == 0) { return true; }
+    else { return false; }
+}
+
+function drawCompositionEdge(source, target, condition) {
+    if (checkConnectionEdge(source, target)) {
+        var textfield = $("#jtopo_textfield");
+        var link = new JTopo.FlexionalLink(source, target, condition);
+        link.direction = "vertical";
+        link.arrowsRadius = 6;
+        link.lineWidth = 3; // line width
+        link.offsetGap = 20;
+        link.bundleGap = 15; // space between lines
+        link.textOffsetY = 0; // offset X,Y of the line text
+        link.strokeColor = "88, 114, 137";
+        link.fontColor = "0,0,0";
+        link.font = "italic 10pt Arial";
+        link.objectType = "coordinator";
+        scene.add(link);
+        link.dbclick(function (event) {
+            if (event.target == null) { return; }
+            var e = event.target;
+            textfield.css({
+                top: event.pageY,
+                left: event.pageX - e.width / 2
+            }).show().attr("value", e.text).focus().select();
+            e.text = "";
+            textfield[0].JTopoNode = e;
+        });
+        link.mouseup(function (event) {
+            if (event.button == 2) {
+                $("#edgeMenu").css({
+                    top: event.pageY,
+                    left: event.pageX
+                }).show();
+            }
+        });
+        stage.click(function (event) {
+            if (event.button == 0) {
+                $("#edgeMenu").hide();
+            }
+        });
+        $("#jtopo_textfield").blur(function () {
+            textfield[0].JTopoNode.text = textfield.hide().val();
+        });
+        return link;
+    }
 }

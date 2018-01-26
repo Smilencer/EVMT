@@ -157,7 +157,7 @@ function addNewConnector(name) {
     });
 }
 
-function drawNewConnector(obj){
+function drawNewConnector(obj) {
     var instance = $("#ipt_domain").val().trim();
     if (instance == "") {
         alert("Connector name is required.");
@@ -166,4 +166,156 @@ function drawNewConnector(obj){
     var name = $(obj).parents("#NewConnectorDialog").find("font").text();
     var conn = drawConnector(name, instance);
     closeDialog();
+}
+
+function addNewInput() {
+    var element = scene.currentElement;
+    if (element == null) {
+        alert("Please select a composite component/connector first.");
+        return;
+    }
+    if (element.objectType == "connector") {
+        if (element.objectName == "Sequencer" || element.objectName == "Aggregator") {
+            alert("Input cannot be added to Sequencer/Aggregator.");
+            return;
+        }
+        $("#NewDataDialog").find("font").text("Input");
+        $("#NewDataDialog").find("button").show();
+        $("#draw2").hide();
+        $.blockUI({
+            message: $("#NewDataDialog"),
+            baseZ: 1000,
+            cursorReset: "default",
+            css: {
+                textAlign: "unset",
+                width: "295px",
+                height: "157px",
+                top: "35%",
+                left: "40%",
+                cursor: "default"
+            },
+            overlayCSS: {
+                cursor: "default"
+            }
+        });
+    }
+    else if (element.objectType == "composite") {
+        $("#NewDataDialog").find("font").text("Input");
+        $("#NewDataDialog").find("button").show();
+        $("#draw1").hide();
+        $.blockUI({
+            message: $("#NewDataDialog"),
+            baseZ: 1000,
+            cursorReset: "default",
+            css: {
+                textAlign: "unset",
+                width: "295px",
+                height: "157px",
+                top: "35%",
+                left: "40%",
+                cursor: "default"
+            },
+            overlayCSS: {
+                cursor: "default"
+            }
+        });
+    }
+}
+
+function addInputInConnector(obj) {
+    var name = $("#ipt_dataname").val().trim();
+    if (name == "") {
+        alert("Input name is required.");
+        return;
+    }
+    var data = drawInputInBlock(scene.currentElement, name);
+    data.objectContainer = currentObject;
+    closeDialog();
+}
+
+function addDataInComposite(obj) {
+    var io = $(obj).parents("#NewDataDialog").find("font").eq(0).text().trim();
+    var name = $("#ipt_dataname").val().trim();
+    if (name == "") {
+        alert(io + " name is required.");
+        return;
+    }
+    var data = drawDataInComposite(io, name);
+    closeDialog();
+}
+
+function addNewOutput() {
+    var element = scene.currentElement;
+    if (element == null) {
+        alert("Please select a composite component first.");
+        return;
+    }
+    if (element.objectType == "composite") {
+        $("#NewDataDialog").find("font").text("Output");
+        $("#NewDataDialog").find("button").show();
+        $("#draw1").hide();
+        $.blockUI({
+            message: $("#NewDataDialog"),
+            baseZ: 1000,
+            cursorReset: "default",
+            css: {
+                textAlign: "unset",
+                width: "295px",
+                height: "157px",
+                top: "35%",
+                left: "40%",
+                cursor: "default"
+            },
+            overlayCSS: {
+                cursor: "default"
+            }
+        });
+    }
+}
+
+function addNewLink(){
+    var pair = scene.selectedElements;
+    if (pair.length != 2) { return; }
+    var source = pair[0];
+    var target = pair[1];
+    if (source.objectType == "connector") {
+        if (target.objectType == "connector" || target.objectType == "subcomponent") {
+            var link = drawCompositionEdge(source, target, "//TODO");
+        }
+    }
+}
+
+//TODO
+function addNewChannel(){
+    var pair = scene.selectedElements;
+    if (pair.length != 2) { return; }
+    var source = pair[0];
+    var target = pair[1];
+    if (source.objectType != "data" || target.objectType != "data") { return; }
+    if (source.objectName == "input" && source.objectContainer==currentObject) {
+        var flow = currentObject.objectName + "." + source.dataName;
+        if (target.subType == "input" && target.parent.xType == "service") {
+            var str = source.dataName + "->" + target.dataName;
+            flow += "," + target.parent.text.getComponent() + "." + target.dataName + "," + target.dataType;
+            var channel = drawDataChannel(source, target.parent, str, flow);
+        }
+    }
+    else if (source.subType == "output" && source.parent.xType == "service") {
+        var flow = source.parent.text.getComponent() + "." + source.dataName;
+        if (target.subType == "input" && target.parent.xType == "service") {
+            var str = source.dataName + "->" + target.dataName;
+            flow += "," + target.parent.text.getComponent() + "." + target.dataName + "," + target.dataType;
+            var channel = drawDataChannel(source.parent, target.parent, str, flow);
+        }
+        else if (target.subType == "input" && target.parent.xType == "connector") {
+            var str = source.dataName + "->" + target.dataName;
+            flow += "," + compostieComponent + "." + target.dataName + "," + target.dataType;
+            var channel = drawDataChannel(source.parent, target, str, flow);
+        }
+        else if (target.subType == "output" && target.parent.xType == "composite") {
+            var str = source.dataName + "->" + target.dataName;
+            flow += "," + compostieComponent + "." + target.dataName + "," + target.dataType;
+            var channel = drawDataChannel(source.parent, target, str, flow);
+        }
+    }
 }
