@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="css/images/favicon.ico" rel="icon" type="image/x-icon" />
+    <title>Create Composite Component</title>
+    <link href="css/common.css" rel="stylesheet" />
+    <link href="css/composite.css" rel="stylesheet" />
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/composite.js"></script>
+    <script src="js/jtopo-0.4.8-min.js"></script>
+    <script src="js/repository.js"></script>
+    <script src="js/jquery.blockUI.js"></script>
+    <script src="js/canvas.js"></script>
+    <link href="css/common2.css" rel="stylesheet" />
+    <script src="js/jquery-ui.min.js"></script>
+</head>
+
+<body>
+    <div id="header">
+        <div id="topmenu">
+            <div id="logo">
+                <a>Enumerative Variability Modelling Tool</a>
+            </div>
+            <div id="urls">
+                <a href="#">Feature Model</a>|
+                <a href="atomic.html" target="_blank">Atomic Component</a>|
+                <a href="javascript:void(0)">Composite Component</a>|
+                <a href="family.html" target="_blank">Family Model</a>
+            </div>
+        </div>
+    </div>
+    <div id="container">
+        <div id="tabmenu">
+            <button type="button" id="newService" onclick="createCompositeService()">
+                <object data="css/images/component.svg" type="image/svg+xml"></object>
+                New Component</button>
+            <button type="button" id="clean" onclick="reset()">
+                <object data="css/images/cleaning.svg" type="image/svg+xml"></object>
+                Clean</button>
+            <button type="button" id="generate" onclick="generateXML()">
+                <object data="css/images/generate.svg" type="image/svg+xml"></object>
+                Generate</button>
+            <button type="button" id="deposit" onclick="deposit()">
+                <object data="css/images/save.svg" type="image/svg+xml"></object>
+                Deposit</button>
+            <button type="button" id="retrieve" onclick="retrieve()">
+                <object data="css/images/retrieve.svg" type="image/svg+xml"></object>
+                Retrieve</button>
+            <button type="button" id="zoomIn" onclick="zoomIn()">
+                <object data="css/images/zoom-in.svg" type="image/svg+xml"></object>
+                Zoom In</button>
+            <button type="button" id="zoomOut" onclick="zoomOut()">
+                <object data="css/images/zoom-out.svg" type="image/svg+xml"></object>
+                Zoom Out</button>
+            <button type="button" id="download" onclick="download()">
+                <a id="gotodownload" href="Download.ashx">
+                    <object data="css/images/download.svg" type="image/svg+xml"></object>
+                    Download</a>
+            </button>
+        </div>
+        <div id="codingArea">
+            <div class="partArea">
+                <div id="palette">
+                    <ul id="accordion" class="accordion">
+                        <li>
+                            <div class="link">
+                                <object class="paint" data="css/images/paint.svg" type="image/svg+xml"></object>
+                                Connector
+                            </div>
+                            <ul class="submenu">
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addNewConnector('Sequencer')">Sequencer</a>
+                                </li>
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addNewConnector('Selector')">Selector</a>
+                                </li>
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addNewConnector('Guard')">Guard</a>
+                                </li>
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addNewConnector('Loop')">Loop</a>
+                                </li>
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addNewConnector('Aggregator')">Aggregator</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="link">
+                                <object class="paint" data="css/images/paint.svg" type="image/svg+xml"></object>
+                                Data
+                            </div>
+                            <ul class="submenu">
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addNewData('Input')">Input</a>
+                                </li>
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addNewData('Output')">Output</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="link">
+                                <object class="paint" data="css/images/paint.svg" type="image/svg+xml"></object>
+                                Edge
+                            </div>
+                            <ul class="submenu">
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addNewLink()">Connection</a>
+                                </li>
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addNewChannel()">Data Channel</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <canvas id="canvas" width="733" height="467"></canvas>
+            </div>
+            <div class="partArea">
+                <div id="dataTree">
+                    <div id="dataTitle">
+                        <span>Repository</span>
+                    </div>
+                    <div id="repoButton">
+                        <button type="button" onclick="getAll()">
+                            <object data="css/images/refresh.svg" type="image/svg+xml"></object>
+                            Refresh</button>
+                        <button type="button" onclick="removeFromDB()">
+                            <object data="css/images/delete.svg" type="image/svg+xml"></object>
+                            Remove</button>
+                    </div>
+                    <div id="categoryDiv">
+                        <div class="category">
+                            <p class="db">
+                                <object data="css/images/database.svg" type="image/svg+xml"></object>
+                                <font>Component Store</font>
+                            </p>
+                            <p class="db-table" style="display: block;">
+                                <object data="css/images/folder.svg" type="image/svg+xml"></object>
+                                <span state="off" onclick="expandTab(this)" class="">Atomic</span>
+                            </p>
+                            <ul style="display: none;" id="AtomicStore">
+                            </ul>
+                            <p class="db-table" style="display: block;">
+                                <object data="css/images/folder.svg" type="image/svg+xml"></object>
+                                <span state="off" onclick="expandTab(this)" class="">Composite</span>
+                            </p>
+                            <ul style="display: none;" id="CompositeStore">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="NewServiceDialog">
+        <div class="DialogTitle">
+            <span>New Component</span>
+        </div>
+        <div class="nrow" id="nrow1">
+            <span>Component Name:</span>
+            <input type="text" id="ipt_sname" onkeyup="generateServiceName(this)" />
+        </div>
+        <div class="nrow" id="nrow4">
+            <span>Service Name:</span>
+            <input type="text" id="ipt_srvname" readonly="true" />
+            <input type="checkbox" id="ipt_srvdefault" checked="checked" onclick="nodefault()" />default</div>
+        <div class="exiter">
+            <button onclick="startComposite()">
+                <object data="css/images/create.svg" type="image/svg+xml"></object>
+                Create</button>
+            <button onclick="closeDialog()">
+                <object data="css/images/cancel.svg" type="image/svg+xml"></object>
+                Cancel</button>
+        </div>
+    </div>
+</body>
+<div id="IOdiv" class="IOproperty">
+    <i></i>
+</div>
+<ul class="contextmenu" style="display: none;">
+    <li>
+        <a href="javascript:void(0)" onclick="removeElementFromCanvas()">Remove</a>
+    </li>
+</ul>
+<div id="NewComponentName" class="NewNameDialog">
+        <div class="DialogTitle">
+            <span>Retrieve Component</span>
+        </div>
+        <div class="row">
+            <span>New name:</span>
+            <input type="text" id="ipt_cname" />
+        </div>
+        <div class="exiter">
+            <button onclick="retrieveComponent(this)">
+                <object data="css/images/create.svg" type="image/svg+xml"></object>
+                Create</button>
+            <button onclick="closeDialog()">
+                <object data="css/images/cancel.svg" type="image/svg+xml"></object>
+                Cancel</button>
+        </div>
+    </div>
+    
+<div id="NewConnectorDialog" class="NewNameDialog">
+    <div class="DialogTitle">
+        <span>Add New
+            <font></font>
+        </span>
+    </div>
+    <div class="row">
+        <span>New name:</span>
+        <input type="text" id="ipt_domain" />
+    </div>
+    <div class="exiter">
+        <button onclick="drawNewConnector(this)">
+            <object data="css/images/create.svg" type="image/svg+xml"></object>
+            Create</button>
+        <button onclick="closeDialog()">
+            <object data="css/images/cancel.svg" type="image/svg+xml"></object>
+            Cancel</button>
+    </div>
+</div>
+<div id="NewDataDialog">
+    <div class="DialogTitle">
+        <span>Add New&nbsp;
+            <font></font>
+        </span>
+    </div>
+    <div class="row" id="row1">
+        <span>
+            <font></font>&nbsp;name:</span>
+        <input type="text" id="ipt_dataname" />
+    </div>
+    <div class="row" id="row2">
+        <span>
+            <font></font>&nbsp;type:</span>
+        <input type="text" id="ipt_datatype" />
+    </div>
+    <div class="exiter">
+        <button onclick="drawNewData(this)" id="draw1">
+            <object data="css/images/create.svg" type="image/svg+xml"></object>
+            Create</button>
+        <button onclick="drawNewNewData(this)" id="draw2">
+            <object data="css/images/create.svg" type="image/svg+xml"></object>
+            Create</button>
+        <button onclick="closeDialog()">
+            <object data="css/images/cancel.svg" type="image/svg+xml"></object>
+            Cancel</button>
+    </div>
+</div>
+<textarea id="jtopo_textfield" onkeydown="keydownTextarea(this)"></textarea>
+</html>

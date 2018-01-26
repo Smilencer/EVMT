@@ -19,19 +19,39 @@ function OpenDB() {
 }
 
 function insertAtomic(data) {
-    insertDate(data, "Atomic");
+    insertData(data, "Atomic");
 }
 
 function insertComposite(data) {
-    insertDate(data, "Composite");
+    insertData(data, "Composite");
 }
 
-function insertDate(data, storeName) {
+function insertData(data, storeName) {
     var transaction = mydb.transaction(storeName, "readwrite");
     var objectStore = transaction.objectStore(storeName);
     var request = objectStore.put(data);
     request.onsuccess = function (e) {
         growl("Component is deposited!");
+    }
+}
+
+function getData(name, storeName, instance) {
+    var transaction = mydb.transaction(storeName, "readwrite");
+    var objectStore = transaction.objectStore(storeName);
+    var request = objectStore.get(name);
+    request.onsuccess = function (e) {
+        var data = e.target.result;
+        var componentBlock = drawComponentBlock(data.name, data.service, instance);
+        for (let i = 0, len = data.input.length; i < len; i++) {
+            drawInputInBlock(componentBlock, data.input[i]);
+        }
+        for (let i = 0, len = data.output.length; i < len; i++) {
+            drawOutputInBlock(componentBlock, data.output[i]);
+        }
+        growl("Component is retrieved!");
+    }
+    request.onerror = function (e) {
+        console.log("Retrieve failed.");
     }
 }
 
