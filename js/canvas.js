@@ -11,7 +11,6 @@
     JTopo.CircleNode.prototype.objectInstance = null;   //the name of input/output
     JTopo.CircleNode.prototype.objectContainer = null;  //container
     JTopo.Link.prototype.objectType = null;    //coordinator or channel or diversity
-    JTopo.Link.prototype.objectFlow = null;    //data flow
 }
 
 function zoomIn() {
@@ -150,7 +149,7 @@ function drawDataInComposite(io, name) {
     });
     data.mouseup(function (event) {
         if (event.button == 2) {
-            $("#dataMenu").css({
+            $(".contextmenu").css({
                 top: event.pageY,
                 left: event.pageX
             }).show();
@@ -158,7 +157,7 @@ function drawDataInComposite(io, name) {
     });
     stage.click(function (event) {
         if (event.button == 0) {
-            $("#dataMenu").hide();
+            $(".contextmenu").hide();
         }
     });
     return data;
@@ -273,8 +272,10 @@ function drawConnector(name, instance) {
 
 function removeElementFromCanvas() {
     var element = scene.currentElement;
-    for (var i = 0; i < element.childs.length; i++) {
-        scene.remove(element.childs[i]);
+    if (element.childs != undefined) {
+        for (var i = 0; i < element.childs.length; i++) {
+            scene.remove(element.childs[i]);
+        }
     }
     scene.remove(element);
     $(".contextmenu").hide();
@@ -315,7 +316,7 @@ function drawCompositionEdge(source, target, condition) {
         });
         link.mouseup(function (event) {
             if (event.button == 2) {
-                $("#edgeMenu").css({
+                $(".contextmenu").css({
                     top: event.pageY,
                     left: event.pageX
                 }).show();
@@ -323,11 +324,71 @@ function drawCompositionEdge(source, target, condition) {
         });
         stage.click(function (event) {
             if (event.button == 0) {
-                $("#edgeMenu").hide();
+                $(".contextmenu").hide();
             }
         });
         $("#jtopo_textfield").blur(function () {
             textfield[0].JTopoNode.text = textfield.hide().val();
+        });
+        return link;
+    }
+}
+
+function drawDataChannel(source, target, flow) {
+    if (checkConnectionEdge(source, target)) {
+        var link = new JTopo.Link(source, target, flow);
+        link.direction = "horizontal";
+        link.arrowsRadius = 8;
+        link.lineWidth = 1; // line width
+        link.offsetGap = 35;
+        link.bundleGap = 15; // space between lines
+        link.textOffsetY = 10; // offset X,Y of the line text
+        link.strokeColor = "255, 48, 48";
+        link.fontColor = "0,0,0";
+        link.objectType = "channel";
+        link.getStartPosition = function () {
+            var a;
+            return (a = (function (thisl) {
+                var b = thisl.nodeA;
+                var c = thisl.nodeZ;
+                var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
+                var e = b.getBound();
+                var f = JTopo.util.intersectionLineBound(d, e);
+                return f;
+            })(this)),
+                null == a && (a = {
+                    x: this.nodeZ.cx,
+                    y: this.nodeZ.cy
+                }), a
+        };
+        link.getEndPosition = function () {
+            var a;
+            return (a = (function (thisl) {
+                var b = thisl.nodeZ;
+                var c = thisl.nodeA;
+                var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
+                var e = b.getBound();
+                var f = JTopo.util.intersectionLineBound(d, e);
+                return f;
+            })(this)),
+                null == a && (a = {
+                    x: this.nodeZ.cx,
+                    y: this.nodeZ.cy
+                }), a
+        };
+        scene.add(link);
+        link.mouseup(function (event) {
+            if (event.button == 2) {
+                $(".contextmenu").css({
+                    top: event.pageY,
+                    left: event.pageX
+                }).show();
+            }
+        });
+        stage.click(function (event) {
+            if (event.button == 0) {
+                $(".contextmenu").hide();
+            }
         });
         return link;
     }

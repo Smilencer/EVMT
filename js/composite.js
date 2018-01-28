@@ -229,7 +229,7 @@ function addInputInConnector(obj) {
         return;
     }
     var data = drawInputInBlock(scene.currentElement, name);
-    data.objectContainer = currentObject;
+    //data.objectContainer = currentObject;
     closeDialog();
 }
 
@@ -273,7 +273,7 @@ function addNewOutput() {
     }
 }
 
-function addNewLink(){
+function addNewLink() {
     var pair = scene.selectedElements;
     if (pair.length != 2) { return; }
     var source = pair[0];
@@ -285,37 +285,32 @@ function addNewLink(){
     }
 }
 
-//TODO
-function addNewChannel(){
+function addNewChannel() {
     var pair = scene.selectedElements;
     if (pair.length != 2) { return; }
     var source = pair[0];
     var target = pair[1];
     if (source.objectType != "data" || target.objectType != "data") { return; }
-    if (source.objectName == "input" && source.objectContainer==currentObject) {
-        var flow = currentObject.objectName + "." + source.dataName;
-        if (target.subType == "input" && target.parent.xType == "service") {
-            var str = source.dataName + "->" + target.dataName;
-            flow += "," + target.parent.text.getComponent() + "." + target.dataName + "," + target.dataType;
-            var channel = drawDataChannel(source, target.parent, str, flow);
+    if (source.objectName == "input" && source.objectContainer == currentObject) {
+        var flow = "this." + source.objectInstance;
+        if (target.objectName == "input" && target.objectContainer.objectType == "subcomponent") {
+            flow += "->" + target.objectContainer.objectInstance + "." + target.objectInstance;
+            var channel = drawDataChannel(source, target.objectContainer, flow);
         }
     }
-    else if (source.subType == "output" && source.parent.xType == "service") {
-        var flow = source.parent.text.getComponent() + "." + source.dataName;
-        if (target.subType == "input" && target.parent.xType == "service") {
-            var str = source.dataName + "->" + target.dataName;
-            flow += "," + target.parent.text.getComponent() + "." + target.dataName + "," + target.dataType;
-            var channel = drawDataChannel(source.parent, target.parent, str, flow);
+    else if (source.objectName == "output" && source.objectContainer.objectType == "subcomponent") {
+        var flow = source.objectContainer.objectInstance + "." + source.objectInstance;
+        if (target.objectName == "input" && target.objectContainer.objectType == "subcomponent") {
+            flow += "->" + target.objectContainer.objectInstance + "." + target.objectInstance;
+            var channel = drawDataChannel(source.objectContainer, target.objectContainer, flow);
         }
-        else if (target.subType == "input" && target.parent.xType == "connector") {
-            var str = source.dataName + "->" + target.dataName;
-            flow += "," + compostieComponent + "." + target.dataName + "," + target.dataType;
-            var channel = drawDataChannel(source.parent, target, str, flow);
+        else if (target.objectName == "input" && target.objectContainer.objectType == "connector") {
+            flow += "->this." + target.objectInstance;
+            var channel = drawDataChannel(source.objectContainer, target.objectContainer, flow);
         }
-        else if (target.subType == "output" && target.parent.xType == "composite") {
-            var str = source.dataName + "->" + target.dataName;
-            flow += "," + compostieComponent + "." + target.dataName + "," + target.dataType;
-            var channel = drawDataChannel(source.parent, target, str, flow);
+        else if (target.objectName == "output" && target.objectContainer.objectType == "composite") {
+            flow += "->this." + target.objectInstance;
+            var channel = drawDataChannel(source.objectContainer, target, flow);
         }
     }
 }

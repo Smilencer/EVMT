@@ -104,21 +104,12 @@ function startCoding() {
 
     var rows = $("#tabler").find("tr");
     var str = "class " + sname + " {\n";
-    for (let i = 1; i < rows.length; i++) {
-        if ($(rows[i]).children("td").eq(2).text() == "input") {
-            str += "\tset " + $(rows[i]).children("td").eq(1).text() + "(value) {\n"
-            str += "\t\tthis._" + $(rows[i]).children("td").eq(1).text() + " = value;\n";
-            str += "\t}\n";
-        }
-    }
+    str += "\tconstructor() {\n";
 
     for (let i = 1; i < rows.length; i++) {
-        if ($(rows[i]).children("td").eq(2).text() == "output") {
-            str += "\tget " + $(rows[i]).children("td").eq(1).text() + "() {\n"
-            str += "\t\treturn this._" + $(rows[i]).children("td").eq(1).text() + ";\n";
-            str += "\t}\n";
-        }
+        str += "\t\tthis." + $(rows[i]).children("td").eq(1).text() + ";\n"
     }
+    str += "\t}\n";
 
     str += "\t" + srvname + "() {\n";
     str += "\t\t//TODO\n";
