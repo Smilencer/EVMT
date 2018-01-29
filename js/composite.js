@@ -2,6 +2,7 @@
 var scene;
 var currentObject = null;
 var zoomlevel = 1;
+var xmlDoc = "";
 
 $(document).ready(function (e) {
     OpenDB();
@@ -20,6 +21,9 @@ $(document).ready(function (e) {
         }
     });
     extendJTopo();
+    String.prototype.replaceAll = function () {
+        return this.replace(/&/g, "&amp;").replace(/</g, "&lt;	").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+    }
 });
 
 function reset() {
@@ -314,3 +318,58 @@ function addNewChannel() {
         }
     }
 }
+
+function generateXML() {
+    var result = scene.findElements(function (e) {
+        return e.objectType == "connector" && e.inLinks.length == 0;
+    });
+    if (result.length != 1) {
+        alert("Invalid component!");
+        return;
+    }
+    var root = result[0];
+    xmlDoc = "<product store='Composite' class='" + currentObject.objectName + "' service='" + currentObject.objectService + "'>" + InsertNewNode(root) + generateChannels() + "</product>";
+}
+
+function InsertNewNode(node) {
+    var nodeStr = "";
+    if (node.objectType == "connector") {
+        var dataStr = "";
+        if (node.childs.length > 0) {
+            var dataNameArr = [];
+            for (let data of node.childs) {
+                dataNameArr.push(data.objectInstance);
+            }
+            dataStr = dataNameArr.join(",");
+        }
+        nodeStr += "<connector type='" + node.objectName + "' name='" + node.objectInstance + "' data='" + dataStr + "'>";
+        for (let link of node.outLinks) {
+            nodeStr += "<condition value='" + link.text.replaceAll() + "'>";
+            var target = link.nodeZ;
+            nodeStr += InsertNewNode(target);
+            nodeStr += "</condition>";
+        }
+        nodeStr += "</connector>";
+    }
+    else if (node.objectType == "subcomponent") {
+        nodeStr += "<component store='" + node.objectStore + "' class='" + node.objectName + "' name='" + node.objectInstance + "'></component>";
+    }
+    return nodeStr;
+}
+
+function generateChannels() {
+    var channelStr = "<dataChannel>";
+    var result = scene.findElements(function (e) {
+        return e.elementType == "link" && e.objectType == "channel";
+    });
+    if (result.length > 0) {
+        for (let channel of result) {
+            var pair = channel.text.split("->");
+            channelStr += "<channel from='" + pair[0] + "' to='" + pair[1] + "'></channel>";
+        }
+    }
+    channelStr += "</dataChannel>";
+    return channelStr;
+}
+
+

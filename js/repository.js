@@ -41,7 +41,7 @@ function getData(name, storeName, instance) {
     var request = objectStore.get(name);
     request.onsuccess = function (e) {
         var data = e.target.result;
-        var componentBlock = drawComponentBlock(data.name, data.service, instance);
+        var componentBlock = drawComponentBlock(data.name, storeName, instance);
         for (let i = 0, len = data.input.length; i < len; i++) {
             drawInputInBlock(componentBlock, data.input[i]);
         }

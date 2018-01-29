@@ -110,7 +110,7 @@ function checkData(container, io, name) {
         flag = "output";
     }
     var result = scene.findElements(function (e) {
-        return e.objectType == "data" && e.objectDataType == flag && e.objectName == name && e.container == container;
+        return e.objectType == "data" && e.objectName == flag && e.objectInstance == name && e.container == container;
     });
     if (result == 0) { return null; }
     else { return result[0]; }
