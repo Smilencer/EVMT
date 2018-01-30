@@ -24,6 +24,9 @@ $(document).ready(function (e) {
     String.prototype.replaceAll = function () {
         return this.replace(/&/g, "&amp;").replace(/</g, "&lt;	").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
     }
+    String.prototype.compress = function () {
+        return this.replace(/[\r\n]/g, "").replace(/[ | ]*\n/g, '\n').replace(/\n[\s| | ]*\r/g, '\n').replace(/ /ig, '').replace(/^[\s　]+|[\s　]+$/g, "").replace(/\t+/g, '');
+    }
 });
 
 function reset() {
@@ -233,7 +236,6 @@ function addInputInConnector(obj) {
         return;
     }
     var data = drawInputInBlock(scene.currentElement, name);
-    //data.objectContainer = currentObject;
     closeDialog();
 }
 
@@ -372,4 +374,72 @@ function generateChannels() {
     return channelStr;
 }
 
+function generateCode() {
+    var code =
+        `class ${currentObject.objectName} {
+        constructor() {
+            ${generateConstructor()}
+        }
+        ${currentObject.objectService}() {
+            //TODO
+        }
+    }`;
+    return code;
+}
+
+function generateConstructor() {
+    var str = ``;
+    var result = scene.findElements(function (e) {
+        return e.objectType == "data" && (e.objectContainer == currentObject || e.objectContainer.objectType == "connector");
+    });
+    if (result.length > 0) {
+        for (let data of result) {
+            str += `this.${data.objectInstance};\n`;
+        }
+    }
+    var result = scene.findElements(function (e) {
+        return e.objectType == "subcomponent";
+    });
+    if (result.length > 0) {
+        for (let subcomponent of result) {
+            str += `this.${subcomponent.objectInstance}=new ${subcomponent.objectName}();\n`
+        }
+    }
+    return str;
+}
+
+function generateService() {
+    var obj = $(xmlDoc);
+    var tree = obj.children.eq(0);
+    var dataflow = obj.children.eq(1);
+}
+
+//TODO
+function parseTree(node) {
+    switch ($(node).attr("type")) {
+        case "Sequencer":
+            let condition = $(node).children("condition");
+            condition.sort(compareUp());
+            for (let item of condition) {
+                parseTree(item);
+            }
+        case "Selector":
+        case "Guard":
+        case "Loop":
+        case "Aggregator":
+    }
+}
+
+function compareUp() {
+    return function (obj1, obj2) {
+        var value1 = Number(obj1.attr("value"));
+        var value2 = Number(obj2.attr("value"));
+        return value1 - value2;
+    }
+}
+
+function deposit() {
+    //if xmldoc not ""
+    console.log(generateCode());
+}
 

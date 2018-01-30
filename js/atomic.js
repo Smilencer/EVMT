@@ -14,6 +14,9 @@ $(document).ready(function () {
         extraKeys: { "Ctrl-Space": "autocomplete" }
     });
     OpenDB();
+    String.prototype.compress = function () {
+        return this.replace(/[\r\n]/g,"").replace(/[ | ]*\n/g,'\n').replace(/\n[\s| | ]*\r/g,'\n').replace(/ /ig,'').replace(/^[\s　]+|[\s　]+$/g, "").replace(/\t+/g,'');
+    }
 });
 
 function popDialog() {
@@ -163,7 +166,7 @@ function deposit() {
         return;
     }
 
-    var code = editor.getValue();
+    var code = editor.getValue().compress();
     if (code == "") {
         alert("Computation unit is required.");
         closeDialog();
