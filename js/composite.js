@@ -298,7 +298,7 @@ function addNewChannel() {
     var target = pair[1];
     if (source.objectType != "data" || target.objectType != "data") { return; }
     if (source.objectName == "input" && source.objectContainer == currentObject) {
-        var flow = "this." + source.objectInstance;
+        var flow = source.objectInstance;
         if (target.objectName == "input" && target.objectContainer.objectType == "subcomponent") {
             flow += "->" + target.objectContainer.objectInstance + "." + target.objectInstance;
             var channel = drawDataChannel(source, target.objectContainer, flow);
@@ -311,11 +311,11 @@ function addNewChannel() {
             var channel = drawDataChannel(source.objectContainer, target.objectContainer, flow);
         }
         else if (target.objectName == "input" && target.objectContainer.objectType == "connector") {
-            flow += "->this." + target.objectInstance;
+            flow += "->" + target.objectInstance;
             var channel = drawDataChannel(source.objectContainer, target.objectContainer, flow);
         }
         else if (target.objectName == "output" && target.objectContainer.objectType == "composite") {
-            flow += "->this." + target.objectInstance;
+            flow += "->" + target.objectInstance;
             var channel = drawDataChannel(source.objectContainer, target, flow);
         }
     }
@@ -354,7 +354,7 @@ function InsertNewNode(node) {
         nodeStr += "</connector>";
     }
     else if (node.objectType == "subcomponent") {
-        nodeStr += "<component store='" + node.objectStore + "' class='" + node.objectName + "' name='" + node.objectInstance + "'></component>";
+        nodeStr += "<component store='" + node.objectStore + "' class='" + node.objectName + "' name='" + node.objectInstance + "' service='" + node.objectService + "'></component>";
     }
     return nodeStr;
 }
@@ -381,7 +381,7 @@ function generateCode() {
             ${generateConstructor()}
         }
         ${currentObject.objectService}() {
-            //TODO
+            ${generateService()}
         }
     }`;
     return code;
@@ -405,35 +405,80 @@ function generateConstructor() {
             str += `this.${subcomponent.objectInstance}=new ${subcomponent.objectName}();\n`
         }
     }
+    var result = scene.findElements(function (e) {
+        return e.objectType == "connector" && e.objectName == "Aggregator";
+    });
+    if (result.length > 0) {
+        for (let aggregator of result) {
+            str += `this.${aggregator.objectInstance};\n`
+        }
+    }
     return str;
 }
 
+//channel TODO
 function generateService() {
     var obj = $(xmlDoc);
-    var tree = obj.children.eq(0);
-    var dataflow = obj.children.eq(1);
-}
-
-//TODO
-function parseTree(node) {
-    switch ($(node).attr("type")) {
-        case "Sequencer":
-            let condition = $(node).children("condition");
-            condition.sort(compareUp());
-            for (let item of condition) {
-                parseTree(item);
+    var tree = $(obj).children().eq(0);
+    var dataflow = $(obj).children().eq(1);
+    var code = "";
+    var parseTree = function (node) {
+        if ($(node).is("connector")) {
+            var condition = $(node).children("condition");
+            var single = $(condition).eq(0);
+            switch ($(node).attr("type")) {
+                case "Sequencer":
+                    condition.sort(compareUp());
+                    for (let item of condition) {
+                        parseTree($(item).children().eq(0));
+                    }
+                    break;
+                case "Selector":
+                    for (let item of condition) {
+                        if ($(item).index(condition) == 0) {
+                            code += `if(${$(item).attr("value")}){`;
+                        }
+                        else {
+                            code += `else if(${$(item).attr("value")}){`;
+                        }
+                        parseTree($(item).children().eq(0));
+                        code += "}";
+                    }
+                    break;
+                case "Guard":
+                    code += `if(${$(single).attr("value")}){`;
+                    parseTree($(single).children().eq(0));
+                    code += "}";
+                    break;
+                case "Loop":
+                    code += `while(${$(single).attr("value")}){`;
+                    parseTree($(single).children().eq(0));
+                    code += "}";
+                    break;
+                case "Aggregator":
+                    code += `let args = this.${$(node).attr("name")}.split(",");`;
+                    code += `for (let arg of args) {`;
+                    for (let item of condition) {
+                        code += `if (arg == "${$(item).attr("value")}") {`;
+                        parseTree($(item).children().eq(0));
+                        code += "}";
+                    }
+                    code += "}";
+                    break;
             }
-        case "Selector":
-        case "Guard":
-        case "Loop":
-        case "Aggregator":
+        }
+        else if ($(node).is("component")) {
+            code += `this.${$(node).attr("name")}.${$(node).attr("service")}();`;
+        }
     }
+    parseTree($(tree).eq(0));
+    return code;
 }
 
 function compareUp() {
     return function (obj1, obj2) {
-        var value1 = Number(obj1.attr("value"));
-        var value2 = Number(obj2.attr("value"));
+        var value1 = Number($(obj1).attr("value"));
+        var value2 = Number($(obj2).attr("value"));
         return value1 - value2;
     }
 }

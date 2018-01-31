@@ -6,6 +6,7 @@
     JTopo.Container.prototype.objectInstance = null;    //instance of component/connector name
     JTopo.Container.prototype.objectStore = null;    //atomic or composite
     JTopo.Container.prototype.objectType = null;   //subcomponent || connector
+    JTopo.Container.prototype.objectService = null;   //service name
     JTopo.CircleNode.prototype.objectType = null;   //data
     JTopo.CircleNode.prototype.objectName = null;   //input or output
     JTopo.CircleNode.prototype.objectInstance = null;   //the name of input/output
@@ -67,7 +68,7 @@ function drawCurrentFamily(name, service) {
     return drawCurrentObject(name, service, "family");
 }
 
-function drawComponentBlock(name, storeName, instance) {
+function drawComponentBlock(name, storeName, instance, service) {
     var block = new JTopo.Container("(" + name + ")" + instance);
     block.textPosition = "Bottom_Center";
     block.setLocation(10 - scene.translateX, 200 - scene.translateY);
@@ -84,6 +85,7 @@ function drawComponentBlock(name, storeName, instance) {
     block.objectInstance = instance;
     block.objectStore = storeName;
     block.objectType = "subcomponent";
+    block.objectService = service;
     scene.add(block);
     block.mouseup(function (event) {
         if (event.button == 2) {
@@ -289,6 +291,14 @@ function checkConnectionEdge(source, target) {
     else { return false; }
 }
 
+function checkConnectionEdge(source, target, flow) {
+    var result = scene.findElements(function (e) {
+        return e.elementType == "link" && e.nodeA == source && e.nodeZ == target && e.text == flow;
+    });
+    if (result == 0) { return true; }
+    else { return false; }
+}
+
 function drawCompositionEdge(source, target, condition) {
     if (checkConnectionEdge(source, target)) {
         var textfield = $("#jtopo_textfield");
@@ -335,7 +345,7 @@ function drawCompositionEdge(source, target, condition) {
 }
 
 function drawDataChannel(source, target, flow) {
-    if (checkConnectionEdge(source, target)) {
+    if (checkConnectionEdge(source, target, flow)) {
         var link = new JTopo.Link(source, target, flow);
         link.direction = "horizontal";
         link.arrowsRadius = 8;
