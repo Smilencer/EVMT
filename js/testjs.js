@@ -6,16 +6,13 @@ $(document).ready(function () {
             this.agg1;
         }
         ASvc() {
-            let args = this.agg1.split(",");
-            for (let arg of args) {
-                if (arg == "B") {
-                    this.b.BSvc();
-                    alert("123");
-                }
-                if (arg == "C") {
-                    this.c.CSvc();
-                    alert("456");
-                }
+            if (this.agg1.split(",").includes("B")) {
+                this.b.BSvc();
+                alert("123");
+            }
+            if (this.agg1.split(",").includes("C")) {
+                this.c.CSvc();
+                alert("456");
             }
         }
     }

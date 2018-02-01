@@ -182,8 +182,8 @@ function addNewInput() {
         return;
     }
     if (element.objectType == "connector") {
-        if (element.objectName == "Sequencer" || element.objectName == "Aggregator") {
-            alert("Input cannot be added to Sequencer/Aggregator.");
+        if (element.objectName == "Sequencer") {
+            alert("Input cannot be added to Sequencer.");
             return;
         }
         $("#NewDataDialog").find("font").text("Input");
@@ -362,63 +362,66 @@ function InsertNewNode(node) {
 function generateChannels() {
     var channelStr = "<dataChannel>";
     var result = scene.findElements(function (e) {
+        return e.objectType == "data" && (e.objectContainer == currentObject || e.objectContainer.objectType == "connector");
+    });
+    if (result.length > 0) {
+        var inputArray = [];
+        var outputArray = [];
+        for (let data of result) {
+            if (data.objectName == "input") {
+                inputArray.push(data.objectInstance);
+            }
+            else if (data.objectName == "output") {
+                outputArray.push(data.objectInstance);
+            }
+        }
+        channelStr += `<input list="${inputArray.join(",")}"></input>`;
+        channelStr += `<output list="${outputArray.join(",")}"></output>`;
+    }
+    var result = scene.findElements(function (e) {
         return e.elementType == "link" && e.objectType == "channel";
     });
     if (result.length > 0) {
         for (let channel of result) {
             var pair = channel.text.split("->");
-            channelStr += "<channel from='" + pair[0] + "' to='" + pair[1] + "'></channel>";
+            channelStr += `<channel from="${pair[0]}" to="${pair[1]}"></channel>`;
         }
     }
     channelStr += "</dataChannel>";
     return channelStr;
 }
 
-function generateCode() {
+function generateCode(xmlTree) {
     var code =
-        `class ${currentObject.objectName} {
+        `class ${$(xmlTree).attr("class")} {
         constructor() {
-            ${generateConstructor()}
+            ${generateConstructor(xmlTree)}
         }
-        ${currentObject.objectService}() {
-            ${generateService()}
+        ${$(xmlTree).attr("service")}() {
+            ${initDataflow(xmlTree)}
+            ${generateService(xmlTree)}
         }
     }`;
     return code;
 }
 
-function generateConstructor() {
-    var str = ``;
-    var result = scene.findElements(function (e) {
-        return e.objectType == "data" && (e.objectContainer == currentObject || e.objectContainer.objectType == "connector");
-    });
-    if (result.length > 0) {
-        for (let data of result) {
-            str += `this.${data.objectInstance};\n`;
-        }
+function generateConstructor(xmlTree) {
+    var str = "";
+    var inputArray = $(xmlTree).find("input").attr("list").split(",");
+    var outputArray = $(xmlTree).find("output").attr("list").split(",");
+    var dataArray = inputArray.concat(outputArray);
+    for (let data of dataArray) {
+        str += `this.${data};\n`;
     }
-    var result = scene.findElements(function (e) {
-        return e.objectType == "subcomponent";
-    });
-    if (result.length > 0) {
-        for (let subcomponent of result) {
-            str += `this.${subcomponent.objectInstance}=new ${subcomponent.objectName}();\n`
-        }
-    }
-    var result = scene.findElements(function (e) {
-        return e.objectType == "connector" && e.objectName == "Aggregator";
-    });
-    if (result.length > 0) {
-        for (let aggregator of result) {
-            str += `this.${aggregator.objectInstance};\n`
-        }
+    var result = $(xmlTree).find("component");
+    for (let item of result) {
+        str += `this.${$(item).attr("name")}=new ${$(item).attr("class")}();\n`;
     }
     return str;
 }
 
-//channel TODO
-function generateService() {
-    var obj = $(xmlDoc);
+function generateService(xmlTree) {
+    var obj = $(xmlTree);
     var tree = $(obj).children().eq(0);
     var dataflow = $(obj).children().eq(1);
     var code = "";
@@ -456,19 +459,17 @@ function generateService() {
                     code += "}";
                     break;
                 case "Aggregator":
-                    code += `let args = this.${$(node).attr("name")}.split(",");`;
-                    code += `for (let arg of args) {`;
                     for (let item of condition) {
-                        code += `if (arg == "${$(item).attr("value")}") {`;
+                        code += `if(this.${$(node).attr("data")}.split(",").includes("${$(item).attr("value")}")){`;
                         parseTree($(item).children().eq(0));
                         code += "}";
                     }
-                    code += "}";
                     break;
             }
         }
         else if ($(node).is("component")) {
             code += `this.${$(node).attr("name")}.${$(node).attr("service")}();`;
+            code += `${generateDataFlow(xmlTree, $(node).attr("name"))}`;
         }
     }
     parseTree($(tree).eq(0));
@@ -483,8 +484,57 @@ function compareUp() {
     }
 }
 
+function initDataflow(xmlTree) {
+    var str = "";
+    var inputArray = $(xmlTree).find("input").attr("list").split(",");
+    for (let inputName of inputArray) {
+        var channelArray = $(xmlTree).find(`channel[from='${inputName}']`);
+        if (channelArray.length > 0) {
+            for (let channel of channelArray) {
+                str += `this.${$(channel).attr("from")}=this.${$(channel).attr("to")};`;
+            }
+        }
+    }
+    return str;
+}
+
+function generateDataFlow(xmlTree, componentInstance) {
+    var str = "";
+    var channelArray = $(xmlTree).find(`channel[from^='${componentInstance}.']`);
+    if (channelArray.length > 0) {
+        for (let channel of channelArray) {
+            str += `this.${$(channel).attr("to")}=this.${$(channel).attr("from")};`;
+        }
+    }
+    return str;
+}
+
 function deposit() {
-    //if xmldoc not ""
-    console.log(generateCode());
+    if (currentObject == null) {
+        alert("Please define the composite component.");
+        return;
+    }
+    if (xmlDoc == "") {
+        alert("Please generate the composite component first.");
+        return;
+    }
+    var inputArray = $(xmlDoc).find("input").attr("list").split(",");
+    var outputArray = $(xmlDoc).find("output").attr("list").split(",");
+    var subComponentArray = [];
+    var result = $(xmlDoc).find("component");
+    for (let item of result) {
+        subComponentArray.push($(item).attr("class"));
+    }
+    var code = generateCode(xmlDoc);
+
+    var pack = {
+        "name": currentObject.objectName,
+        "service": currentObject.objectService,
+        "input": inputArray,
+        "output": outputArray,
+        "subComponent": subComponentArray,
+        "code": code.compress()
+    };
+    insertComposite(pack);
 }
 
