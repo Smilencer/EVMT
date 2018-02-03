@@ -55,6 +55,42 @@ function getData(name, storeName, instance) {
     }
 }
 
+function downloadCode(componentName, componentStoreName, feedbackMethod) {
+    var code = new Set();
+    var transaction = mydb.transaction(["Composite", "Atomic"], IDBTransaction.READ_ONLY);
+    var CompositeStore = transaction.objectStore("Composite");
+    var AtomicStore = transaction.objectStore("Atomic");
+    var getCode = function (name, storeName) {
+        if (storeName == "Composite") {
+            let request = CompositeStore.get(name);
+            request.onsuccess = function (e) {
+                let data = e.target.result;
+                code.add(data.code);
+                for (let [key, value] of data.subComponent) {
+                    getCode(key, value);
+                }
+            }
+            request.onerror = function (e) {
+                console.log("Download failed.");
+            }
+        }
+        else if (storeName == "Atomic") {
+            let request = AtomicStore.get(name);
+            request.onsuccess = function (e) {
+                let data = e.target.result;
+                code.add(data.code);
+            }
+            request.onerror = function (e) {
+                console.log("Download failed.");
+            }
+        }
+    }
+    getCode(componentName, componentStoreName);
+    transaction.oncomplete = function () {
+        feedbackMethod(code);
+    }
+}
+
 function getAll() {
     cursorStore("Atomic");
     cursorStore("Composite");

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="css/images/favicon.ico" rel="icon" type="image/x-icon" />
+    <title>Test Online</title>
+    <script src="codemirror-5.30.0/lib/codemirror.js"></script>
+    <link href="codemirror-5.30.0/lib/codemirror.css" rel="stylesheet" />
+    <script src="codemirror-5.30.0/mode/javascript/javascript.js"></script>
+    <link href="codemirror-5.30.0/addon/fold/foldgutter.css" rel="stylesheet" />
+    <script src="codemirror-5.30.0/addon/fold/brace-fold.js"></script>
+    <script src="codemirror-5.30.0/addon/fold/foldcode.js"></script>
+    <script src="codemirror-5.30.0/addon/fold/foldgutter.js"></script>
+    <script src="codemirror-5.30.0/addon/fold/comment-fold.js"></script>
+    <script src="codemirror-5.30.0/addon/edit/matchbrackets.js"></script>
+    <link href="codemirror-5.30.0/addon/hint/show-hint.css" rel="stylesheet" />
+    <script src="codemirror-5.30.0/addon/hint/show-hint.js"></script>
+    <script src="codemirror-5.30.0/addon/hint/anyword-hint.js"></script>
+    <link href="css/test.css" rel="stylesheet" />
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/test.js"></script>
+    <script src="js/jsbeautify.js"></script>
+</head>
+
+<body>
+    <div id="tabmenu">
+        <button type="button" id="clean" onclick="reset()">
+            <object data="css/images/cleaning.svg" type="image/svg+xml"></object>
+            Clean</button>
+        <button type="button" id="execute" onclick="runCode()">
+            <object data="css/images/play.svg" type="image/svg+xml"></object>
+            Execute</button>
+        <button type="button" id="download" onclick="download()">
+            <object data="css/images/download.svg" type="image/svg+xml"></object>
+            Download</button>
+        <div id="componentName">Component:
+            <font id="cname"></font>
+        </div>
+    </div>
+    <div id="codingArea">
+        <div class="partArea">
+            <textarea id="code"></textarea>
+        </div>
+        <div class="partArea">
+            <textarea id="testArea"></textarea>
+            <textarea id="feedback" placeholder="The result is here..." readonly="readonly"></textarea>
+        </div>
+    </div>
+</body>
+
+</html>

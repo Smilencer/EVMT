@@ -55,10 +55,11 @@
                 <object data="css/images/zoom-out.svg" type="image/svg+xml"></object>
                 Zoom Out</button>
             <button type="button" id="download" onclick="download()">
-                <a id="gotodownload" href="Download.ashx">
-                    <object data="css/images/download.svg" type="image/svg+xml"></object>
-                    Download</a>
-            </button>
+                <object data="css/images/download.svg" type="image/svg+xml"></object>
+                Download</button>
+            <button type="button" id="testOnline" onclick="openTestWindow()">
+                <object data="css/images/test.svg" type="image/svg+xml"></object>
+                Test Online</button>
         </div>
         <div id="codingArea">
             <div class="partArea">
@@ -196,23 +197,23 @@
     </li>
 </ul>
 <div id="NewComponentName" class="NewNameDialog">
-        <div class="DialogTitle">
-            <span>Retrieve Component</span>
-        </div>
-        <div class="row">
-            <span>New name:</span>
-            <input type="text" id="ipt_cname" />
-        </div>
-        <div class="exiter">
-            <button onclick="retrieveComponent(this)">
-                <object data="css/images/create.svg" type="image/svg+xml"></object>
-                Create</button>
-            <button onclick="closeDialog()">
-                <object data="css/images/cancel.svg" type="image/svg+xml"></object>
-                Cancel</button>
-        </div>
+    <div class="DialogTitle">
+        <span>Retrieve Component</span>
     </div>
-    
+    <div class="row">
+        <span>New name:</span>
+        <input type="text" id="ipt_cname" />
+    </div>
+    <div class="exiter">
+        <button onclick="retrieveComponent(this)">
+            <object data="css/images/create.svg" type="image/svg+xml"></object>
+            Create</button>
+        <button onclick="closeDialog()">
+            <object data="css/images/cancel.svg" type="image/svg+xml"></object>
+            Cancel</button>
+    </div>
+</div>
+
 <div id="NewConnectorDialog" class="NewNameDialog">
     <div class="DialogTitle">
         <span>Add New
@@ -256,4 +257,5 @@
     </div>
 </div>
 <textarea id="jtopo_textfield" onkeydown="keydownTextarea(this)"></textarea>
+
 </html>

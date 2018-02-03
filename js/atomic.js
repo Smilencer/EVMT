@@ -15,7 +15,7 @@ $(document).ready(function () {
     });
     OpenDB();
     String.prototype.compress = function () {
-        return this.replace(/[\r\n]/g,"").replace(/[ | ]*\n/g,'\n').replace(/\n[\s| | ]*\r/g,'\n').replace(/ /ig,'').replace(/^[\s　]+|[\s　]+$/g, "").replace(/\t+/g,'');
+        return this.replace(/\s+/g," ");
     }
 });
 

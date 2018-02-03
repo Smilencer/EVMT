@@ -25,7 +25,7 @@ $(document).ready(function (e) {
         return this.replace(/&/g, "&amp;").replace(/</g, "&lt;	").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
     }
     String.prototype.compress = function () {
-        return this.replace(/[\r\n]/g, "").replace(/[ | ]*\n/g, '\n').replace(/\n[\s| | ]*\r/g, '\n').replace(/ /ig, '').replace(/^[\s　]+|[\s　]+$/g, "").replace(/\t+/g, '');
+        return this.replace(/\s+/g, " ");
     }
 });
 
@@ -331,6 +331,7 @@ function generateXML() {
     }
     var root = result[0];
     xmlDoc = "<product store='Composite' class='" + currentObject.objectName + "' service='" + currentObject.objectService + "'>" + InsertNewNode(root) + generateChannels() + "</product>";
+    growl("Composite component is generated!");
 }
 
 function InsertNewNode(node) {
@@ -520,10 +521,10 @@ function deposit() {
     }
     var inputArray = $(xmlDoc).find("input").attr("list").split(",");
     var outputArray = $(xmlDoc).find("output").attr("list").split(",");
-    var subComponentArray = [];
+    var subComponentMap = new Map();
     var result = $(xmlDoc).find("component");
     for (let item of result) {
-        subComponentArray.push($(item).attr("class"));
+        subComponentMap.set($(item).attr("class"), $(item).attr("store"));
     }
     var code = generateCode(xmlDoc);
 
@@ -532,9 +533,40 @@ function deposit() {
         "service": currentObject.objectService,
         "input": inputArray,
         "output": outputArray,
-        "subComponent": subComponentArray,
+        "subComponent": subComponentMap,
         "code": code.compress()
     };
     insertComposite(pack);
+}
+
+function download() {
+    if ($(".highlight").length == 0 || $(".highlight").parents("ul").length == 0) {
+        alert("Please select a component in the repository.")
+        return;
+    }
+    downloadCode($(".highlight").text(), $(".highlight").attr("store"), function (codeSet) {
+        var codeArray = Array.from(codeSet);
+        var code = codeArray.join(" ");
+        downloadFile($(".highlight").text() + ".js", code);
+    });
+}
+
+function downloadFile(fileName, content) {
+    var eleLink = document.createElement('a');
+    eleLink.download = fileName;
+    eleLink.style.display = 'none';
+    var blob = new Blob([content], { type: "text/javascript" });
+    eleLink.href = URL.createObjectURL(blob);
+    document.body.appendChild(eleLink);
+    eleLink.click();
+    document.body.removeChild(eleLink);
+}
+
+function openTestWindow() {
+    if ($(".highlight").length == 0 || $(".highlight").parents("ul").length == 0) {
+        alert("Please select a component in the repository.")
+        return;
+    }
+    window.open("test.html", "test", "location=no, toolbar=no");
 }
 

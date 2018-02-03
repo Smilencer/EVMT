@@ -1,0 +1,116 @@
+html,
+body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+body {
+    background-color: #f6f6f6;
+}
+
+#tabmenu {
+    width: 998px;
+    height: 56px;
+    border: 1px solid #ddd;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    margin: 0 auto;
+}
+
+#componentName {
+    height: 56px;
+    width: 500px;
+    float: right;
+    line-height: 56px;
+    text-align: right;
+    padding-right: 15px;
+    font-family: Verdana;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+#tabmenu button {
+    display: inline-block;
+    cursor: pointer;
+    height: 32px;
+    line-height: 32px;
+    color: #333;
+    border-radius: 4px;
+    border: 1px solid #d4d4d4;
+    background-color: #fff;
+    font-size: 14px;
+    font-family: "Helvetica";
+    padding: 0 10px;
+    margin-top: 12px;
+    margin-left: 15px;
+}
+
+#tabmenu button object {
+    height: 20px;
+    margin-top: 5px;
+    position: relative;
+    float: left;
+    margin-right: 10px;
+}
+
+#tabmenu button:hover {
+    background-color: #96b97d;
+}
+
+#codingArea {
+    width: 968px;
+    padding: 15px;
+    height: 469px;
+    border: 1px solid #ddd;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background-color: #fff;
+    margin: 0 auto;
+    margin-top: -1px;
+}
+
+.partArea {
+    position: relative;
+    float: left;
+}
+
+.partArea:first-of-type {
+    margin-right: 15px;
+}
+
+.CodeMirror:last-of-type {
+    border: 1px solid #d4d4d4;
+    font-size: 14px;
+}
+
+.codeClass {
+    height: 467px;
+    width: 535px;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.testClass {
+    height: 210px;
+    width: 394px;
+    margin: 0;
+}
+
+.partArea {
+    position: relative;
+    float: left;
+}
+
+#feedback {
+    border: 1px solid #d4d4d4;
+    height: 200px;
+    width: 394px;
+    margin: 15px 0;
+    padding: 10px;
+    font: 16px Verdana;
+    resize: none;
+    color: blue;
+    display: block;
+}
