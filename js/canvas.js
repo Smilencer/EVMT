@@ -12,6 +12,8 @@
     JTopo.CircleNode.prototype.objectInstance = null;   //the name of input/output
     JTopo.CircleNode.prototype.objectContainer = null;  //container
     JTopo.Link.prototype.objectType = null;    //coordinator or channel or diversity
+    JTopo.Node.prototype.objectType = null;    //generator (abbr. for variation generator)
+    JTopo.Node.prototype.objectName = null;    //Optional etc.
 }
 
 function zoomIn() {
@@ -116,6 +118,10 @@ function checkData(container, io, name) {
     });
     if (result == 0) { return null; }
     else { return result[0]; }
+}
+
+function drawDataInFamily(io, name) {
+    return drawDataInComposite(io, name);
 }
 
 function drawDataInComposite(io, name) {
@@ -344,6 +350,37 @@ function drawCompositionEdge(source, target, condition) {
     }
 }
 
+function drawVariationEdge(source, target) {
+    if (checkConnectionEdge(source, target)) {
+        var link = new JTopo.Link(source, target, "");
+        link.direction = "vertical";
+        link.dashedPattern = 5;
+        link.arrowsRadius = 0;
+        link.lineWidth = 2; // line width
+        link.offsetGap = 20;
+        link.bundleGap = 15; // space between lines
+        link.fontColor = "22, 160, 133";
+        link.strokeColor = "22, 160, 133";
+        link.textOffsetY = 20;
+        scene.add(link);
+        link.objectType = "diversity";
+        link.mouseup(function (event) {
+            if (event.button == 2) {
+                $(".contextmenu").css({
+                    top: event.pageY,
+                    left: event.pageX
+                }).show();
+            }
+        });
+        stage.click(function (event) {
+            if (event.button == 0) {
+                $(".contextmenu").hide();
+            }
+        });
+        return link;
+    }
+}
+
 function drawDataChannel(source, target, flow) {
     if (checkConnectionEdge(source, target, flow)) {
         var link = new JTopo.Link(source, target, flow);
@@ -402,4 +439,50 @@ function drawDataChannel(source, target, flow) {
         });
         return link;
     }
+}
+
+function drawVariationGenerator(name) {
+    var node = new JTopo.Node(name.substr(0, 3).toUpperCase());
+    node.fontColor = "255,255,255";
+    node.font = "bold 20pt Verdana";
+    node.textPosition = "Middle_Center";
+    node.textOffsetY = -2.5;
+    node.beginDegree = 0;
+    node.width = 80;
+    node.height = 40;
+    node.setLocation(400, 90);
+    node.paint = function (g) {
+        g.beginPath();
+        g.moveTo(-40, -20);
+        g.lineTo(40, -20);
+        g.lineTo(30, 20);
+        g.lineTo(-30, 20);
+        g.lineTo(-40, -20);
+        g.fillStyle = "#999999";
+        g.fill();
+        g.lineWidth = 3;
+        g.lineCap = "round";
+        g.lineJoin = "round";
+        g.strokeStyle = "#000000";
+        g.stroke();
+        g.closePath();
+        this.paintText(g);
+    };
+    node.objectType = "generator";
+    node.objectName = name;
+    scene.add(node);
+    node.mouseup(function (event) {
+        if (event.button == 2) {
+            $(".contextmenu").css({
+                top: event.pageY,
+                left: event.pageX
+            }).show();
+        }
+    });
+    stage.click(function (event) {
+        if (event.button == 0) {
+            $(".contextmenu").hide();
+        }
+    });
+    return node;
 }

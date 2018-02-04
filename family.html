@@ -1,19 +1,19 @@
 ﻿<!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link href="css/images/favicon.ico" rel="icon" type="image/x-icon" />
-    <title>Create Composite Component</title>
+    <link href="/favicon.ico" rel="icon" type="image/x-icon" />
+    <title>Create Family</title>
     <link href="css/common.css" rel="stylesheet" />
-    <link href="css/composite.css" rel="stylesheet" />
     <script src="js/jquery-3.2.1.min.js"></script>
-    <script src="js/composite.js"></script>
+    <script src="js/family.js"></script>
     <script src="js/jtopo-0.4.8-min.js"></script>
     <script src="js/repository.js"></script>
     <script src="js/jquery.blockUI.js"></script>
     <script src="js/canvas.js"></script>
     <link href="css/common2.css" rel="stylesheet" />
+    <link href="css/family.css" rel="stylesheet" />
     <script src="js/jquery-ui.min.js"></script>
 </head>
 
@@ -26,25 +26,22 @@
             <div id="urls">
                 <a href="feature_model.html" target="_blank">Feature Model</a>|
                 <a href="atomic.html" target="_blank">Atomic Component</a>|
-                <a href="javascript:void(0)">Composite Component</a>|
-                <a href="family.html" target="_blank">Family Model</a>
+                <a href="composite.html" target="_blank">Composite Component</a>|
+                <a href="javascript:void(0)">Family Model</a>
             </div>
         </div>
     </div>
     <div id="container">
         <div id="tabmenu">
-            <button type="button" id="newService" onclick="createCompositeService()">
-                <object data="css/images/component.svg" type="image/svg+xml"></object>
-                New Component</button>
+            <button type="button" id="newFamily" onclick="createFamily()">
+                <object data="css/images/family.svg" type="image/svg+xml"></object>
+                New Family</button>
             <button type="button" id="clean" onclick="reset()">
                 <object data="css/images/cleaning.svg" type="image/svg+xml"></object>
                 Clean</button>
             <button type="button" id="generate" onclick="generateXML()">
                 <object data="css/images/generate.svg" type="image/svg+xml"></object>
                 Generate</button>
-            <button type="button" id="deposit" onclick="deposit()">
-                <object data="css/images/save.svg" type="image/svg+xml"></object>
-                Deposit</button>
             <button type="button" id="retrieve" onclick="retrieve()">
                 <object data="css/images/retrieve.svg" type="image/svg+xml"></object>
                 Retrieve</button>
@@ -54,42 +51,57 @@
             <button type="button" id="zoomOut" onclick="zoomOut()">
                 <object data="css/images/zoom-out.svg" type="image/svg+xml"></object>
                 Zoom Out</button>
-            <button type="button" id="download" onclick="download()">
-                <object data="css/images/download.svg" type="image/svg+xml"></object>
-                Download</button>
-            <button type="button" id="testOnline" onclick="openTestWindow()">
-                <object data="css/images/test.svg" type="image/svg+xml"></object>
-                Test Online</button>
+            <button type="button" id="explorer" onclick="explorer()">
+                <object data="css/images/explorer.svg" type="image/svg+xml"></object>
+                Product Explorer</button>
         </div>
         <div id="codingArea">
             <div class="partArea">
                 <div id="palette">
                     <ul id="accordion" class="accordion">
                         <li>
-                            <div class="link">
+                            <div class="link link2">
                                 <object class="paint" data="css/images/paint.svg" type="image/svg+xml"></object>
-                                Connector
+                                Family
+                                <p class="sub-link">Connector</p>
                             </div>
                             <ul class="submenu">
                                 <li>
                                     <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
-                                    <a href="javascript:void(0)" onclick="addNewConnector('Sequencer')">Sequencer</a>
+                                    <a href="javascript:void(0)" onclick="addNewConnector('F-Sequencer')">F-Sequencer</a>
                                 </li>
                                 <li>
                                     <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
-                                    <a href="javascript:void(0)" onclick="addNewConnector('Selector')">Selector</a>
+                                    <a href="javascript:void(0)" onclick="addNewConnector('F-Selector')">F-Selector</a>
                                 </li>
                                 <li>
                                     <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
-                                    <a href="javascript:void(0)" onclick="addNewConnector('Guard')">Guard</a>
+                                    <a href="javascript:void(0)" onclick="addNewConnector('F-Guard')">F-Guard</a>
                                 </li>
                                 <li>
                                     <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
-                                    <a href="javascript:void(0)" onclick="addNewConnector('Loop')">Loop</a>
+                                    <a href="javascript:void(0)" onclick="addNewConnector('F-Loop')">F-Loop</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="link link2">
+                                <object class="paint" data="css/images/paint.svg" type="image/svg+xml"></object>
+                                Variation
+                                <p class="sub-link">Generator</p>
+                            </div>
+                            <ul class="submenu">
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addNewVG('Optional')">Optional</a>
                                 </li>
                                 <li>
                                     <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
-                                    <a href="javascript:void(0)" onclick="addNewConnector('Aggregator')">Aggregator</a>
+                                    <a href="javascript:void(0)" onclick="addNewVG('Alternative')">Alternative</a>
+                                </li>
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addNewVG('Or')">Or</a>
                                 </li>
                             </ul>
                         </li>
@@ -125,9 +137,21 @@
                                 </li>
                             </ul>
                         </li>
+                        <li>
+                            <div class="link">
+                                <object class="paint" data="css/images/paint.svg" type="image/svg+xml"></object>
+                                Filter
+                            </div>
+                            <ul class="submenu">
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addFilter()">Filter</a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
-                <canvas id="canvas" width="733" height="467"></canvas>
+                <canvas id="canvas" width="733" height="574"></canvas>
             </div>
             <div class="partArea">
                 <div id="dataTree">
@@ -166,36 +190,28 @@
             </div>
         </div>
     </div>
-    <div id="NewServiceDialog">
-        <div class="DialogTitle">
-            <span>New Component</span>
-        </div>
-        <div class="nrow" id="nrow1">
-            <span>Component Name:</span>
-            <input type="text" id="ipt_sname" onkeyup="generateServiceName(this)" />
-        </div>
-        <div class="nrow" id="nrow4">
-            <span>Service Name:</span>
-            <input type="text" id="ipt_srvname" readonly="true" />
-            <input type="checkbox" id="ipt_srvdefault" checked="checked" onclick="nodefault()" />default</div>
-        <div class="exiter">
-            <button onclick="startComposite()">
-                <object data="css/images/create.svg" type="image/svg+xml"></object>
-                Create</button>
-            <button onclick="closeDialog()">
-                <object data="css/images/cancel.svg" type="image/svg+xml"></object>
-                Cancel</button>
-        </div>
-    </div>
 </body>
-<div id="IOdiv" class="IOproperty">
-    <i></i>
+<div id="NewFamilyDialog">
+    <div class="DialogTitle">
+        <span>New Family</span>
+    </div>
+    <div class="nrow" id="nrow1">
+        <span>Family Name:</span>
+        <input type="text" id="ipt_sname" onkeyup="generateFamilyName(this)" />
+    </div>
+    <div class="nrow" id="nrow4">
+        <span>Service Name:</span>
+        <input type="text" id="ipt_srvname" readonly="true" />
+        <input type="checkbox" id="ipt_srvdefault" checked="checked" onclick="nodefault()" />default</div>
+    <div class="exiter">
+        <button onclick="startFamily()">
+            <object data="css/images/create.svg" type="image/svg+xml"></object>
+            Create</button>
+        <button onclick="closeDialog()">
+            <object data="css/images/cancel.svg" type="image/svg+xml"></object>
+            Cancel</button>
+    </div>
 </div>
-<ul class="contextmenu" style="display: none;">
-    <li>
-        <a href="javascript:void(0)" onclick="removeElementFromCanvas()">Remove</a>
-    </li>
-</ul>
 <div id="NewComponentName" class="NewNameDialog">
     <div class="DialogTitle">
         <span>Retrieve Component</span>
@@ -205,7 +221,7 @@
         <input type="text" id="ipt_cname" />
     </div>
     <div class="exiter">
-        <button onclick="retrieveComponent()">
+        <button onclick="retrieveComponent(this)">
             <object data="css/images/create.svg" type="image/svg+xml"></object>
             Create</button>
         <button onclick="closeDialog()">
@@ -213,7 +229,11 @@
             Cancel</button>
     </div>
 </div>
-
+<ul class="contextmenu" style="display: none;">
+    <li>
+        <a href="javascript:void(0)" onclick="removeElementFromCanvas()">Remove</a>
+    </li>
+</ul>
 <div id="NewConnectorDialog" class="NewNameDialog">
     <div class="DialogTitle">
         <span>Add New
@@ -248,7 +268,7 @@
         <button onclick="addInputInConnector()" id="draw1">
             <object data="css/images/create.svg" type="image/svg+xml"></object>
             Create</button>
-        <button onclick="addDataInComposite(this)" id="draw2">
+        <button onclick="addDataInFamily(this)" id="draw2">
             <object data="css/images/create.svg" type="image/svg+xml"></object>
             Create</button>
         <button onclick="closeDialog()">
@@ -256,6 +276,8 @@
             Cancel</button>
     </div>
 </div>
-<textarea id="jtopo_textfield" onkeydown="keydownTextarea(this)"></textarea>
+<div id="IOdiv" class="IOproperty">
+    <i></i>
+</div>
 
 </html>

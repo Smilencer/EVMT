@@ -129,7 +129,7 @@ function retrieve() {
     });
 }
 
-function retrieveComponent(obj) {
+function retrieveComponent() {
     var instance = $("#ipt_cname").val().trim();
     if (instance == "") {
         alert("The name is required.");
@@ -178,7 +178,7 @@ function drawNewConnector(obj) {
 function addNewInput() {
     var element = scene.currentElement;
     if (element == null) {
-        alert("Please select a composite component/connector first.");
+        alert("Please select composite component/connector first.");
         return;
     }
     if (element.objectType == "connector") {
@@ -229,7 +229,7 @@ function addNewInput() {
     }
 }
 
-function addInputInConnector(obj) {
+function addInputInConnector() {
     var name = $("#ipt_dataname").val().trim();
     if (name == "") {
         alert("Input name is required.");
@@ -253,7 +253,7 @@ function addDataInComposite(obj) {
 function addNewOutput() {
     var element = scene.currentElement;
     if (element == null) {
-        alert("Please select a composite component first.");
+        alert("Please select composite component first.");
         return;
     }
     if (element.objectType == "composite") {
@@ -314,7 +314,7 @@ function addNewChannel() {
             flow += "->" + target.objectInstance;
             var channel = drawDataChannel(source.objectContainer, target.objectContainer, flow);
         }
-        else if (target.objectName == "output" && target.objectContainer.objectType == "composite") {
+        else if (target.objectName == "output" && target.objectContainer == currentObject) {
             flow += "->" + target.objectInstance;
             var channel = drawDataChannel(source.objectContainer, target, flow);
         }
