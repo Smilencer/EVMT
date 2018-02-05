@@ -567,6 +567,6 @@ function openTestWindow() {
         alert("Please select a component in the repository.")
         return;
     }
-    window.open("test.html", "test", "location=no, toolbar=no");
+    window.open("test.html", "test", `location=no,toolbar=no,height=${screen.height},width=${screen.width}`);
 }
 

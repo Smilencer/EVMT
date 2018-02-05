@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="/favicon.ico" rel="icon" type="image/x-icon" />
+    <title>Product Explorer</title>
+    <link href="css/common.css" rel="stylesheet" />
+    <link href="css/explorer.css" rel="stylesheet" />
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/explorer.js"></script>
+    <script src="js/jtopo-0.4.8-min.js"></script>
+    <script src="js/jquery.blockUI.js"></script>
+    <script src="js/canvas.js"></script>
+    <link href="css/common2.css" rel="stylesheet" />
+    <script src="js/jquery-ui.min.js"></script>
+</head>
+<body>
+    <div id="header">
+        <div id="topmenu">
+            <div id="logo"><a>Enumerative Variability Modelling Tool</a></div>
+            <div id="urls"><a href="#">Feature Model</a>|<a href="atomic.html" target="_blank">Atomic Component</a>|<a href="composite.html" target="_blank">Composite Component</a>|<a href="family.html" target="_blank">Family Model</a></div>
+        </div>
+    </div>
+    <div id="container">
+        <div id="tabmenu">
+            <button type="button" id="zoomIn" onclick="zoomIn()">
+                <object data="css/images/zoom-in.svg" type="image/svg+xml"></object>
+                Zoom In
+            </button>
+            <button type="button" id="zoomOut" onclick="zoomOut()">
+                <object data="css/images/zoom-out.svg" type="image/svg+xml"></object>
+                Zoom Out
+            </button>
+            <button type="button" id="selectAll" onclick="selectAll()">
+                <object data="css/images/select.svg" type="image/svg+xml"></object>
+                Select All
+            </button>
+            <button type="button" id="unselectAll" onclick="unselectAll()">
+                <object data="css/images/unselect.svg" type="image/svg+xml"></object>
+                Unselect All
+            </button>
+            <button type="button" id="batch" onclick="batchdownload()">
+                <object data="css/images/download.svg" type="image/svg+xml"></object>
+                Batch Download
+            </button>
+            <button type="button" id="download" onclick="download()">
+                <a id="gotodownload" href="Download.ashx">
+                    <object data="css/images/download.svg" type="image/svg+xml"></object>
+                    Download
+                </a>
+            </button>
+        </div>
+        <div id="codingArea">
+            <div id="product_summary"></div>
+            <div id="product_main">
+                <ul id="product_list"></ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

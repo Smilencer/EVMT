@@ -51,9 +51,11 @@
             <button type="button" id="zoomOut" onclick="zoomOut()">
                 <object data="css/images/zoom-out.svg" type="image/svg+xml"></object>
                 Zoom Out</button>
-            <button type="button" id="explorer" onclick="explorer()">
-                <object data="css/images/explorer.svg" type="image/svg+xml"></object>
-                Product Explorer</button>
+            <a onclick="return explorer();" href="explorer.html" target="_blank">
+                <button type="button" id="explorer">
+                    <object data="css/images/explorer.svg" type="image/svg+xml"></object>
+                    Product Explorer</button>
+            </a>
         </div>
         <div id="codingArea">
             <div class="partArea">
@@ -279,5 +281,6 @@
 <div id="IOdiv" class="IOproperty">
     <i></i>
 </div>
+<textarea id="jtopo_textfield" onkeydown="keydownTextarea(this)"></textarea>
 
 </html>
