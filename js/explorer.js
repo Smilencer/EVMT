@@ -23,5 +23,49 @@ function assessDepth() {
             depthMap.set(len, arr);
         }
     }
-    return depthMap;
+    return depthMap;  //new Map([...depthMap.entries()].sort())
+}
+
+function ExpandOptional(oneSet) {
+    oneSet.add("");
+    return oneSet;
+}
+
+function ExpandAlternative(...mulptiSets) {
+    let oneSet = new Set();
+    for (let item of mulptiSets) {
+        for (let v of item.values()) {
+            oneSet.add(v);
+        }
+    }
+    return oneSet;
+}
+
+function ExpandOr(...mulptiSets) {
+    let oneSet = ExpandAlternative(...mulptiSets);
+    var arr = [...oneSet];
+    var listArr = [""];
+    var result = [];
+    for (var k = 0, len = arr.length; k < len; k++) {
+        listArr.forEach(x => {
+            listArr.push(x + "," + arr[k]);
+        });
+    }
+    for (var n = 0; n < listArr.length; n++) {
+        if (listArr[n] != "") {
+            let str = listArr[n].replace(",", "");
+            if (str.endsWith(",")) {
+                str = str.substr(0, str.length - 1)
+            }
+            result.push(str);
+        }
+    }
+    oneSet.clear();
+    for (let item of result) {
+        if (item != "") {
+            let tempArr = item.split(",");
+            oneSet.add([...new Set(tempArr)].sort().join(","))
+        }
+    }
+    return oneSet;
 }

@@ -11,7 +11,8 @@
     JTopo.CircleNode.prototype.objectName = null;   //input or output
     JTopo.CircleNode.prototype.objectInstance = null;   //the name of input/output
     JTopo.CircleNode.prototype.objectContainer = null;  //container
-    JTopo.Link.prototype.objectType = null;    //coordinator or channel or diversity
+    JTopo.Link.prototype.objectType = null;    //coordinator or channel or diversity or constraint
+    JTopo.Link.prototype.objectName = null;    //reuqires or excludes
     JTopo.Node.prototype.objectType = null;    //generator (abbr. for variation generator)
     JTopo.Node.prototype.objectName = null;    //Optional etc.
 }
@@ -364,6 +365,86 @@ function drawVariationEdge(source, target) {
         link.textOffsetY = 20;
         scene.add(link);
         link.objectType = "diversity";
+        link.mouseup(function (event) {
+            if (event.button == 2) {
+                $(".contextmenu").css({
+                    top: event.pageY,
+                    left: event.pageX
+                }).show();
+            }
+        });
+        stage.click(function (event) {
+            if (event.button == 0) {
+                $(".contextmenu").hide();
+            }
+        });
+        return link;
+    }
+}
+
+function drawConstraintEdge(source, target, constraint) {
+    if (checkConnectionEdge(source, target)) {
+        var link = new JTopo.Link(source, target, constraint.toUpperCase() + "S");
+        link.direction = "horizontal";
+        link.dashedPattern = 5;
+        link.arrowsRadius = 10;
+        link.lineWidth = 1; // line width
+        link.offsetGap = 20;
+        link.bundleGap = 15; // space between lines
+        link.fontColor = "217, 0, 13";
+        link.strokeColor = "217, 0, 13";
+        link.textOffsetY = 20;
+        scene.add(link);
+        link.objectType = "constraint";
+        link.objectName = constraint;
+        link.getStartPosition = function () {
+            var a;
+            return (a = (function (thisl) {
+                var b = thisl.nodeA;
+                var c = thisl.nodeZ;
+                var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
+                var e = b.getBound();
+                var f = JTopo.util.intersectionLineBound(d, e);
+                return f;
+            })(this)),
+                null == a && (a = {
+                    x: this.nodeZ.cx,
+                    y: this.nodeZ.cy
+                }), a
+        };
+        link.getEndPosition = function () {
+            var a;
+            return (a = (function (thisl) {
+                var b = thisl.nodeZ;
+                var c = thisl.nodeA;
+                var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
+                var e = b.getBound();
+                var f = JTopo.util.intersectionLineBound(d, e);
+                return f;
+            })(this)),
+                null == a && (a = {
+                    x: this.nodeZ.cx,
+                    y: this.nodeZ.cy
+                }), a
+        };
+        if (constraint == "exclude") {
+            link.paintPath = function (a, b) {
+                if (this.nodeA === this.nodeZ) return void this.paintLoop(a);
+                a.beginPath(),
+                    a.moveTo(b[0].x, b[0].y);
+                for (var c = 1; c < b.length; c++) {
+                    null == this.dashedPattern ? (
+                        (null == this.PointPathColor ? a.lineTo(b[c].x, b[c].y) : a.JtopoDrawPointPath(b[c - 1].x, b[c - 1].y, b[c].x, b[c].y, a.strokeStyle, this.PointPathColor))
+                    ) : a.JTopoDashedLineTo(b[c - 1].x, b[c - 1].y, b[c].x, b[c].y, this.dashedPattern)
+                };
+                if (a.stroke(), a.closePath(), null != this.arrowsRadius) {
+                    var d = b[b.length - 2],
+                        e = b[b.length - 1];
+                    this.paintArrow(a, d, e);
+                    this.paintArrow(a, e, d);
+                }
+            };
+        }
         link.mouseup(function (event) {
             if (event.button == 2) {
                 $(".contextmenu").css({

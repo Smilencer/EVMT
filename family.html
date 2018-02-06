@@ -142,18 +142,34 @@
                         <li>
                             <div class="link">
                                 <object class="paint" data="css/images/paint.svg" type="image/svg+xml"></object>
-                                Filter
+                                Constraint
                             </div>
                             <ul class="submenu">
                                 <li>
                                     <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
-                                    <a href="javascript:void(0)" onclick="addFilter()">Filter</a>
+                                    <a href="javascript:void(0)" onclick="addConstraint('require')">Require</a>
+                                </li>
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="addConstraint('exclude')">Exclude</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="link">
+                                <object class="paint" data="css/images/paint.svg" type="image/svg+xml"></object>
+                                Interaction
+                            </div>
+                            <ul class="submenu">
+                                <li>
+                                    <object class="paint" data="css/images/option.svg" type="image/svg+xml"></object>
+                                    <a href="javascript:void(0)" onclick="setInteraction()">Interaction</a>
                                 </li>
                             </ul>
                         </li>
                     </ul>
                 </div>
-                <canvas id="canvas" width="733" height="574"></canvas>
+                <canvas id="canvas" width="733" height="669"></canvas>
             </div>
             <div class="partArea">
                 <div id="dataTree">

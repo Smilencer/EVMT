@@ -304,6 +304,16 @@ function addNewLink() {
     }
 }
 
+function addConstraint(constraint) {
+    var pair = scene.selectedElements;
+    if (pair.length != 2) { return; }
+    var source = pair[0];
+    var target = pair[1];
+    if (source.objectType == "subcomponent" && target.objectType == "subcomponent") {
+        drawConstraintEdge(source, target, constraint);
+    }
+}
+
 function addNewChannel() {
     var pair = scene.selectedElements;
     if (pair.length != 2) { return; }
@@ -343,7 +353,7 @@ function generateXML() {
         return;
     }
     var root = result[0];
-    xmlDoc = `<family class="${currentObject.objectName}" service="${currentObject.objectService}">${InsertNewNode(root)}${generateChannels()}</family>`;
+    xmlDoc = `<family class="${currentObject.objectName}" service="${currentObject.objectService}">${InsertNewNode(root)}${generateChannels()}${generateConstraints()}</family>`;
     growl("Family is generated!");
 }
 
@@ -407,6 +417,19 @@ function generateChannels() {
     }
     channelStr += "</dataChannel>";
     return channelStr;
+}
+
+function generateConstraints() {
+    var constraintStr = "<constraints>";
+    var result = scene.findElements(function (e) {
+        return e.elementType == "link" && e.objectType == "constraint";
+    });
+    if (result.length > 0) {
+        for (let constraint of result) {
+            constraintStr += `<constraint type="${constraint.objectName}" from="${constraint.nodeA.objectInstance}" to="${constraint.nodeZ.objectInstance}"></constraint>`;
+        }
+    }
+    constraintStr += "</constraints>";
 }
 
 function explorer() {
