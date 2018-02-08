@@ -85,6 +85,11 @@ body {
     font-size: 14px;
 }
 
+#code {
+    width: 548px;
+    height: 463px;
+}
+
 .codeClass {
     height: 467px;
     width: 535px;

@@ -129,6 +129,7 @@ function cursorStore(storeName) {
             var liStr = "<li><object data='css/images/service.svg' type='image/svg+xml'></object>";
             liStr += "<span store='" + storeName + "' onclick='highlight(this)'>" + name + "</span></li>";
             $("#" + storeName + "Store").append(liStr);
+            cursor.continue();
         }
     }
 }

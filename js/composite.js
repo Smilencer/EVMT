@@ -408,11 +408,19 @@ function generateCode(xmlTree) {
 
 function generateConstructor(xmlTree) {
     var str = "";
-    var inputArray = $(xmlTree).find("input").attr("list").split(",");
-    var outputArray = $(xmlTree).find("output").attr("list").split(",");
+    var inputArray = [];
+    var outputArray = [];
+    var inputList = $(xmlTree).find("input").attr("list");
+    var outputList = $(xmlTree).find("output").attr("list");
+    if (inputList != "") {
+        inputArray = inputList.split(",");
+    }
+    if (outputArray != "") {
+        outputArray = outputList.split(",");
+    }
     var dataArray = inputArray.concat(outputArray);
     for (let data of dataArray) {
-        str += `this.${data};\n`;
+        str += `this.${data}=null;\n`;
     }
     var result = $(xmlTree).find("component");
     for (let item of result) {
@@ -492,7 +500,7 @@ function initDataflow(xmlTree) {
         var channelArray = $(xmlTree).find(`channel[from='${inputName}']`);
         if (channelArray.length > 0) {
             for (let channel of channelArray) {
-                str += `this.${$(channel).attr("from")}=this.${$(channel).attr("to")};`;
+                str += `this.${$(channel).attr("to")}=null?this.${$(channel).attr("from")}:this.${$(channel).attr("to")}+this.${$(channel).attr("from")};`;
             }
         }
     }
@@ -504,7 +512,7 @@ function generateDataFlow(xmlTree, componentInstance) {
     var channelArray = $(xmlTree).find(`channel[from^='${componentInstance}.']`);
     if (channelArray.length > 0) {
         for (let channel of channelArray) {
-            str += `this.${$(channel).attr("to")}=this.${$(channel).attr("from")};`;
+            str += `this.${$(channel).attr("to")}=null?this.${$(channel).attr("from")}:this.${$(channel).attr("to")}+this.${$(channel).attr("from")};`;
         }
     }
     return str;

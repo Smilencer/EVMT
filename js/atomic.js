@@ -110,7 +110,7 @@ function startCoding() {
     str += "\tconstructor() {\n";
 
     for (let i = 1; i < rows.length; i++) {
-        str += "\t\tthis." + $(rows[i]).children("td").eq(1).text() + ";\n"
+        str += "\t\tthis." + $(rows[i]).children("td").eq(1).text() + "=null;\n"
     }
     str += "\t}\n";
 

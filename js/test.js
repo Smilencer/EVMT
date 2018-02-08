@@ -2,18 +2,19 @@ var editor;
 var tester;
 
 $(document).ready(function () {
-    editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-        mode: "javascript",
-        lineNumbers: true,
-        indentUnit: 4,
-        indentWithTabs: true,
-        lineWrapping: true,
-        foldGutter: true,
-        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-        matchBrackets: true,
-        extraKeys: { "Ctrl-Space": "autocomplete" }
-    });
-    editor.setSize(535, 467);
+    // editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+    //     mode: "javascript",
+    //     lineNumbers: true,
+    //     indentUnit: 4,
+    //     indentWithTabs: true,
+    //     lineWrapping: true,
+    //     foldGutter: true,
+    //     gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+    //     matchBrackets: true,
+    //     extraKeys: { "Ctrl-Space": "autocomplete" }
+    // });
+    // editor.setSize(535, 467);
+    // $("#code").setTextareaCount();
     tester = CodeMirror.fromTextArea(document.getElementById("testArea"), {
         mode: "javascript",
         lineNumbers: true,
@@ -50,7 +51,9 @@ function initCode() {
         var code = codeArray.join(" ");
         code = code.replace(/^\s+/, '');
         code = js_beautify(code, 4, ' ');
-        editor.setValue(code);
+        // editor.setValue(code);
+        $("#code").val(code);
+        $("#code").setTextareaCount();
     })
 }
 
@@ -60,13 +63,13 @@ function reset() {
 }
 
 function runCode() {
-    var source_code = editor.getValue();
+    var source_code = $("#code").val();
     var test_code = tester.getValue();
     eval(source_code + test_code);
 }
 
 function download() {
-    downloadFile($("#cname").text() + ".js", editor.getValue().compress());
+    downloadFile($("#cname").text() + ".js", $("#code").val().compress());
 }
 
 function downloadFile(fileName, content) {
