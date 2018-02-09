@@ -403,8 +403,8 @@ function generateChannels() {
                 outputArray.push(data.objectInstance);
             }
         }
-        channelStr += `<input list="${inputArray.join(",")}"></input>`;
-        channelStr += `<output list="${outputArray.join(",")}"></output>`;
+        channelStr += `<inputs list="${inputArray.join(",")}"></inputs>`;
+        channelStr += `<outputs list="${outputArray.join(",")}"></outputs>`;
     }
     var result = scene.findElements(function (e) {
         return e.elementType == "link" && e.objectType == "channel";
@@ -430,6 +430,7 @@ function generateConstraints() {
         }
     }
     constraintStr += "</constraints>";
+    return constraintStr;
 }
 
 function explorer() {

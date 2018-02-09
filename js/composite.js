@@ -376,8 +376,8 @@ function generateChannels() {
                 outputArray.push(data.objectInstance);
             }
         }
-        channelStr += `<input list="${inputArray.join(",")}"></input>`;
-        channelStr += `<output list="${outputArray.join(",")}"></output>`;
+        channelStr += `<inputs list="${inputArray.join(",")}"></inputs>`;
+        channelStr += `<outputs list="${outputArray.join(",")}"></outputs>`;
     }
     var result = scene.findElements(function (e) {
         return e.elementType == "link" && e.objectType == "channel";
@@ -410,8 +410,8 @@ function generateConstructor(xmlTree) {
     var str = "";
     var inputArray = [];
     var outputArray = [];
-    var inputList = $(xmlTree).find("input").attr("list");
-    var outputList = $(xmlTree).find("output").attr("list");
+    var inputList = $(xmlTree).find("inputs").attr("list");
+    var outputList = $(xmlTree).find("outputs").attr("list");
     if (inputList != "") {
         inputArray = inputList.split(",");
     }
@@ -495,7 +495,7 @@ function compareUp() {
 
 function initDataflow(xmlTree) {
     var str = "";
-    var inputArray = $(xmlTree).find("input").attr("list").split(",");
+    var inputArray = $(xmlTree).find("inputs").attr("list").split(",");
     for (let inputName of inputArray) {
         var channelArray = $(xmlTree).find(`channel[from='${inputName}']`);
         if (channelArray.length > 0) {
@@ -527,8 +527,8 @@ function deposit() {
         alert("Please generate the composite component first.");
         return;
     }
-    var inputArray = $(xmlDoc).find("input").attr("list").split(",");
-    var outputArray = $(xmlDoc).find("output").attr("list").split(",");
+    var inputArray = $(xmlDoc).find("inputs").attr("list").split(",");
+    var outputArray = $(xmlDoc).find("outputs").attr("list").split(",");
     var subComponentMap = new Map();
     var result = $(xmlDoc).find("component");
     for (let item of result) {

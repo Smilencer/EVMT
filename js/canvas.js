@@ -386,13 +386,12 @@ function drawConstraintEdge(source, target, constraint) {
     if (checkConnectionEdge(source, target)) {
         var link = new JTopo.Link(source, target, constraint.toUpperCase() + "S");
         link.direction = "horizontal";
-        link.dashedPattern = 5;
         link.arrowsRadius = 10;
-        link.lineWidth = 1; // line width
+        link.lineWidth = 2.5; // line width
         link.offsetGap = 20;
         link.bundleGap = 15; // space between lines
-        link.fontColor = "217, 0, 13";
-        link.strokeColor = "217, 0, 13";
+        link.fontColor = "200,60,196";
+        link.strokeColor = "200,60,196";
         link.textOffsetY = 20;
         scene.add(link);
         link.objectType = "constraint";
