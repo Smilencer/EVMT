@@ -224,14 +224,86 @@ function filterOut(oneSet, constraintsTree) {
     return oneSet;
 }
 
-//TODO
 function generateProductsXML(finalSet, xmlTree) {
     for (let config of finalSet) {
-        let className = $(xmlTree).attr("class");
-        let serviceName = $(xmlTree).attr("service");
+        let cloneTree = $(xmlTree).clone();
+        let configArray = config.split(/\+|,/);
+        let className = $(cloneTree).attr("class");
+        let serviceName = $(cloneTree).attr("service");
         let productXML = $(`<product store="Composite" class="${className}" service="${serviceName}"></product>`);
-        $(productXML).append($(xmlTree).children("connector"));
-        $(productXML).append($(xmlTree).children("dataChannel"));
-        console.log(productXML[0].outerHTML);
+        $(productXML).append($(cloneTree).children("connector"));
+        $(productXML).append($(cloneTree).children("dataChannel"));
+        let componentArray = $(productXML).find("component");
+        for (let componentObj of componentArray) {
+            if (!configArray.includes($(componentObj).attr("name"))) {
+                $(componentObj).remove();
+            }
+        }
+        let channelArray = $(productXML).find("channel");
+        for (let channelObj of channelArray) {
+            let from = $(channelObj).attr("from");
+            let to = $(channelObj).attr("to");
+            let fromArray = from.split(".");
+            let toArray = to.split(".");
+            let fromClass = fromArray[0];
+            let toClass = toArray[0];
+            if (fromArray.length == 1) {
+                if (!configArray.includes(toClass)) {
+                    $(channelObj).remove();
+                }
+            }
+            else if (toArray.length == 1) {
+                if (!configArray.includes(fromClass)) {
+                    $(channelObj).remove();
+                }
+            }
+            else {
+                if (!configArray.includes(fromClass) || !configArray.includes(toClass)) {
+                    $(channelObj).remove();
+                }
+            }
+        }
+        productXML = cleanJunkNode(productXML);
+        let vgArray = $(productXML).find("vg");
+        let index = 1;
+        for (let vgObj of vgArray) {
+            if ($(vgObj).attr("type") == "Or") {
+                $(vgObj).wrapInner(`<connector type="Aggregator" name="Agg${index}" data="agg${index}"></connector>`);
+                index++;
+            }
+            $(vgObj).children().unwrap();
+        }
+        let connectorArray = $(productXML).find("connector");
+        for (let connectorObj of connectorArray) {
+            let connectorType = $(connectorObj).attr("type");
+            if (connectorType.startsWith("F-")) {
+                $(connectorObj).attr("type", connectorType.slice(2));
+            }
+            connectorType = $(connectorObj).attr("type");
+            if (connectorType == "Sequencer" || connectorType == "Selector" || connectorType == "Aggregator") {
+                if ($(connectorObj).children().length == 1) {
+                    let leaf = $(connectorObj).find("component");
+                    $(connectorObj).replaceWith($(leaf));
+                }
+            }
+        }
+        console.log(configArray);
+        console.log($(productXML)[0].outerHTML);
     }
+}
+
+function cleanJunkNode(productXML) {
+    var doClean = function (tagName) {
+        let subNodes = $(productXML).find(tagName);
+        for (let obj of subNodes) {
+            let result = $(obj).has("component");
+            if ($(result).length == 0) {
+                $(obj).remove();
+            }
+        }
+    }
+    doClean("connector");
+    doClean("condition");
+    doClean("vg");
+    return productXML;
 }
