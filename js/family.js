@@ -433,6 +433,32 @@ function generateConstraints() {
     return constraintStr;
 }
 
+function setInteraction() {
+    var elementArray = scene.selectedElements;
+    for (let element of elementArray) {
+        if (element.objectType != "subcomponent") {
+            alert("Please choose components.")
+            return;
+        }
+    }
+    $.blockUI({
+        message: $("#InteractionDiv"),
+        baseZ: 1000,
+        cursorReset: "default",
+        css: {
+            textAlign: "unset",
+            width: "752px",
+            height: "308px",
+            top: "20%",
+            left: "25%",
+            cursor: "default"
+        },
+        overlayCSS: {
+            cursor: "default"
+        }
+    });
+}
+
 function explorer() {
     if (xmlDoc == "") {
         alert("Please generate the composite component first.");
