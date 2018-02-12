@@ -48,6 +48,7 @@ function reset() {
 }
 
 function runCode() {
+    $("#feedback").val("");
     var source_code = $("#code").val();
     var test_code = tester.getValue();
     eval(source_code + test_code);

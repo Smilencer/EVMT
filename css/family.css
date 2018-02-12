@@ -334,7 +334,7 @@
 }
 
 #InteractionDiv {
-    width: 750px;
+    width: 525px;
     height: 306px;
     border: 1px solid #96b97d;
     display: none;
@@ -369,12 +369,27 @@
 
 #InteractionDiv .contentDiv ol li {
     margin: 10px 0;
+    height: 25px;
+    line-height: 25px;
 }
 
-#InteractionDiv .contentDiv font{
+#InteractionDiv .contentDiv font {
     margin: 0 10px;
 }
 
-#InteractionDiv .contentDiv input{
+#InteractionDiv .contentDiv input {
     width: 240px;
+}
+
+#InteractionDiv .contentDiv span {
+    display: inline-block;
+    width: 150px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+#InteractionDiv .contentDiv span:hover {
+    text-overflow: inherit;
+    overflow: visible;
 }

@@ -232,6 +232,56 @@ function drawOutputInBlock(container, name) {
     return drawDataInBlock(container, "o", name);
 }
 
+function checkFeatureInteration(container, content) {
+    var result = scene.findElements(function (e) {
+        return e.objectType == "interaction" && e.objectInstance == content && e.container == container;
+    });
+    if (result == 0) { return null; }
+    else { return result[0]; }
+}
+
+function drawFeatureInteration(container, content) {
+    var feedback = checkFeatureInteration(container, content);
+    if (feedback != null) { return feedback };
+    var interation = new JTopo.CircleNode("FI");
+    interation.font = "bold 8pt Verdana";
+    interation.textOffsetY = -2;
+    interation.radius = 8;
+    interation.alpha = 1.0;
+    interation.fillColor = "255, 119, 119";
+    interation.borderColor = "0,0,0";
+    interation.fontColor = "0,0,0";
+    interation.textPosition = "Middle_Center";
+    //interation.alarm = content;
+    interation.objectInstance = content;
+    interation.objectType = "interaction";
+    interation.objectContainer = container;
+    scene.add(interation);
+    container.add(interation);
+    interation.mouseup(function (event) {
+        if (event.button == 2 && container.objectType == "connector") {
+            $(".contextmenu").css({
+                top: event.pageY,
+                left: event.pageX
+            }).show();
+        }
+    });
+    interation.mouseover(function (event) {
+        interation.alarm = content;
+        interation.alarmFont = "16px Consolas";
+        interation.alarmColor = "255, 119, 119";
+    });
+    interation.mouseout(function (event) {
+        interation.alarm = null;
+    });
+    stage.click(function (event) {
+        if (event.button == 0) {
+            $(".contextmenu").hide();
+        }
+    });
+    return interation;
+}
+
 function drawConnector(name, instance) {
     var textfield = $("#jtopo_textfield");
     var fcon = new JTopo.Container(instance);
@@ -285,6 +335,9 @@ function removeElementFromCanvas() {
         for (var i = 0; i < element.childs.length; i++) {
             scene.remove(element.childs[i]);
         }
+    }
+    if (element.objectContainer != undefined && element.objectContainer.objectType == "connector") {
+        element.objectContainer.childs.splice(element.objectContainer.childs.findIndex(item => item._id == element._id), 1);
     }
     scene.remove(element);
     $(".contextmenu").hide();
@@ -355,7 +408,7 @@ function drawVariationEdge(source, target) {
     if (checkConnectionEdge(source, target)) {
         var link = new JTopo.Link(source, target, "");
         link.direction = "vertical";
-        link.dashedPattern = 5;
+        link.dashedPattern = 3;
         link.arrowsRadius = 0;
         link.lineWidth = 2; // line width
         link.offsetGap = 20;
@@ -365,6 +418,37 @@ function drawVariationEdge(source, target) {
         link.textOffsetY = 20;
         scene.add(link);
         link.objectType = "diversity";
+        link.mouseup(function (event) {
+            if (event.button == 2) {
+                $(".contextmenu").css({
+                    top: event.pageY,
+                    left: event.pageX
+                }).show();
+            }
+        });
+        stage.click(function (event) {
+            if (event.button == 0) {
+                $(".contextmenu").hide();
+            }
+        });
+        return link;
+    }
+}
+
+function drawFeatureInteractionEdge(source, target) {
+    if (checkConnectionEdge(source, target)) {
+        var link = new JTopo.Link(source, target, "Interaction");
+        link.direction = "vertical";
+        link.dashedPattern = 4;
+        link.arrowsRadius = 0;
+        link.lineWidth = 2; // line width
+        link.offsetGap = 20;
+        link.bundleGap = 15; // space between lines
+        link.fontColor = "255, 119, 119";
+        link.strokeColor = "255, 119, 119";
+        link.textOffsetY = 20;
+        scene.add(link);
+        link.objectType = "fiEdge";
         link.mouseup(function (event) {
             if (event.button == 2) {
                 $(".contextmenu").css({

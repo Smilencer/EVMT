@@ -353,7 +353,7 @@ function generateXML() {
         return;
     }
     var root = result[0];
-    xmlDoc = `<family class="${currentObject.objectName}" service="${currentObject.objectService}">${InsertNewNode(root)}${generateChannels()}${generateConstraints()}</family>`;
+    xmlDoc = `<family class="${currentObject.objectName}" service="${currentObject.objectService}">${InsertNewNode(root)}${generateChannels()}${generateConstraints()}${generateInteractionComponents()}</family>`;
     growl("Family is generated!");
 }
 
@@ -363,12 +363,18 @@ function InsertNewNode(node) {
         var dataStr = "";
         if (node.childs.length > 0) {
             var dataNameArr = [];
+            var interationStr = "";
             for (let data of node.childs) {
-                dataNameArr.push(data.objectInstance);
+                if (data.objectType == "data") {
+                    dataNameArr.push(data.objectInstance);
+                }
+                else if (data.objectType == "interaction") {
+                    interationStr = data.objectInstance;
+                }
             }
             dataStr = dataNameArr.join(",");
         }
-        nodeStr += `<connector type="${node.objectName}" name="${node.objectInstance}" data="${dataStr}">`;
+        nodeStr += `<connector type="${node.objectName}" name="${node.objectInstance}" data="${dataStr}" interation="${interationStr}">`;
         for (let link of node.outLinks) {
             nodeStr += `<condition value="${link.text.replaceAll()}">${InsertNewNode(link.nodeZ)}</condition>`;
         }
@@ -433,13 +439,48 @@ function generateConstraints() {
     return constraintStr;
 }
 
+function generateInteractionComponents() {
+    var interactionStr = "<interactions>";
+    var result = scene.findElements(function (e) {
+        return e.elementType == "link" && e.objectType == "fiEdge";
+    });
+    if (result.length > 0) {
+        for (let fi of result) {
+            var node = fi.nodeZ;
+            interactionStr += `<fi store="${node.objectStore}" class="${node.objectName}" name="${node.objectInstance}" service="${node.objectService}"></fi>`;
+        }
+    }
+    interactionStr += "</interactions>"
+    return interactionStr;
+}
+
 function setInteraction() {
+    if (currentObject == null) {
+        alert("Please define the composite component first.")
+        return;
+    }
     var elementArray = scene.selectedElements;
+    if (elementArray.length < 2) {
+        alert("Please choose at least two components.")
+        return;
+    }
+    $(".contentDiv>ol").empty();
+    var result = scene.findElements(function (e) {
+        return e.objectType == "subcomponent" && e.selected == false;
+    });
+    var optionStr = ``;
+    for (let opt of result) {
+        optionStr += `<option value="${opt.text}">component</option>`;
+    }
+    var i = 0;
     for (let element of elementArray) {
         if (element.objectType != "subcomponent") {
-            alert("Please choose components.")
+            alert("The interaction only happens with components.")
             return;
         }
+        i++;
+        let liStr = `<li><span>${element.text}</span><font>--></font><input type="text" list="inter${i}" id="ip${i}"><datalist id="inter${i}">${optionStr}</datalist></li>`;
+        $(".contentDiv>ol").append(liStr);
     }
     $.blockUI({
         message: $("#InteractionDiv"),
@@ -447,16 +488,71 @@ function setInteraction() {
         cursorReset: "default",
         css: {
             textAlign: "unset",
-            width: "752px",
+            width: "527px",
             height: "308px",
             top: "20%",
-            left: "25%",
+            left: "30%",
             cursor: "default"
         },
         overlayCSS: {
             cursor: "default"
         }
     });
+}
+
+function createInteraction() {
+    var data = [];
+    var fiComponents = [];
+    for (let liObj of $(".contentDiv li")) {
+        let str = $(liObj).children("input").val();
+        if (str == "") {
+            str = "|";
+        }
+        else {
+            fiComponents.push(str);
+        }
+        data.push(`${$(liObj).children("span").text()}->${str}`);
+    }
+    var elementArray = scene.selectedElements;
+    var ancestorArray = [];
+    for (let element of elementArray) {
+        let arr = [];
+        ancestorArray.push(new Set(findAncestor(element, arr)));
+    }
+    var id = [...intersectionSet(ancestorArray)][0];
+    var result = scene.findElements(function (e) {
+        return e.objectType == "connector" && e._id == id;
+    });
+    var fi = drawFeatureInteration(result[0], data.join(","));
+    for (let fiComponent of fiComponents) {
+        result = scene.findElements(function (e) {
+            return e.objectType == "subcomponent" && e.text == fiComponent;
+        });
+        drawFeatureInteractionEdge(fi, result[0]);
+    }
+    closeDialog();
+}
+
+function findAncestor(node, arr) {
+    var links = node.inLinks;
+    if (links.length == 0) {
+        return arr;
+    }
+    var useful = links.filter(link => link.objectType != "constraint");
+    var father = useful[0].nodeA;
+    if (father.objectType == "connector") {
+        arr.push(father._id);
+    }
+    return findAncestor(father, arr);
+}
+
+function intersectionSet(ancestorArray) {
+    var setA = ancestorArray[0];
+    for (var i = 1, len = ancestorArray.length; i < len; i++) {
+        var setB = ancestorArray[i];
+        setA = new Set([...setA].filter(x => setB.has(x)));
+    }
+    return setA;
 }
 
 function explorer() {
