@@ -1,16 +1,16 @@
 $(document).ready(function () {
     class Cashback {
         constructor() {
-            this.note = null;
             this.money = null;
+            this.want = null;
             this.wantcash = new WantCash();
             this.change = new Change();
         }
         CashbackSvc() {
-            this.wantcash.amount = null ? this.note : this.wantcash.amount + this.note;
+            this.wantcash.amount = null ? this.want : this.wantcash.amount + this.want;
             this.wantcash.WantCashSvc();
-            this.change.change = null ? this.wantcash.cash : this.change.change + this.wantcash.cash;
             this.money = null ? this.wantcash.cash : this.money + this.wantcash.cash;
+            this.change.change = null ? this.wantcash.cash : this.change.change + this.wantcash.cash;
             if (this.money > 0) {
                 this.change.ChangeSvc();
             }
@@ -40,6 +40,6 @@ $(document).ready(function () {
     }
 
     var cb = new Cashback();
-    cb.note = 10;
+    cb.want = 10;
     cb.CashbackSvc();
 });

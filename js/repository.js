@@ -43,10 +43,14 @@ function getData(name, storeName, instance) {
         var data = e.target.result;
         var componentBlock = drawComponentBlock(data.name, storeName, instance, data.service);
         for (let i = 0, len = data.input.length; i < len; i++) {
-            drawInputInBlock(componentBlock, data.input[i]);
+            if (data.input[i] != "") {
+                drawInputInBlock(componentBlock, data.input[i]);
+            }
         }
         for (let i = 0, len = data.output.length; i < len; i++) {
-            drawOutputInBlock(componentBlock, data.output[i]);
+            if (data.output[i] != "") {
+                drawOutputInBlock(componentBlock, data.output[i]);
+            }
         }
         growl("Component is retrieved!");
     }

@@ -2,7 +2,7 @@ var xmlDoc = "";
 
 $(document).ready(function () {
     //xmlDoc = window.opener.xmlDoc;
-    xmlDoc = `<family class="VendingMachine" service="VendingMachineSvc"><connector type="F-Sequencer" name="f-seq1" data=""><condition value="0"><vg type="Or"><connector type="F-Sequencer" name="f-seq2" data=""><condition value="0"><vg type="Alternative"><component store="Atomic" class="Mocha" name="mocha" service="MochaSvc"></component><component store="Atomic" class="Latte" name="latte" service="LatteSvc"></component></vg></condition><condition value="1"><vg type="Optional"><component store="Atomic" class="Cream" name="cream" service="CreamSvc"></component></vg></condition></connector><component store="Atomic" class="Tea" name="tea" service="TeaSvc"></component></vg></condition><condition value="1"><vg type="Alternative"><component store="Atomic" class="Card" name="card" service="CardSvc"></component><component store="Atomic" class="Cash" name="cash" service="CashSvc"></component><component store="Atomic" class="Gift" name="gift" service="GiftSvc"></component></vg></condition><condition value="2"><vg type="Optional"><component store="Atomic" class="Change" name="change" service="ChangeSvc"></component></vg></condition></connector><dataChannel><inputs list="coffeesize,teatype,money"></inputs><outputs list=""></outputs><channel from="coffeesize" to="mocha.size"></channel><channel from="coffeesize" to="latte.size"></channel><channel from="mocha.price" to="cream.coffeeprice"></channel><channel from="latte.price" to="cream.coffeeprice"></channel><channel from="cream.sumprice" to="card.amount"></channel><channel from="cream.sumprice" to="cash.amount"></channel><channel from="cream.sumprice" to="gift.amount"></channel><channel from="latte.price" to="card.amount"></channel><channel from="latte.price" to="cash.amount"></channel><channel from="latte.price" to="gift.amount"></channel><channel from="mocha.price" to="card.amount"></channel><channel from="mocha.price" to="cash.amount"></channel><channel from="mocha.price" to="gift.amount"></channel><channel from="teatype" to="tea.decaf"></channel><channel from="tea.price" to="card.amount"></channel><channel from="tea.price" to="cash.amount"></channel><channel from="tea.price" to="gift.amount"></channel><channel from="money" to="cash.pay"></channel><channel from="cash.change" to="change.change"></channel></dataChannel><constraints><constraint type="exclude" from="gift" to="change"></constraint></constraints></family>`;
+    xmlDoc = `<family class="VendingMachine" service="VendingMachineSvc"><connector type="F-Sequencer" name="f-seq1" data="" interation="(Card)card->|,(Change)change->(Cashback)cashback"><condition value="0"><vg type="Or"><connector type="F-Sequencer" name="f-seq2" data="" interation=""><condition value="0"><vg type="Alternative"><component store="Atomic" class="Mocha" name="mocha" service="MochaSvc"></component><component store="Atomic" class="Latte" name="latte" service="LatteSvc"></component></vg></condition><condition value="1"><vg type="Optional"><component store="Atomic" class="Cream" name="cream" service="CreamSvc"></component></vg></condition></connector><component store="Atomic" class="Tea" name="tea" service="TeaSvc"></component></vg></condition><condition value="1"><vg type="Alternative"><component store="Atomic" class="Gift" name="gift" service="GiftSvc"></component><component store="Atomic" class="Cash" name="cash" service="CashSvc"></component><component store="Atomic" class="Card" name="card" service="CardSvc"></component></vg></condition><condition value="2"><vg type="Optional"><component store="Atomic" class="Change" name="change" service="ChangeSvc"></component></vg></condition></connector><dataChannel><inputs list="size,decaf,payment,moneyback"></inputs><outputs list=""></outputs><channel from="latte.price" to="cream.coffeeprice"></channel><channel from="latte.price" to="gift.amount"></channel><channel from="latte.price" to="cash.amount"></channel><channel from="latte.price" to="card.amount"></channel><channel from="mocha.price" to="cream.coffeeprice"></channel><channel from="mocha.price" to="gift.amount"></channel><channel from="mocha.price" to="cash.amount"></channel><channel from="mocha.price" to="card.amount"></channel><channel from="cream.sumprice" to="gift.amount"></channel><channel from="cream.sumprice" to="cash.amount"></channel><channel from="cream.sumprice" to="card.amount"></channel><channel from="tea.price" to="gift.amount"></channel><channel from="tea.price" to="cash.amount"></channel><channel from="tea.price" to="card.amount"></channel><channel from="cash.change" to="change.change"></channel><channel from="size" to="mocha.size"></channel><channel from="size" to="latte.size"></channel><channel from="decaf" to="tea.decaf"></channel><channel from="payment" to="cash.pay"></channel><channel from="moneyback" to="cashback.want"></channel></dataChannel><constraints><constraint type="exclude" from="gift" to="change"></constraint></constraints><interactions><fi store="Composite" class="Cashback" name="cashback" service="CashbackSvc"></fi></interactions></family>`;
     var xmlTree = $(xmlDoc);
     var depthMap = assessDepth(xmlTree);
     var connectorMap = generateComposition(depthMap, xmlTree);
@@ -66,7 +66,12 @@ function generateComposition(depthMap, xmlTree) {
         let valueArr = depthMap.get(key);
         for (let connectorName of valueArr) {
             let setArray = generateSubComposition(connectorName, xmlTree);
-            connectorMap.set(connectorName, filterOut(doCartesian(setArray), $(xmlTree).children("constraints")));
+            let oneSet = filterOut(doCartesian(setArray), $(xmlTree).children("constraints"));
+            let interations = $(xmlTree).find(`connector[name="${connectorName}"]`).attr("interation");
+            if (interations != "") {
+                oneSet = setInteraction(interations, oneSet);
+            }
+            connectorMap.set(connectorName, oneSet);
         }
     }
     return connectorMap;
@@ -206,7 +211,7 @@ function filterOut(oneSet, constraintsTree) {
         let to = $(constraint).attr("to");
         if (type == "require") {
             for (let str of oneSet) {
-                let arr = str.split("+");
+                let arr = str.split(/\+|,/);
                 if (arr.includes(from) && !arr.includes(to)) {
                     oneSet.delete(str);
                 }
@@ -214,7 +219,7 @@ function filterOut(oneSet, constraintsTree) {
         }
         if (type == "exclude") {
             for (let str of oneSet) {
-                let arr = str.split("+");
+                let arr = str.split(/\+|,/);
                 if (arr.includes(from) && arr.includes(to)) {
                     oneSet.delete(str);
                 }
@@ -222,6 +227,38 @@ function filterOut(oneSet, constraintsTree) {
         }
     }
     return oneSet;
+}
+
+function setInteraction(interactions, oneSet) {
+    var interactionArray = interactions.split(",");
+    var newSet = new Set();
+    for (let str of oneSet) {
+        console.log(str);
+        let arr = str.split(/\+|,/);
+        let flag = true;
+        for (let item of interactionArray) {
+            let itemArr = item.split("->");
+            let fromArr = itemArr[0].split(")");
+            let oldName = fromArr[1];
+            let newName = oldName;
+            if (itemArr[1] != "|") {
+                let toArr = itemArr[1].split(")");
+                newName = toArr[1];
+            }
+            if (arr.includes(oldName)) {
+                str = str.replace(new RegExp(`${oldName}`, "gm"), newName);
+            }
+            else {
+                flag = false;
+                newSet.add(str);
+                break;
+            }
+        }
+        if (flag) {
+            newSet.add(str);
+        }
+    }
+    return newSet;
 }
 
 function generateProductsXML(finalSet, xmlTree) {

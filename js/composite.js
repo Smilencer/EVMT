@@ -528,6 +528,11 @@ function deposit() {
         return;
     }
     var inputArray = $(xmlDoc).find("inputs").attr("list").split(",");
+    for (let item of inputArray) {
+        if ($(xmlDoc).find(`channel[to="${item}"]`).length > 0) {
+            inputArray.splice(inputArray.findIndex(x => x == item), 1);
+        }
+    }
     var outputArray = $(xmlDoc).find("outputs").attr("list").split(",");
     var subComponentMap = new Map();
     var result = $(xmlDoc).find("component");

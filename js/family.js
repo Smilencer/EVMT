@@ -361,9 +361,9 @@ function InsertNewNode(node) {
     var nodeStr = "";
     if (node.objectType == "connector") {
         var dataStr = "";
+        var interationStr = "";
         if (node.childs.length > 0) {
             var dataNameArr = [];
-            var interationStr = "";
             for (let data of node.childs) {
                 if (data.objectType == "data") {
                     dataNameArr.push(data.objectInstance);
