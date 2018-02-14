@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link href="/favicon.ico" rel="icon" type="image/x-icon" />
@@ -13,12 +14,21 @@
     <script src="js/canvas.js"></script>
     <link href="css/common2.css" rel="stylesheet" />
     <script src="js/jquery-ui.min.js"></script>
+    <script src="js/repository.js"></script>
 </head>
+
 <body>
     <div id="header">
         <div id="topmenu">
-            <div id="logo"><a>Enumerative Variability Modelling Tool</a></div>
-            <div id="urls"><a href="#">Feature Model</a>|<a href="atomic.html" target="_blank">Atomic Component</a>|<a href="composite.html" target="_blank">Composite Component</a>|<a href="family.html" target="_blank">Family Model</a></div>
+            <div id="logo">
+                <a>Enumerative Variability Modelling Tool</a>
+            </div>
+            <div id="urls">
+                <a href="#">Feature Model</a>|
+                <a href="atomic.html" target="_blank">Atomic Component</a>|
+                <a href="composite.html" target="_blank">Composite Component</a>|
+                <a href="family.html" target="_blank">Family Model</a>
+            </div>
         </div>
     </div>
     <div id="container">
@@ -55,7 +65,49 @@
             <div id="product_main">
                 <ul id="product_list"></ul>
             </div>
+            <div id="box">
+                <div id="canvas_main">
+                    <div id="return_div" onclick="hideProduct()"></div>
+                    <div id="canvas_div">
+                        <canvas id="canvas" width="784" height="422"></canvas>
+                    </div>
+                    <div id="dataTree">
+                        <div id="dataTitle">
+                            <span>Repository</span>
+                        </div>
+                        <div id="repoButton">
+                            <button type="button" onclick="getAll()">
+                                <object data="css/images/refresh.svg" type="image/svg+xml"></object>
+                                Refresh</button>
+                            <button type="button" onclick="removeFromDB()">
+                                <object data="css/images/delete.svg" type="image/svg+xml"></object>
+                                Remove</button>
+                        </div>
+                        <div id="categoryDiv">
+                            <div class="category">
+                                <p class="db">
+                                    <object data="css/images/database.svg" type="image/svg+xml"></object>
+                                    <font>Component Store</font>
+                                </p>
+                                <p class="db-table" style="display: block;">
+                                    <object data="css/images/folder.svg" type="image/svg+xml"></object>
+                                    <span state="off" onclick="expandTab(this)" class="">Atomic</span>
+                                </p>
+                                <ul style="display: none;" id="AtomicStore">
+                                </ul>
+                                <p class="db-table" style="display: block;">
+                                    <object data="css/images/folder.svg" type="image/svg+xml"></object>
+                                    <span state="off" onclick="expandTab(this)" class="">Composite</span>
+                                </p>
+                                <ul style="display: none;" id="CompositeStore">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
+
 </html>

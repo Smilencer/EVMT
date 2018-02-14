@@ -361,7 +361,7 @@ function InsertNewNode(node) {
     var nodeStr = "";
     if (node.objectType == "connector") {
         var dataStr = "";
-        var interationStr = "";
+        var interactionStr = "";
         if (node.childs.length > 0) {
             var dataNameArr = [];
             for (let data of node.childs) {
@@ -369,12 +369,12 @@ function InsertNewNode(node) {
                     dataNameArr.push(data.objectInstance);
                 }
                 else if (data.objectType == "interaction") {
-                    interationStr = data.objectInstance;
+                    interactionStr = data.objectInstance;
                 }
             }
             dataStr = dataNameArr.join(",");
         }
-        nodeStr += `<connector type="${node.objectName}" name="${node.objectInstance}" data="${dataStr}" interation="${interationStr}">`;
+        nodeStr += `<connector type="${node.objectName}" name="${node.objectInstance}" data="${dataStr}" interaction="${interactionStr}">`;
         for (let link of node.outLinks) {
             nodeStr += `<condition value="${link.text.replaceAll()}">${InsertNewNode(link.nodeZ)}</condition>`;
         }
@@ -523,7 +523,7 @@ function createInteraction() {
     var result = scene.findElements(function (e) {
         return e.objectType == "connector" && e._id == id;
     });
-    var fi = drawFeatureInteration(result[0], data.join(","));
+    var fi = drawFeatureInteraction(result[0], data.join(","));
     for (let fiComponent of fiComponents) {
         result = scene.findElements(function (e) {
             return e.objectType == "subcomponent" && e.text == fiComponent;

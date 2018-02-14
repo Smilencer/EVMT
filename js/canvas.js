@@ -232,7 +232,7 @@ function drawOutputInBlock(container, name) {
     return drawDataInBlock(container, "o", name);
 }
 
-function checkFeatureInteration(container, content) {
+function checkFeatureInteraction(container, content) {
     var result = scene.findElements(function (e) {
         return e.objectType == "interaction" && e.objectInstance == content && e.container == container;
     });
@@ -240,25 +240,24 @@ function checkFeatureInteration(container, content) {
     else { return result[0]; }
 }
 
-function drawFeatureInteration(container, content) {
-    var feedback = checkFeatureInteration(container, content);
+function drawFeatureInteraction(container, content) {
+    var feedback = checkFeatureInteraction(container, content);
     if (feedback != null) { return feedback };
-    var interation = new JTopo.CircleNode("FI");
-    interation.font = "bold 8pt Verdana";
-    interation.textOffsetY = -2;
-    interation.radius = 8;
-    interation.alpha = 1.0;
-    interation.fillColor = "255, 119, 119";
-    interation.borderColor = "0,0,0";
-    interation.fontColor = "0,0,0";
-    interation.textPosition = "Middle_Center";
-    //interation.alarm = content;
-    interation.objectInstance = content;
-    interation.objectType = "interaction";
-    interation.objectContainer = container;
-    scene.add(interation);
-    container.add(interation);
-    interation.mouseup(function (event) {
+    var interaction = new JTopo.CircleNode("FI");
+    interaction.font = "bold 8pt Verdana";
+    interaction.textOffsetY = -2;
+    interaction.radius = 8;
+    interaction.alpha = 1.0;
+    interaction.fillColor = "255, 119, 119";
+    interaction.borderColor = "0,0,0";
+    interaction.fontColor = "0,0,0";
+    interaction.textPosition = "Middle_Center";
+    interaction.objectInstance = content;
+    interaction.objectType = "interaction";
+    interaction.objectContainer = container;
+    scene.add(interaction);
+    container.add(interaction);
+    interaction.mouseup(function (event) {
         if (event.button == 2 && container.objectType == "connector") {
             $(".contextmenu").css({
                 top: event.pageY,
@@ -266,20 +265,20 @@ function drawFeatureInteration(container, content) {
             }).show();
         }
     });
-    interation.mouseover(function (event) {
-        interation.alarm = content;
-        interation.alarmFont = "16px Consolas";
-        interation.alarmColor = "255, 119, 119";
+    interaction.mouseover(function (event) {
+        interaction.alarm = content;
+        interaction.alarmFont = "16px Consolas";
+        interaction.alarmColor = "255, 119, 119";
     });
-    interation.mouseout(function (event) {
-        interation.alarm = null;
+    interaction.mouseout(function (event) {
+        interaction.alarm = null;
     });
     stage.click(function (event) {
         if (event.button == 0) {
             $(".contextmenu").hide();
         }
     });
-    return interation;
+    return interaction;
 }
 
 function drawConnector(name, instance) {
