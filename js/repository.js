@@ -59,6 +59,118 @@ function getData(name, storeName, instance) {
     }
 }
 
+function getAllComponent(domArray, feedbackMethod) {
+    var componentArray = [];
+    var transaction = mydb.transaction(["Composite", "Atomic"], IDBTransaction.READ_ONLY);
+    var CompositeStore = transaction.objectStore("Composite");
+    var AtomicStore = transaction.objectStore("Atomic");
+    for (let componentNode of domArray) {
+        let storeName = $(componentNode).attr("store");
+        let request;
+        if (storeName == "Composite") {
+            request = CompositeStore.get($(componentNode).attr("class"));
+        }
+        else if (storeName == "Atomic") {
+            request = AtomicStore.get($(componentNode).attr("class"));
+        }
+        request.onsuccess = function (e) {
+            let data = e.target.result;
+            componentBlock = drawComponentBlock(data.name, storeName, $(componentNode).attr("name"), data.service);
+            for (let i = 0, len = data.input.length; i < len; i++) {
+                if (data.input[i] != "") {
+                    drawInputInBlock(componentBlock, data.input[i]);
+                }
+            }
+            for (let i = 0, len = data.output.length; i < len; i++) {
+                if (data.output[i] != "") {
+                    drawOutputInBlock(componentBlock, data.output[i]);
+                }
+            }
+            componentArray.push(componentBlock);
+        }
+        request.onerror = function (e) {
+            console.log("Retrieve failed.");
+        }
+    }
+    transaction.oncomplete = function () {
+        feedbackMethod(componentArray);
+    }
+}
+
+function downloadProduct(domArray, feedbackMethod) {
+    var code = new Set();
+    var transaction = mydb.transaction(["Composite", "Atomic"], IDBTransaction.READ_ONLY);
+    var CompositeStore = transaction.objectStore("Composite");
+    var AtomicStore = transaction.objectStore("Atomic");
+    for (let componentNode of domArray) {
+        var getCode = function (name, storeName) {
+            let request;
+            if (storeName == "Composite") {
+                request = CompositeStore.get(name);
+            }
+            else if (storeName == "Atomic") {
+                request = AtomicStore.get(name);
+            }
+            request.onsuccess = function (e) {
+                let data = e.target.result;
+                code.add(data.code);
+                if (storeName == "Composite") {
+                    for (let [key, value] of data.subComponent) {
+                        getCode(key, value);
+                    }
+                }
+            }
+            request.onerror = function (e) {
+                console.log("Retrieve failed.");
+            }
+        }
+        getCode($(componentNode).attr("class"), $(componentNode).attr("store"));
+    }
+    transaction.oncomplete = function () {
+        feedbackMethod(code);
+    }
+}
+
+function downloadBatch(productXMLMap, feedbackMethod) {
+    var batchMap = new Map();
+    var transaction = mydb.transaction(["Composite", "Atomic"], IDBTransaction.READ_ONLY);
+    var CompositeStore = transaction.objectStore("Composite");
+    var AtomicStore = transaction.objectStore("Atomic");
+    for (let [productName, productXML] of productXMLMap) {
+        let code = new Set();
+        for (let componentNode of $(productXML).find("component")) {
+            var getCode = function (name, storeName) {
+                let request;
+                if (storeName == "Composite") {
+                    request = CompositeStore.get(name);
+                }
+                else if (storeName == "Atomic") {
+                    request = AtomicStore.get(name);
+                }
+                request.onsuccess = function (e) {
+                    let data = e.target.result;
+                    code.add(data.code);
+                    if (storeName == "Composite") {
+                        for (let [key, value] of data.subComponent) {
+                            getCode(key, value);
+                        }
+                    }
+                }
+                request.onerror = function (e) {
+                    console.log("Retrieve failed.");
+                }
+            }
+            getCode($(componentNode).attr("class"), $(componentNode).attr("store"));
+        }
+        let codeArray = Array.from(code);
+        let codeStr = generateCode($(productXML)) + " " + codeArray.join(" ");
+        batchMap.set(`${productName}.js`, codeStr);
+    }
+    transaction.oncomplete = function () {
+        feedbackMethod(batchMap);
+    }
+}
+
 function downloadCode(componentName, componentStoreName, feedbackMethod) {
     var code = new Set();
     var transaction = mydb.transaction(["Composite", "Atomic"], IDBTransaction.READ_ONLY);

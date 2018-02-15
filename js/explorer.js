@@ -1,5 +1,7 @@
 var xmlDoc = "";
 var products = [];
+var currentObject = null;
+var zoomlevel = 1;
 var stage;
 var scene;
 
@@ -13,8 +15,7 @@ $(document).ready(function () {
         }
         return this;
     }
-    //xmlDoc = window.opener.xmlDoc;
-    xmlDoc = `<family class="VendingMachine" service="VendingMachineSvc"><connector type="F-Sequencer" name="f-seq1" data="" interaction="(Card)card->|,(Change)change->(Cashback)cashback"><condition value="0"><vg type="Or"><connector type="F-Sequencer" name="f-seq2" data="" interaction=""><condition value="0"><vg type="Alternative"><component store="Atomic" class="Mocha" name="mocha" service="MochaSvc"></component><component store="Atomic" class="Latte" name="latte" service="LatteSvc"></component></vg></condition><condition value="1"><vg type="Optional"><component store="Atomic" class="Cream" name="cream" service="CreamSvc"></component></vg></condition></connector><component store="Atomic" class="Tea" name="tea" service="TeaSvc"></component></vg></condition><condition value="1"><vg type="Alternative"><component store="Atomic" class="Gift" name="gift" service="GiftSvc"></component><component store="Atomic" class="Cash" name="cash" service="CashSvc"></component><component store="Atomic" class="Card" name="card" service="CardSvc"></component></vg></condition><condition value="2"><vg type="Optional"><component store="Atomic" class="Change" name="change" service="ChangeSvc"></component></vg></condition></connector><dataChannel><inputs list="size,decaf,payment,moneyback"></inputs><outputs list=""></outputs><channel from="latte.price" to="cream.coffeeprice"></channel><channel from="latte.price" to="gift.amount"></channel><channel from="latte.price" to="cash.amount"></channel><channel from="latte.price" to="card.amount"></channel><channel from="mocha.price" to="cream.coffeeprice"></channel><channel from="mocha.price" to="gift.amount"></channel><channel from="mocha.price" to="cash.amount"></channel><channel from="mocha.price" to="card.amount"></channel><channel from="cream.sumprice" to="gift.amount"></channel><channel from="cream.sumprice" to="cash.amount"></channel><channel from="cream.sumprice" to="card.amount"></channel><channel from="tea.price" to="gift.amount"></channel><channel from="tea.price" to="cash.amount"></channel><channel from="tea.price" to="card.amount"></channel><channel from="cash.change" to="change.change"></channel><channel from="size" to="mocha.size"></channel><channel from="size" to="latte.size"></channel><channel from="decaf" to="tea.decaf"></channel><channel from="payment" to="cash.pay"></channel><channel from="moneyback" to="cashback.want"></channel></dataChannel><constraints><constraint type="exclude" from="gift" to="change"></constraint></constraints><interactions><fi store="Composite" class="Cashback" name="cashback" service="CashbackSvc"></fi></interactions></family>`;
+    xmlDoc = window.opener.xmlDoc;
     var xmlTree = $(xmlDoc);
     var depthMap = assessDepth(xmlTree);
     var connectorMap = generateComposition(depthMap, xmlTree);
@@ -23,7 +24,7 @@ $(document).ready(function () {
     connectorMap.delete(root);
     var finalSet = combineComposition(connectorMap, rootSet);
     generateProductsXML(finalSet, xmlTree);
-    $("#product_summary").append(`${$(xmlTree).attr("class")}: ${finalSet.size} products`);
+    $("#product_summary>span").append(`${$(xmlTree).attr("class")}: ${finalSet.size} products`);
     showExplorer();
 
     OpenDB();
@@ -364,8 +365,9 @@ function generateProductsXML(finalSet, xmlTree) {
             connectorType = $(connectorObj).attr("type");
             if (connectorType == "Sequencer" || connectorType == "Selector" || connectorType == "Aggregator") {
                 if ($(connectorObj).children().length == 1) {
-                    let leaf = $(connectorObj).find("component");
-                    $(connectorObj).replaceWith($(leaf));
+                    let conditionObj = $(connectorObj).children("condition");
+                    $(conditionObj).children().unwrap();
+                    $(connectorObj).children().unwrap();
                 }
             }
         }
@@ -452,15 +454,168 @@ function unselectAll() {
 }
 
 function showProduct(num) {
+    $("#product_summary>a").append($("#product_list>li").eq(num - 1).children("a").html());
     $("#product_main").hide("slide", 500, function () {
         $("#box").show("fade", 500, function () {
-
+            $("#product_summary>span").hide("fade", 100, function () {
+                $("#product_summary>a").show("fade", 100);
+            });
+            var tree = $(products[num - 1]);
+            currentObject = drawCurrentCompositeComponent($(tree).attr("class"), $(tree).attr("service"));
+            var inputDataArray = $(tree).find("inputs").attr("list").split(",");
+            for (let inputData of inputDataArray) {
+                if (inputData != "") {
+                    drawDataInComposite("Input", inputData);
+                }
+            }
+            var outputDataArray = $(tree).find("outputs").attr("list").split(",");
+            for (let outputData of outputDataArray) {
+                if (outputData != "") {
+                    drawDataInComposite("Output", outputData);
+                }
+            }
+            getAllComponent($(tree).find("component"), function (componentArray) {
+                var drawPicture = function (node, array) {
+                    if ($(node).is("connector")) {
+                        let connectorObj = drawConnector($(node).attr("type"), $(node).attr("name"));
+                        if ($(node).attr("data") != "") {
+                            let dataArray = $(node).attr("data").split(",");
+                            for (let dataNode of dataArray) {
+                                drawInputInBlock(connectorObj, dataNode);
+                            }
+                        }
+                        for (let conditionNode of $(node).children("condition")) {
+                            let endNode = $(conditionNode).children();
+                            let endObj = drawPicture(endNode, array);
+                            drawCompositionEdge(connectorObj, endObj, $(conditionNode).attr("value"));
+                        }
+                        return connectorObj;
+                    }
+                    else if ($(node).is("component")) {
+                        return array.find(x => x.objectName == $(node).attr("class") && x.objectInstance == $(node).attr("name"));
+                    }
+                }
+                drawPicture($(tree).children("connector"), componentArray);
+                scene.doLayout(JTopo.layout.TreeLayout("down", 200, 107));
+                for (let channelNode of $(tree).find("channel")) {
+                    let fromArr = $(channelNode).attr("from").split(".");
+                    let toArr = $(channelNode).attr("to").split(".");
+                    let target;
+                    let source;
+                    if (fromArr.length == 1) {
+                        let result = scene.findElements(function (e) {
+                            return e.objectType == "data" && e.objectInstance == fromArr[0];
+                        });
+                        source = result[0];
+                    }
+                    else {
+                        source = componentArray.find(x => x.objectInstance == fromArr[0]);
+                    }
+                    if (toArr.length == 1) {
+                        let result = scene.findElements(function (e) {
+                            return e.objectType == "data" && e.objectInstance == toArr[0];
+                        });
+                        target = result[0];
+                    }
+                    else {
+                        target = componentArray.find(x => x.objectInstance == toArr[0]);
+                    }
+                    drawDataChannel(source, target, `${$(channelNode).attr("from")}->${$(channelNode).attr("to")}`);
+                }
+                relocate();
+            });
         });
     });
 }
 
 function hideProduct() {
     $("#box").hide("slide", { direction: "right" }, 500, function () {
-        $("#product_main").show("fade", 500);
+        $("#product_main").show("fade", 500, function () {
+            $("#product_summary>a").hide("fade", 100, function () {
+                $("#product_summary>span").show("fade", 100);
+            });
+            scene.clear();
+            currentObject = null;
+            $("#product_summary>a").empty();
+        });
     });
+}
+
+function download() {
+    let num;
+    if ($("#product_main").is(":visible ")) {
+        if ($(".tickproduct:checked").length != 1) {
+            alert("Please select one product.")
+            return;
+        }
+        num = $(".tickproduct:checked").index(".tickproduct");
+    }
+    else {
+        $("#product_summary>a").clone().children().remove();
+        let arr = $("#product_summary>a").text().split(/[\s,:]/);
+        num = parseInt(arr[1], 10) - 1;
+    }
+    let productXML = products[num];
+    downloadProduct($(productXML).find("component"), function (codeSet) {
+        var codeArray = Array.from(codeSet);
+        var code = generateCode($(productXML)) + " " + codeArray.join(" ");
+        downloadFile(`${$(xmlDoc).attr("class")}_${num + 1}.js`, code);
+    });
+}
+
+function batchdownload() {
+    if ($("#product_main").is(":visible ")) {
+        if ($(".tickproduct:checked").length == 0) {
+            alert("Please select products.")
+            return;
+        }
+        let productXMLMap = new Map();
+        for (let item of $(".tickproduct:checked")) {
+            let num = $(item).index(".tickproduct");
+            productXMLMap.set(`${$(xmlDoc).attr("class")}_${num + 1}`, products[num]);
+        }
+        downloadBatch(productXMLMap, function (batchMap) {
+            zip.workerScriptsPath = "js/";
+            zip.createWriter(new zip.BlobWriter("application/zip"), function (writer) {
+                var titles = [];
+                var files = [];
+                for (let [key, value] of batchMap) {
+                    titles.push(key);
+                    files.push(value);
+                }
+                var f = 0;
+                function nextFile(f) {
+                    fblob = new Blob([files[f]], { type: "text/javascript" });
+                    writer.add(titles[f], new zip.BlobReader(fblob), function () {
+                        f++;
+                        if (f < files.length) {
+                            nextFile(f);
+                        } else close();
+                    });
+                }
+                function close() {
+                    writer.close(function (blob) {
+                        var eleLink = document.createElement('a');
+                        eleLink.download = $(xmlDoc).attr("class") + ".zip";
+                        eleLink.style.display = 'none';
+                        eleLink.href = URL.createObjectURL(blob);
+                        document.body.appendChild(eleLink);
+                        eleLink.click();
+                        document.body.removeChild(eleLink);
+                    });
+                }
+                nextFile(f);
+            }, onerror);
+        });
+    }
+}
+
+function openTestWindow() {
+    if ($("#product_main").is(":visible ")) {
+        if ($(".tickproduct:checked").length != 1) {
+            alert("Please select one product.")
+            return;
+        }
+    }
+    window.open("test.html", "test", `location=no,toolbar=no,height=${screen.height},width=${screen.width}`);
 }

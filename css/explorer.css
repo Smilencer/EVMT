@@ -8,6 +8,24 @@
     font-weight: bold;
 }
 
+#product_summary a {
+    display: none;
+}
+
+#product_summary a font {
+    margin: 0 2px;
+    font-weight: normal;
+}
+
+#product_summary a span {
+    font-family: Garamond;
+    font-weight: bold;
+}
+
+#product_summary i {
+    font-weight: normal;
+}
+
 #product_main {
     width: 1168px;
     height: 424px;
@@ -91,22 +109,11 @@
     height: 315px;
 }
 
-#download {
+.rightbtn {
     float: right;
-    margin-right: 15px;
-}
-
-#download a {
-    text-decoration: none;
-    color: #000;
 }
 
 #batch {
     float: right;
     margin-right: 15px;
-}
-
-#batch a {
-    text-decoration: none;
-    color: #000;
 }

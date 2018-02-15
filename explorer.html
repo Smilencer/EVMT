@@ -8,6 +8,7 @@
     <link href="css/common.css" rel="stylesheet" />
     <link href="css/explorer.css" rel="stylesheet" />
     <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/codegen.js"></script>
     <script src="js/explorer.js"></script>
     <script src="js/jtopo-0.4.8-min.js"></script>
     <script src="js/jquery.blockUI.js"></script>
@@ -15,6 +16,7 @@
     <link href="css/common2.css" rel="stylesheet" />
     <script src="js/jquery-ui.min.js"></script>
     <script src="js/repository.js"></script>
+    <script src="js/zip.js"></script>
 </head>
 
 <body>
@@ -49,19 +51,23 @@
                 <object data="css/images/unselect.svg" type="image/svg+xml"></object>
                 Unselect All
             </button>
-            <button type="button" id="batch" onclick="batchdownload()">
+            <button class="rightbtn" type="button" id="batch" onclick="batchdownload()">
                 <object data="css/images/download.svg" type="image/svg+xml"></object>
                 Batch Download
             </button>
-            <button type="button" id="download" onclick="download()">
-                <a id="gotodownload" href="Download.ashx">
-                    <object data="css/images/download.svg" type="image/svg+xml"></object>
-                    Download
-                </a>
+            <button class="rightbtn" type="button" id="download" onclick="download()">
+                <object data="css/images/download.svg" type="image/svg+xml"></object>
+                Download
             </button>
+            <button class="rightbtn" type="button" id="testOnline" onclick="openTestWindow()">
+                <object data="css/images/test.svg" type="image/svg+xml"></object>
+                Test Online</button>
         </div>
         <div id="codingArea">
-            <div id="product_summary"></div>
+            <div id="product_summary">
+                <span></span>
+                <a></a>
+            </div>
             <div id="product_main">
                 <ul id="product_list"></ul>
             </div>
@@ -109,5 +115,8 @@
         </div>
     </div>
 </body>
+<div id="IOdiv" class="IOproperty">
+    <i></i>
+</div>
 
 </html>

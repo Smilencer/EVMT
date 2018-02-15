@@ -19,7 +19,7 @@
 	    	"margin" : 0,
 	    	"padding" : 0,
 	    	"text-align": "center",
-	    	"font-family": "仿宋"
+	    	"font-family": "arial"
 	    });
 	    this.$wrap.css({
 	    	"padding" : ((this.$element.outerHeight() - this.$element.height())/2) + 'px 0',
@@ -32,7 +32,7 @@
 	    	"white-space" : "pre",
 	    	"resize": "none",
 	    	"margin-left" : (parseInt(config.width) -  parseInt(this.$element.css("border-left-width"))) + 'px',
-	    	"width": (this.$element.width() - parseInt(config.width)) + 'px'
+	    	"width": "507px"
 	    });
 
 	}

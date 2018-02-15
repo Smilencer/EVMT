@@ -18,6 +18,7 @@
 }
 
 function zoomIn() {
+    if (currentObject == null) { return; }
     stage.zoomOut();
     zoomlevel = scene.scaleX;
     growl("Zoom level: " + Math.round(zoomlevel * 100) / 100);
@@ -25,6 +26,7 @@ function zoomIn() {
 }
 
 function zoomOut() {
+    if (currentObject == null) { return; }
     stage.zoomIn();
     zoomlevel = scene.scaleX;
     growl("Zoom level: " + Math.round(zoomlevel * 100) / 100);

@@ -29,17 +29,44 @@ $(document).ready(function () {
 });
 
 function initCode() {
-    var name = $(".highlight", window.opener.document).text();
-    var storeName = $(".highlight", window.opener.document).attr("store");
-    $("#cname").empty().append(name);
-    opener.downloadCode(name, storeName, function (codeSet) {
-        var codeArray = Array.from(codeSet);
-        var code = codeArray.join(" ");
-        code = code.replace(/^\s+/, '');
-        code = js_beautify(code, 4, ' ');
-        $("#code").val(code);
-        $("#code").setTextareaCount();
-    })
+    var path = window.opener.location.pathname;
+    if (path == "/composite.html") {
+        var name = $(".highlight", window.opener.document).text();
+        var storeName = $(".highlight", window.opener.document).attr("store");
+        $("#cname").empty().append(name);
+        opener.downloadCode(name, storeName, function (codeSet) {
+            var codeArray = Array.from(codeSet);
+            var code = codeArray.join(" ");
+            code = code.replace(/^\s+/, '');
+            code = js_beautify(code, 4, ' ');
+            $("#code").val(code);
+            $("#code").setTextareaCount();
+            $(".textarea-group").width(537);
+        });
+    }
+    else if (path == "/explorer.html") {
+        var name = $(window.opener.xmlDoc).attr("class");
+        let num;
+        if ($("#product_main", window.opener.document).is(":visible")) {
+            num = $(".tickproduct", window.opener.document).index($(".tickproduct:checked", window.opener.document));
+        }
+        else {
+            $("#product_summary>a", window.opener.document).clone().children().remove();
+            let arr = $("#product_summary>a", window.opener.document).text().split(/[\s,:]/);
+            num = parseInt(arr[1], 10) - 1;
+        }
+        $("#componentName").empty().append(`Product: <font id="cname">${name}_${num + 1}</font>`);
+        let productXML = window.opener.products[num];
+        opener.downloadProduct($(productXML).find("component"), function (codeSet) {
+            var codeArray = Array.from(codeSet);
+            var code = opener.generateCode($(productXML)) + " " + codeArray.join(" ");
+            code = code.replace(/^\s+/, '');
+            code = js_beautify(code, 4, ' ');
+            $("#code").val(code);
+            $("#code").setTextareaCount();
+            $(".textarea-group").width(537);
+        });
+    }
 }
 
 function reset() {
