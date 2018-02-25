@@ -393,3 +393,16 @@
     text-overflow: inherit;
     overflow: visible;
 }
+
+#NewCardinalityDialog {
+    width: 250px;
+    height: 177px;
+}
+
+#NewCardinalityDialog .nrow span {
+    width: 110px;
+}
+
+.nrow .ipt_card {
+    width: 70px;
+}

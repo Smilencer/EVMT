@@ -161,6 +161,7 @@ function closeDialog() {
     $("#ipt_domain").val("");
     $("#NewDataDialog").find("input").val("");
     $("#connectorMenu").hide();
+    $(".contextmenu").hide();
     $.unblockUI();
 }
 
@@ -381,7 +382,11 @@ function InsertNewNode(node) {
         nodeStr += "</connector>";
     }
     else if (node.objectType == "generator") {
-        nodeStr += `<vg type="${node.objectName}">`;
+        let cardStr = "";
+        if (node.objectCardinality != null) {
+            cardStr = ` cardinality="${node.objectCardinality}"`;
+        }
+        nodeStr += `<vg type="${node.objectName}"${cardStr}>`;
         for (let link of node.outLinks) {
             nodeStr += InsertNewNode(link.nodeZ);
         }
@@ -561,4 +566,48 @@ function explorer() {
         return false;
     }
     return true;
+}
+
+function setCardinality() {
+    $.blockUI({
+        message: $("#NewCardinalityDialog"),
+        baseZ: 1000,
+        cursorReset: "default",
+        css: {
+            textAlign: "unset",
+            width: "252px",
+            height: "179px",
+            top: "35%",
+            left: "40%",
+            cursor: "default"
+        },
+        overlayCSS: {
+            cursor: "default"
+        }
+    });
+}
+
+function restoreCardinality(){
+    var orNode = scene.currentElement;
+    orNode.objectCardinality = null;
+    orNode.alarm = `[1...*]`;
+    closeDialog();
+}
+
+function setMax() {
+    var min = parseInt($("#ipt_min").val(), 10);
+    min++;
+    var max = parseInt($("#ipt_max").val(), 10);
+    if (max <= min) {
+        $("#ipt_max").attr("min", min);
+        $("#ipt_max").val(min)
+    }
+}
+
+function confirmCardinality() {
+    var orNode = scene.currentElement;
+    var content = $("#ipt_min").val() + "..." + $("#ipt_max").val();
+    orNode.objectCardinality = content;
+    orNode.alarm = `[${content}]`;
+    closeDialog();
 }

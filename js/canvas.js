@@ -15,6 +15,7 @@
     JTopo.Link.prototype.objectName = null;    //reuqires or excludes
     JTopo.Node.prototype.objectType = null;    //generator (abbr. for variation generator)
     JTopo.Node.prototype.objectName = null;    //Optional etc.
+    JTopo.Node.prototype.objectCardinality = null;    //Or's Cardinality
 }
 
 function zoomIn() {
@@ -608,36 +609,41 @@ function drawDataChannel(source, target, flow) {
 
 function drawVariationGenerator(name) {
     var node = new JTopo.Node(name.substr(0, 3).toUpperCase());
-    node.fontColor = "255,255,255";
-    node.font = "bold 20pt Verdana";
-    node.textPosition = "Middle_Center";
-    node.textOffsetY = -2.5;
-    node.beginDegree = 0;
-    node.width = 80;
-    node.height = 40;
+    switch (name) {
+        case "Alternative":
+            node.setImage("./css/images/alt.png");
+            break;
+        case "Optional":
+            node.setImage("./css/images/opt.png");
+            break;
+        case "Or":
+            node.setImage("./css/images/or.png");
+            node.alarm = `[1...*]`;
+            node.alarmFont = "14px Trebuchet MS";
+            node.alarmColor = "218, 218, 218";
+            node.alarmAlpha = 1.0;
+            break;
+        default:
+            break;
+    }
+    node.width = 79;
+    node.height = 30;
     node.setLocation(400, 90);
-    node.paint = function (g) {
-        g.beginPath();
-        g.moveTo(-40, -20);
-        g.lineTo(40, -20);
-        g.lineTo(30, 20);
-        g.lineTo(-30, 20);
-        g.lineTo(-40, -20);
-        g.fillStyle = "#999999";
-        g.fill();
-        g.lineWidth = 3;
-        g.lineCap = "round";
-        g.lineJoin = "round";
-        g.strokeStyle = "#000000";
-        g.stroke();
-        g.closePath();
-        this.paintText(g);
-    };
     node.objectType = "generator";
     node.objectName = name;
+    node.text = "";
     scene.add(node);
     node.mouseup(function (event) {
         if (event.button == 2) {
+            if (node.objectName == "Or") {
+                if ($(".contextmenu .or-card").length == 0) {
+                    $(".contextmenu>li").append(`<a class="or-card" href="javascript:void(0)" onclick="setCardinality()">Set Cardinality</a>`);
+                    $(".contextmenu>li").append(`<a class="or-card" href="javascript:void(0)" onclick="restoreCardinality()">Restore Cardinality</a>`);
+                }
+            }
+            else {
+                $(".or-card").remove();
+            }
             $(".contextmenu").css({
                 top: event.pageY,
                 left: event.pageX

@@ -315,5 +315,25 @@
             Cancel</button>
     </div>
 </div>
-
+<div id="NewCardinalityDialog" class="NewNameDialog">
+    <div class="DialogTitle">
+        <span>Add Cardinality</span>
+    </div>
+    <div class="nrow">
+        <span>Minimum:</span>
+        <input class="ipt_card" type="number" value="1" min="1" id="ipt_min" onchange="setMax()" />
+    </div>
+    <div class="nrow">
+        <span>Maximum:</span>
+        <input class="ipt_card" type="number" value="2" min="2" id="ipt_max" />
+    </div>
+    <div class="exiter">
+        <button onclick="confirmCardinality()">
+            <object data="css/images/create.svg" type="image/svg+xml"></object>
+            OK</button>
+        <button onclick="closeDialog()">
+            <object data="css/images/cancel.svg" type="image/svg+xml"></object>
+            Cancel</button>
+    </div>
+</div>
 </html>
