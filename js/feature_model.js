@@ -19,6 +19,7 @@ $(document).ready(function () {
     scene = new JTopo.Scene();
     stage.add(scene);
     JTopo.Node.prototype.xType = "";
+    JTopo.Link.prototype.xType = "";
     JTopo.FoldLink.prototype.xType = "";
 });
 
@@ -45,6 +46,7 @@ function createFeatureModel() {
 function closeDialog() {
     $("#NewFMDialog").find("input").val("");
     $.unblockUI();
+    $("#featureMenu").hide();
 }
 
 function startFM() {
@@ -92,7 +94,7 @@ function drawFeature(fName, featureType) {
         e.text = "";
         textfield[0].JTopoNode = e;
     });
-    defaultNode.addEventListener("mouseup", function (event) {
+    defaultNode.mouseup(function (event) {
         if (event.button == 2) {
             $("#featureMenu").css({
                 top: event.pageY,
@@ -148,9 +150,19 @@ function drawConnection(nodeA, nodeZ) {
     else {
         link.strokeColor = '0, 17, 139';
     }
+    link.xType = nodeZ.xType;
     scene.add(link);
-    link.addEventListener("mouseup", function (event) {
+    link.mouseup(function (event) {
         if (event.button == 2) {
+            if (link.xType == "Or" && link.text != "") {
+                if ($("#featureMenu .or-card").length == 0) {
+                    $("#featureMenu>li").append(`<a class="or-card" href="javascript:void(0)" onclick="setCardinality()">Set Cardinality</a>`);
+                    $("#featureMenu>li").append(`<a class="or-card" href="javascript:void(0)" onclick="restoreCardinality()">Restore Cardinality</a>`);
+                }
+            }
+            else {
+                $(".or-card").remove();
+            }
             $("#featureMenu").css({
                 top: event.pageY,
                 left: event.pageX
@@ -203,7 +215,7 @@ function setGroup() {
                 links[0].text = "ALT" + altIndex;
             }
             else if (featureType == "Or") {
-                links[0].text = "OR" + orIndex;
+                links[0].text = "OR" + orIndex + " <1..*>";
             }
         }
         if (featureType == "Alternative") {
@@ -290,6 +302,14 @@ function mapChildren(featureNode) {
         for (var i = 0; i < childrenNames.length; i++) {
             var linkName = childrenNames[i];
             var linkType = linkName.substr(0, 2);
+            var linkNameArr = linkName.split(" ");
+            var linkCard = [];
+            if (linkNameArr.length > 1) {
+                if (!linkNameArr[1].includes("*")) {
+                    var cardStr = linkNameArr[1].replace("<", "").replace(">", "");
+                    linkCard = cardStr.split("..");
+                }
+            }
             var children = scene.findElements(function (e) {
                 return e.elementType == "link" && e.text == linkName;
             });
@@ -308,6 +328,7 @@ function mapChildren(featureNode) {
             else if (linkType == "OR") {
                 var arr = [];
                 var listArr = [""];
+                var tempArr = [];
                 for (var j = 0; j < children.length; j++) {
                     arr.push(children[j].nodeZ.text);
                 }
@@ -318,7 +339,20 @@ function mapChildren(featureNode) {
                 }
                 for (var n = 0; n < listArr.length; n++) {
                     if (listArr[n] != "") {
-                        subArr[i].push(listArr[n].replace(",", ""));
+                        tempArr.push(listArr[n].replace(",", ""));
+                    }
+                }
+                if (linkCard.length == 0) {
+                    subArr[i] = subArr[i].concat(tempArr);
+                }
+                else {
+                    for (let item of tempArr) {
+                        var itemArr = item.split(",");
+                        var min = parseInt(linkCard[0], 10);
+                        var max = parseInt(linkCard[1], 10);
+                        if (itemArr.length >= min && itemArr.length <= max) {
+                            subArr[i].push(item);
+                        }
                     }
                 }
             }
@@ -455,4 +489,66 @@ function reset() {
     else {
         return false;
     }
+}
+
+function setCardinality() {
+    var orLink = scene.currentElement;
+    var orText = orLink.text;
+    var result = scene.findElements(function (e) {
+        return e.elementType == "link" && e.xType == "Or" && e.text == orText;
+    });
+    $("#ipt_min").attr("max", result.length - 1);
+    $("#ipt_max").attr("max", result.length);
+    $.blockUI({
+        message: $("#NewCardinalityDialog"),
+        baseZ: 1000,
+        cursorReset: "default",
+        css: {
+            textAlign: "unset",
+            width: "252px",
+            height: "179px",
+            top: "35%",
+            left: "40%",
+            cursor: "default"
+        },
+        overlayCSS: {
+            cursor: "default"
+        }
+    });
+}
+
+function restoreCardinality() {
+    var orLink = scene.currentElement;
+    var orText = orLink.text;
+    var orId = (orText.split(" "))[0];
+    var result = scene.findElements(function (e) {
+        return e.elementType == "link" && e.xType == "Or" && e.text == orText;
+    });
+    for (let link of result) {
+        link.text = `${orId} <1..*>`;
+    }
+    closeDialog();
+}
+
+function setMax() {
+    var min = parseInt($("#ipt_min").val(), 10);
+    min++;
+    var max = parseInt($("#ipt_max").val(), 10);
+    $("#ipt_max").attr("min", min);
+    if (max <= min) {
+        $("#ipt_max").val(min)
+    }
+}
+
+function confirmCardinality() {
+    var orLink = scene.currentElement;
+    var orText = orLink.text;
+    var orId = (orText.split(" "))[0];
+    var result = scene.findElements(function (e) {
+        return e.elementType == "link" && e.xType == "Or" && e.text == orText;
+    });
+    for (let link of result) {
+        link.text = `${orId} <${$("#ipt_min").val()}..${$("#ipt_max").val()}>`;
+    }
+    closeDialog();
 }

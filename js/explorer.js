@@ -166,9 +166,10 @@ function digNode(node) {
                 var finalSet = new Set();
                 var card = $(node).attr("cardinality")
                 if (card != undefined) {
+                    var cardArr = card.split("..");
                     for (let item of expandedSet) {
                         let tempArr = item.split(",");
-                        if (tempArr.length >= card[0] && tempArr.length <= card[1]) {
+                        if (tempArr.length >= cardArr[0] && tempArr.length <= cardArr[1]) {
                             finalSet.add(item);
                         }
                     }

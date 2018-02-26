@@ -569,6 +569,9 @@ function explorer() {
 }
 
 function setCardinality() {
+    var orNode = scene.currentElement;
+    $("#ipt_min").attr("max", orNode.outLinks.length - 1);
+    $("#ipt_max").attr("max", orNode.outLinks.length);
     $.blockUI({
         message: $("#NewCardinalityDialog"),
         baseZ: 1000,
@@ -590,7 +593,7 @@ function setCardinality() {
 function restoreCardinality(){
     var orNode = scene.currentElement;
     orNode.objectCardinality = null;
-    orNode.alarm = `[1...*]`;
+    orNode.alarm = `<1..*>`;
     closeDialog();
 }
 
@@ -598,16 +601,16 @@ function setMax() {
     var min = parseInt($("#ipt_min").val(), 10);
     min++;
     var max = parseInt($("#ipt_max").val(), 10);
+    $("#ipt_max").attr("min", min);
     if (max <= min) {
-        $("#ipt_max").attr("min", min);
         $("#ipt_max").val(min)
     }
 }
 
 function confirmCardinality() {
     var orNode = scene.currentElement;
-    var content = $("#ipt_min").val() + "..." + $("#ipt_max").val();
+    var content = $("#ipt_min").val() + ".." + $("#ipt_max").val();
     orNode.objectCardinality = content;
-    orNode.alarm = `[${content}]`;
+    orNode.alarm = `<${content}>`;
     closeDialog();
 }

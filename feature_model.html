@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <link href="css/images/favicon.ico" rel="icon" type="image/x-icon" />
@@ -13,11 +14,19 @@
     <script src="js/jquery-ui.min.js"></script>
     <script src="js/feature_model.js"></script>
 </head>
+
 <body>
     <div id="header">
         <div id="topmenu">
-            <div id="logo"><a>Enumerative Variability Modelling Tool</a></div>
-            <div id="urls"><a href="#">Feature Model</a>|<a href="atomic.html" target="_blank">Atomic Component</a>|<a href="composite.html" target="_blank">Composite Component</a>|<a href="family.html" target="_blank">Family Model</a></div>
+            <div id="logo">
+                <a>Enumerative Variability Modelling Tool</a>
+            </div>
+            <div id="urls">
+                <a href="#">Feature Model</a>|
+                <a href="atomic.html" target="_blank">Atomic Component</a>|
+                <a href="composite.html" target="_blank">Composite Component</a>|
+                <a href="family.html" target="_blank">Family Model</a>
+            </div>
         </div>
         <div id="container">
             <div id="tabmenu">
@@ -104,7 +113,9 @@
                 </div>
                 <div class="partArea">
                     <div id="dataTree">
-                        <div id="dataTitle"><span>Valid Variants</span></div>
+                        <div id="dataTitle">
+                            <span>Valid Variants</span>
+                        </div>
                         <div id="repoButton">
                             <button type="button" onclick="refreshVariants()">
                                 <object data="css/images/refresh.svg" type="image/svg+xml"></object>
@@ -121,11 +132,18 @@
         </div>
     </div>
     <ul class="contextmenu" id="featureMenu">
-        <li><a href="javascript:void(0)" onclick="removeFeatureFromCanvas()">Remove</a></li>
+        <li>
+            <a href="javascript:void(0)" onclick="removeFeatureFromCanvas()">Remove</a>
+        </li>
     </ul>
     <div id="NewFMDialog">
-        <div class="DialogTitle"><span>New Feature Model</span></div>
-        <div class="nrow" id="nrow1"><span>Feature Model:</span><input type="text" id="ipt_sname" /></div>
+        <div class="DialogTitle">
+            <span>New Feature Model</span>
+        </div>
+        <div class="nrow" id="nrow1">
+            <span>Feature Model:</span>
+            <input type="text" id="ipt_sname" />
+        </div>
         <div class="exiter">
             <button onclick="startFM()">
                 <object data="css/images/create.svg" type="image/svg+xml"></object>
@@ -138,5 +156,27 @@
         </div>
     </div>
 </body>
+<div id="NewCardinalityDialog" class="NewNameDialog">
+    <div class="DialogTitle">
+        <span>Add Cardinality</span>
+    </div>
+    <div class="nrow">
+        <span>Minimum:</span>
+        <input class="ipt_card" type="number" value="1" min="1" id="ipt_min" onchange="setMax()" />
+    </div>
+    <div class="nrow">
+        <span>Maximum:</span>
+        <input class="ipt_card" type="number" value="2" min="2" id="ipt_max" />
+    </div>
+    <div class="exiter">
+        <button onclick="confirmCardinality()">
+            <object data="css/images/create.svg" type="image/svg+xml"></object>
+            OK</button>
+        <button onclick="closeDialog()">
+            <object data="css/images/cancel.svg" type="image/svg+xml"></object>
+            Cancel</button>
+    </div>
+</div>
 <textarea id="jtopo_textfield" onkeydown="keydownTextarea(this)"></textarea>
+
 </html>
