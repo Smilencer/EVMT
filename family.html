@@ -15,6 +15,7 @@
     <link href="css/common2.css" rel="stylesheet" />
     <link href="css/family.css" rel="stylesheet" />
     <script src="js/jquery-ui.min.js"></script>
+    <script src="js/codegen.js"></script>
 </head>
 
 <body>
@@ -51,6 +52,9 @@
             <button type="button" id="zoomOut" onclick="zoomOut()">
                 <object data="css/images/zoom-out.svg" type="image/svg+xml"></object>
                 Zoom Out</button>
+            <button type="button" id="exportImage" onclick="stage.saveImageInfo()">
+                <object data="css/images/screenshot.svg" type="image/svg+xml"></object>
+                Export Image</button>
             <a onclick="return explorer();" href="explorer.html" target="_blank">
                 <button type="button" id="explorer">
                     <object data="css/images/explorer.svg" type="image/svg+xml"></object>
@@ -250,6 +254,14 @@
 <ul class="contextmenu" style="display: none;">
     <li>
         <a href="javascript:void(0)" onclick="removeElementFromCanvas()">Remove</a>
+    </li>
+</ul>
+<ul class="contextmenu" id="repositoryContext" style="display: none;">
+    <li>
+        <a href="javascript:void(0)" onclick="openTestWindow()">Test</a>
+    </li>
+    <li>
+        <a href="javascript:void(0)" onclick="godownload()">Download</a>
     </li>
 </ul>
 <div id="NewConnectorDialog" class="NewNameDialog">

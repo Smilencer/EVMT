@@ -55,12 +55,9 @@
             <button type="button" id="zoomOut" onclick="zoomOut()">
                 <object data="css/images/zoom-out.svg" type="image/svg+xml"></object>
                 Zoom Out</button>
-            <button type="button" id="download" onclick="download()">
-                <object data="css/images/download.svg" type="image/svg+xml"></object>
-                Download</button>
-            <button type="button" id="testOnline" onclick="openTestWindow()">
-                <object data="css/images/test.svg" type="image/svg+xml"></object>
-                Test Online</button>
+            <button type="button" id="exportImage" onclick="stage.saveImageInfo()">
+                <object data="css/images/screenshot.svg" type="image/svg+xml"></object>
+                Export Image</button>
         </div>
         <div id="codingArea">
             <div class="partArea">
@@ -195,6 +192,14 @@
 <ul class="contextmenu" style="display: none;">
     <li>
         <a href="javascript:void(0)" onclick="removeElementFromCanvas()">Remove</a>
+    </li>
+</ul>
+<ul class="contextmenu" id="repositoryContext" style="display: none;">
+    <li>
+        <a href="javascript:void(0)" onclick="openTestWindow()">Test</a>
+    </li>
+    <li>
+        <a href="javascript:void(0)" onclick="godownload()">Download</a>
     </li>
 </ul>
 <div id="NewComponentName" class="NewNameDialog">

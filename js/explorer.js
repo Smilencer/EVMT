@@ -628,7 +628,7 @@ function batchdownload() {
     }
 }
 
-function openTestWindow() {
+function openTestWindow2() {
     if ($("#product_main").is(":visible ")) {
         if ($(".tickproduct:checked").length != 1) {
             alert("Please select one product.")

@@ -24,6 +24,7 @@
     <script src="js/jquery.blockUI.js"></script>
     <script src="js/repository.js"></script>
     <script src="js/jquery-ui.min.js"></script>
+    <script src="js/codegen.js"></script>
 </head>
 
 <body>
@@ -145,5 +146,12 @@
         </div>
     </div>
 </body>
-
+<ul class="contextmenu" id="repositoryContext" style="display: none;">
+    <li>
+        <a href="javascript:void(0)" onclick="openTestWindow()">Test</a>
+    </li>
+    <li>
+        <a href="javascript:void(0)" onclick="godownload()">Download</a>
+    </li>
+</ul>
 </html>

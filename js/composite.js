@@ -426,23 +426,3 @@ function deposit() {
     insertComposite(pack);
 }
 
-function download() {
-    if ($(".highlight").length == 0 || $(".highlight").parents("ul").length == 0) {
-        alert("Please select a component in the repository.")
-        return;
-    }
-    downloadCode($(".highlight").text(), $(".highlight").attr("store"), function (codeSet) {
-        var codeArray = Array.from(codeSet);
-        var code = codeArray.join(" ");
-        downloadFile($(".highlight").text() + ".js", code);
-    });
-}
-
-function openTestWindow() {
-    if ($(".highlight").length == 0 || $(".highlight").parents("ul").length == 0) {
-        alert("Please select a component in the repository.")
-        return;
-    }
-    window.open("test.html", "test", `location=no,toolbar=no,height=${screen.height},width=${screen.width}`);
-}
-

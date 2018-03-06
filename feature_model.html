@@ -46,6 +46,9 @@
                     <object data="css/images/zoom-out.svg" type="image/svg+xml"></object>
                     Zoom Out
                 </button>
+                <button type="button" id="exportImage" onclick="stage.saveImageInfo()">
+                    <object data="css/images/screenshot.svg" type="image/svg+xml"></object>
+                    Export Image</button>
             </div>
             <div id="codingArea">
                 <div class="partArea">
@@ -112,7 +115,7 @@
                     <canvas id="canvas" width="733" height="467"></canvas>
                 </div>
                 <div class="partArea">
-                    <div id="dataTree">
+                    <div class="dataTree-before" id="dataTree-toggle">
                         <div id="dataTitle">
                             <span>Valid Variants</span>
                         </div>
@@ -120,6 +123,10 @@
                             <button type="button" onclick="refreshVariants()">
                                 <object data="css/images/refresh.svg" type="image/svg+xml"></object>
                                 Refresh
+                            </button>
+                            <button type="button" onclick="resize()">
+                                <object data="css/images/resize.svg" type="image/svg+xml"></object>
+                                Resize
                             </button>
                         </div>
                         <div id="categoryDiv">

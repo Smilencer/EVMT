@@ -1,3 +1,11 @@
+$(document).contextmenu(function () {
+    return false;
+});
+
+$(document).click(function () {
+    $(".contextmenu").hide();
+});
+
 function OpenDB() {
     var request = indexedDB.open("Component Store");
     request.onerror = function (e) {
@@ -243,7 +251,7 @@ function cursorStore(storeName) {
         if (cursor) {
             var name = cursor.value.name;
             var liStr = "<li><object data='css/images/service.svg' type='image/svg+xml'></object>";
-            liStr += "<span store='" + storeName + "' onclick='highlight(this)'>" + name + "</span></li>";
+            liStr += "<span store='" + storeName + "' onclick='highlight(this)' oncontextmenu='rightClick(this)'>" + name + "</span></li>";
             $("#" + storeName + "Store").append(liStr);
             cursor.continue();
         }
@@ -268,6 +276,35 @@ function highlight(obj) {
     $(obj).addClass("highlight");
 }
 
+function rightClick(obj) {
+    highlight(obj);
+    var position = $(obj).offset();
+    $("#repositoryContext").css({
+        top: position.top,
+        left: position.left + $(obj).width()
+    }).show();
+}
+
 function growl(msg) {
     $.growlUI("Operation Complete", msg);
+}
+
+function openTestWindow() {
+    if ($(".highlight").length == 0 || $(".highlight").parents("ul").length == 0) {
+        alert("Please select a component in the repository.")
+        return;
+    }
+    window.open("test.html", "test", `location=no,toolbar=no,height=${screen.height},width=${screen.width}`);
+}
+
+function godownload() {
+    if ($(".highlight").length == 0 || $(".highlight").parents("ul").length == 0) {
+        alert("Please select a component in the repository.")
+        return;
+    }
+    downloadCode($(".highlight").text(), $(".highlight").attr("store"), function (codeSet) {
+        var codeArray = Array.from(codeSet);
+        var code = codeArray.join(" ");
+        downloadFile($(".highlight").text() + ".js", code);
+    });
 }

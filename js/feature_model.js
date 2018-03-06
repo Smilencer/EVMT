@@ -5,22 +5,15 @@ var altIndex = 1;
 var orIndex = 1;
 var nodeJSON = {};
 var productList = [];
+var lastSelectedNode = null;
 
 $(document).ready(function () {
-    Array.prototype.del = function (n) {
-        if (n < 0)
-            return this;
-        else
-            return this.slice(0, n).concat(this.slice(n + 1, this.length));
-    }
-
     var canvas = document.getElementById("canvas");
     stage = new JTopo.Stage(canvas);
     scene = new JTopo.Scene();
     stage.add(scene);
     JTopo.Node.prototype.xType = "";
     JTopo.Link.prototype.xType = "";
-    JTopo.FoldLink.prototype.xType = "";
 });
 
 function createFeatureModel() {
@@ -57,6 +50,10 @@ function startFM() {
 }
 
 function drawFeature(fName, featureType) {
+    let ctx = stage.canvas.getContext("2d");
+    ctx.font = "14px Arial";
+    let nameWidth = ctx.measureText(fName).width;
+    if (nameWidth < 40) { nameWidth = 40; }
     var defaultNode = new JTopo.Node();
     var textfield = $("#jtopo_textfield");
     defaultNode.text = fName;
@@ -66,7 +63,7 @@ function drawFeature(fName, featureType) {
     defaultNode.fillColor = '240,240,240';
     defaultNode.fontColor = '0,0,0';
     defaultNode.setLocation(180, 100);
-    defaultNode.setSize(120, 30);
+    defaultNode.setSize(nameWidth + 20, 30);
     defaultNode.borderRadius = 5;
     defaultNode.borderWidth = 2;
     if (featureType == "Optional") {
@@ -93,6 +90,7 @@ function drawFeature(fName, featureType) {
         }).show().attr("value", e.text).focus().select();
         e.text = "";
         textfield[0].JTopoNode = e;
+        lastSelectedNode = defaultNode;
     });
     defaultNode.mouseup(function (event) {
         if (event.button == 2) {
@@ -107,8 +105,14 @@ function drawFeature(fName, featureType) {
             $("#featureMenu").hide();
         }
     });
-    $("#jtopo_textfield").blur(function () {
-        textfield[0].JTopoNode.text = textfield.hide().val();
+    $("#jtopo_textfield").blur(function (event) {
+        textfield[0].JTopoNode.text = textfield.hide().val().trim();
+        var e = event.target;
+        let ctx = stage.canvas.getContext("2d");
+        ctx.font = "14px Arial";
+        let nameWidth = ctx.measureText(textfield.val().trim()).width;
+        if (nameWidth < 40) { nameWidth = 40; }
+        lastSelectedNode.width = nameWidth + 20;
     });
     return defaultNode;
 }
@@ -232,12 +236,12 @@ function addNewConstraint(constraint) {
     if (pair.length != 2) { return; }
     var source = pair[0];
     var target = pair[1];
-    var link = drawFoldLink(source, target, constraint);
+    var link = drawLink(source, target, constraint);
     link.xType = constraint;
 }
 
-function drawFoldLink(nodeA, nodeZ, text) {
-    var link = new JTopo.FoldLink(nodeA, nodeZ, text);
+function drawLink(nodeA, nodeZ, text) {
+    var link = new JTopo.Link(nodeA, nodeZ, text);
     link.lineWidth = 1;
     link.dashedPattern = 5;
     link.fontColor = '0,0,0';
@@ -275,7 +279,13 @@ function refreshVariants() {
     if (root.text in nodeJSON) {
         productList = nodeJSON[root.text];
         expandDeeper(root.text);
-        productList = filterOut(productList);
+        var productSet = new Set();
+        for (let item of productList) {
+            var set = new Set(item.split(/,/g));
+            set.delete("");
+            productSet.add([...set].join(", "));
+        }
+        productList = filterOut([...productSet]);
         productList.sort();
         $("#dataTitle>span").empty().append(productList.length + " Valid Variants");
         for (var i = 0; i < productList.length; i++) {
@@ -426,16 +436,28 @@ function expandResult(featureKey) {
 
 function filterOut(productArray) {
     var result = scene.findElements(function (e) {
+        return e.xType == "Requires" || e.xType == "Excludes";
+    });
+    if (result.length == 0) {
+        return productArray;
+    }
+
+    var finalSet = new Set(productArray);
+    result = scene.findElements(function (e) {
         return e.xType == "Requires";
     });
     if (result.length > 0) {
-        for (var i = 0; i < result.length; i++) {
-            var source = result[i].nodeA.text;
-            var target = result[i].nodeZ.text;
-            for (var j = productArray.length - 1; j >= 0; j--) {
-                var productItem = productArray[j].split(",");
-                if ($.inArray(source, productItem) != -1 && $.inArray(target, productItem) == -1) {
-                    productArray.del(j);
+        let resultArray = ExpandConstraint(result);
+        for (let productStr of finalSet) {
+            var productItem = productStr.split(", ");
+            for (let item of resultArray) {
+                let itemArr = item.split(";");
+                let sourceArr = itemArr[0].split(",");
+                let targetArr = itemArr[1].split(",");
+                let intersect1 = productItem.filter(x => sourceArr.includes(x));
+                let intersect2 = productItem.filter(x => targetArr.includes(x));
+                if (intersect1.length > 0 && intersect2.length == 0) {
+                    finalSet.delete(productStr);
                 }
             }
         }
@@ -444,18 +466,96 @@ function filterOut(productArray) {
         return e.xType == "Excludes";
     });
     if (result.length > 0) {
-        for (var i = 0; i < result.length; i++) {
-            var source = result[i].nodeA.text;
-            var target = result[i].nodeZ.text;
-            for (var j = productArray.length - 1; j >= 0; j--) {
-                var productItem = productArray[j].split(",");
-                if ($.inArray(source, productItem) != -1 && $.inArray(target, productItem) != -1) {
-                    productArray = productArray.del(j);
+        let resultArray = ExpandConstraint(result);
+        for (let productStr of finalSet) {
+            var productItem = productStr.split(", ");
+            for (let item of resultArray) {
+                let itemArr = item.split(";");
+                let sourceArr = itemArr[0].split(",");
+                let targetArr = itemArr[1].split(",");
+                let intersect1 = productItem.filter(x => sourceArr.includes(x));
+                let intersect2 = productItem.filter(x => targetArr.includes(x));
+                if (intersect1.length > 0 && intersect2.length > 0) {
+                    finalSet.delete(productStr);
                 }
             }
         }
     }
-    return productArray;
+    return [...finalSet];
+}
+
+function ExpandConstraint(linkArray) {
+    var resultArray = [];
+    for (let link of linkArray) {
+        var source = link.nodeA;
+        var target = link.nodeZ;
+        if (isLeaf(source)) {
+            if (isLeaf(target)) {
+                resultArray.push(source.text + ";" + target.text);
+            }
+            else {
+                let targetArr = getAllLeaves(target, []);
+                let targetSet = new Set();
+                for (let item of targetArr) {
+                    targetSet.add(item.text);
+                }
+                resultArray.push(source.text + ";" + [...targetSet].join(","));
+            }
+        }
+        else {
+            if (isLeaf(target)) {
+                let sourceArr = getAllLeaves(source, []);
+                let sourceSet = new Set();
+                for (let item of sourceArr) {
+                    sourceSet.add(item.text);
+                }
+                resultArray.push([...sourceSet].join(",") + ";" + target.text);
+            }
+            else {
+                let sourceArr = getAllLeaves(source, []);
+                let targetArr = getAllLeaves(target, []);
+                let sourceSet = new Set();
+                let targetSet = new Set();
+                for (let item of sourceArr) {
+                    sourceSet.add(item.text);
+                }
+                for (let item of targetArr) {
+                    targetSet.add(item.text);
+                }
+                resultArray.push([...sourceSet].join(",") + ";" + [...targetSet].join(","));
+            }
+        }
+    }
+    return resultArray;
+}
+
+function isLeaf(node) {
+    let olinks = node.outLinks;
+    if (olinks.length == 0) { return true; }
+    else {
+        for (let link of olinks) {
+            if (link.xType != "Requires" && link.xType != "Excludes") {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+function getAllLeaves(node, arr) {
+    if (node.outLinks.length == 0) {
+        arr.push(node);
+    }
+    else {
+        let olinks = node.outLinks;
+        for (let link of olinks) {
+            if (link.xType != "Requires" && link.xType != "Excludes") {
+                let child = link.nodeZ;
+                getAllLeaves(child, arr);
+            }
+        }
+    }
+    return arr;
 }
 
 function zoomIn() {
@@ -551,4 +651,17 @@ function confirmCardinality() {
         link.text = `${orId} <${$("#ipt_min").val()}..${$("#ipt_max").val()}>`;
     }
     closeDialog();
+}
+
+function resize() {
+    if ($(".partArea:first").is(":visible")) {
+        $(".partArea:first").hide(function () {
+            $("#dataTree-toggle").switchClass("dataTree-before", "dataTree-after", 1000);
+        });
+    }
+    else {
+        $("#dataTree-toggle").switchClass("dataTree-after", "dataTree-before", 1000, function () {
+            $(".partArea:first").show();
+        })
+    }
 }

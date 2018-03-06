@@ -30,21 +30,7 @@ $(document).ready(function () {
 
 function initCode() {
     var path = window.opener.location.pathname;
-    if (path == "/composite.html") {
-        var name = $(".highlight", window.opener.document).text();
-        var storeName = $(".highlight", window.opener.document).attr("store");
-        $("#cname").empty().append(name);
-        opener.downloadCode(name, storeName, function (codeSet) {
-            var codeArray = Array.from(codeSet);
-            var code = codeArray.join(" ");
-            code = code.replace(/^\s+/, '');
-            code = js_beautify(code, 4, ' ');
-            $("#code").val(code);
-            $("#code").setTextareaCount();
-            $(".textarea-group").width(537);
-        });
-    }
-    else if (path == "/explorer.html") {
+    if (path == "/explorer.html") {
         var name = $(window.opener.xmlDoc).attr("class");
         let num;
         if ($("#product_main", window.opener.document).is(":visible")) {
@@ -60,6 +46,20 @@ function initCode() {
         opener.downloadProduct($(productXML).find("component"), function (codeSet) {
             var codeArray = Array.from(codeSet);
             var code = opener.generateCode($(productXML)) + " " + codeArray.join(" ");
+            code = code.replace(/^\s+/, '');
+            code = js_beautify(code, 4, ' ');
+            $("#code").val(code);
+            $("#code").setTextareaCount();
+            $(".textarea-group").width(537);
+        });
+    }
+    else {
+        var name = $(".highlight", window.opener.document).text();
+        var storeName = $(".highlight", window.opener.document).attr("store");
+        $("#cname").empty().append(name);
+        opener.downloadCode(name, storeName, function (codeSet) {
+            var codeArray = Array.from(codeSet);
+            var code = codeArray.join(" ");
             code = code.replace(/^\s+/, '');
             code = js_beautify(code, 4, ' ');
             $("#code").val(code);
