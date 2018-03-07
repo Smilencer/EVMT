@@ -195,7 +195,7 @@ function addNewLink() {
         link.text = "MAN" + manIndex;
         manIndex++;
     }
-    scene.doLayout(JTopo.layout.TreeLayout("down", 150, 75));
+    scene.doLayout(JTopo.layout.TreeLayout("right", 65, 250));
 }
 
 function setGroup() {
@@ -242,10 +242,11 @@ function addNewConstraint(constraint) {
 
 function drawLink(nodeA, nodeZ, text) {
     var link = new JTopo.Link(nodeA, nodeZ, text);
-    link.lineWidth = 1;
-    link.dashedPattern = 5;
-    link.fontColor = '0,0,0';
-    link.strokeColor = '0,0,0';
+    link.lineWidth = 3;
+    link.dashedPattern = 1.5;
+    link.fontColor = '8, 100, 0';
+    link.strokeColor = '10, 130, 0';
+    link.font = "14px Verdana bolder";
     link.direction = 'horizontal' || 'vertical';
     link.arrowsRadius = 15;
     link.bundleOffset = 60;
@@ -269,6 +270,8 @@ function drawLink(nodeA, nodeZ, text) {
 }
 
 function refreshVariants() {
+    nodeJSON = {};
+    productList = [];
     $("#categoryDiv>ol").empty();
     var result = scene.findElements(function (e) {
         return e.xType == "root";
