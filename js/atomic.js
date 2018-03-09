@@ -84,10 +84,10 @@ function addData() {
         alert("Select input or output for the data.");
         return;
     }
-    $("#tabler>table").children("tbody").append("<tr><td><a href='javascript:void(0)' onclick='removeData(this)'><img src='css/images/delete.svg' width='15' /></a></td><td>" + dname + "</td><td>" + $(".ipt_radio:checked").val() + "</td></tr>");
+    $("#tabler>table").children("tbody").append("<tr><td><a href='javascript:void(0)' onclick='removeIOData(this)'><img src='css/images/delete.svg' width='15' /></a></td><td>" + dname + "</td><td>" + $(".ipt_radio:checked").val() + "</td></tr>");
 }
 
-function removeData(obj) {
+function removeIOData(obj) {
     $(obj).parent().parent().remove();
 }
 
