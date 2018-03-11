@@ -95,7 +95,7 @@ function drawComponentBlock(name, storeName, instance, service) {
     scene.add(block);
     block.mouseup(function (event) {
         if (event.button == 2) {
-            $(".contextmenu").css({
+            $("#canvasContext").css({
                 top: event.pageY,
                 left: event.pageX
             }).show();
@@ -161,7 +161,7 @@ function drawDataInComposite(io, name) {
     });
     data.mouseup(function (event) {
         if (event.button == 2) {
-            $(".contextmenu").css({
+            $("#canvasContext").css({
                 top: event.pageY,
                 left: event.pageX
             }).show();
@@ -213,7 +213,7 @@ function drawDataInBlock(container, io, name) {
     });
     data.mouseup(function (event) {
         if (event.button == 2 && container.objectType == "connector") {
-            $(".contextmenu").css({
+            $("#canvasContext").css({
                 top: event.pageY,
                 left: event.pageX
             }).show();
@@ -262,7 +262,7 @@ function drawFeatureInteraction(container, content) {
     container.add(interaction);
     interaction.mouseup(function (event) {
         if (event.button == 2 && container.objectType == "connector") {
-            $(".contextmenu").css({
+            $("#canvasContext").css({
                 top: event.pageY,
                 left: event.pageX
             }).show();
@@ -314,7 +314,7 @@ function drawConnector(name, instance) {
     });
     fcon.mouseup(function (event) {
         if (event.button == 2) {
-            $(".contextmenu").css({
+            $("#canvasContext").css({
                 top: event.pageY,
                 left: event.pageX
             }).show();
@@ -370,7 +370,6 @@ function drawCompositionEdge(source, target, condition) {
         link.lineWidth = 3; // line width
         link.offsetGap = 20;
         link.bundleGap = 15; // space between lines
-        link.textOffsetY = 0; // offset X,Y of the line text
         link.strokeColor = "88, 114, 137";
         link.fontColor = "0,0,0";
         link.font = "italic 10pt Arial";
@@ -388,7 +387,7 @@ function drawCompositionEdge(source, target, condition) {
         });
         link.mouseup(function (event) {
             if (event.button == 2) {
-                $(".contextmenu").css({
+                $("#canvasContext").css({
                     top: event.pageY,
                     left: event.pageX
                 }).show();
@@ -422,7 +421,7 @@ function drawVariationEdge(source, target) {
         link.objectType = "diversity";
         link.mouseup(function (event) {
             if (event.button == 2) {
-                $(".contextmenu").css({
+                $("#canvasContext").css({
                     top: event.pageY,
                     left: event.pageX
                 }).show();
@@ -453,7 +452,7 @@ function drawFeatureInteractionEdge(source, target) {
         link.objectType = "fiEdge";
         link.mouseup(function (event) {
             if (event.button == 2) {
-                $(".contextmenu").css({
+                $("#canvasContext").css({
                     top: event.pageY,
                     left: event.pageX
                 }).show();
@@ -532,7 +531,7 @@ function drawConstraintEdge(source, target, constraint) {
         }
         link.mouseup(function (event) {
             if (event.button == 2) {
-                $(".contextmenu").css({
+                $("#canvasContext").css({
                     top: event.pageY,
                     left: event.pageX
                 }).show();
@@ -555,7 +554,6 @@ function drawDataChannel(source, target, flow) {
         link.lineWidth = 1; // line width
         link.offsetGap = 35;
         link.bundleGap = 15; // space between lines
-        link.textOffsetY = 10; // offset X,Y of the line text
         link.strokeColor = "255, 48, 48";
         link.fontColor = "0,0,0";
         link.objectType = "channel";
@@ -592,7 +590,7 @@ function drawDataChannel(source, target, flow) {
         scene.add(link);
         link.mouseup(function (event) {
             if (event.button == 2) {
-                $(".contextmenu").css({
+                $("#canvasContext").css({
                     top: event.pageY,
                     left: event.pageX
                 }).show();
@@ -636,15 +634,15 @@ function drawVariationGenerator(name) {
     node.mouseup(function (event) {
         if (event.button == 2) {
             if (node.objectName == "Or") {
-                if ($(".contextmenu .or-card").length == 0) {
-                    $(".contextmenu>li").append(`<a class="or-card" href="javascript:void(0)" onclick="setCardinality()">Set Cardinality</a>`);
-                    $(".contextmenu>li").append(`<a class="or-card" href="javascript:void(0)" onclick="restoreCardinality()">Restore Cardinality</a>`);
+                if ($("#canvasContext .or-card").length == 0) {
+                    $("#canvasContext>li").append(`<a class="or-card" href="javascript:void(0)" onclick="setCardinality()">Set Cardinality</a>`);
+                    $("#canvasContext>li").append(`<a class="or-card" href="javascript:void(0)" onclick="restoreCardinality()">Restore Cardinality</a>`);
                 }
             }
             else {
                 $(".or-card").remove();
             }
-            $(".contextmenu").css({
+            $("#canvasContext").css({
                 top: event.pageY,
                 left: event.pageX
             }).show();

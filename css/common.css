@@ -181,6 +181,8 @@ body {
 
 .category span {
     cursor: pointer;
+    max-width: 140px;
+    display: inline-block;
 }
 
 .category ul {

@@ -402,9 +402,10 @@ function deposit() {
         return;
     }
     var inputArray = $(xmlDoc).find("inputs").attr("list").split(",");
-    for (let item of inputArray) {
+    let inputSet = new Set(inputArray);
+    for (let item of inputSet) {
         if ($(xmlDoc).find(`channel[to="${item}"]`).length > 0) {
-            inputArray.splice(inputArray.findIndex(x => x == item), 1);
+            inputSet.delete(item);
         }
     }
     var outputArray = $(xmlDoc).find("outputs").attr("list").split(",");
@@ -418,7 +419,7 @@ function deposit() {
     var pack = {
         "name": currentObject.objectName,
         "service": currentObject.objectService,
-        "input": inputArray,
+        "input": [...inputSet],
         "output": outputArray,
         "subComponent": subComponentMap,
         "code": code.compress()
