@@ -17,7 +17,7 @@ $(document).ready(function () {
     }
 
     // xmlDoc = window.opener.xmlDoc;
-    xmlDoc=`<family class="CarLight" service="activate"><connector type="F-Sequencer" name="F-SEQ3" data="" interaction="(StaticCornerLight)SCL2->(StaticCornerFogLight)SCFL2,(FogLight)Fog->|"><condition value="0"><connector type="F-Selector" name="F-SEL1" data="high_or_low" interaction=""><condition value="high_or_low==&quot;high&quot;"><vg type="Alternative"><component store="Atomic" class="LowBeamXenon" name="LBX1" service="toggleLight"></component><component store="Atomic" class="LowBeamHalogen" name="LBH1" service="toggleLight"></component></vg></condition><condition value="high_or_low==&quot;low&quot;"><vg type="Alternative"><component store="Atomic" class="HighBeamXenon" name="HBX1" service="toggleLight"></component><component store="Atomic" class="HighBeamHalogen" name="HBH1" service="toggleLight"></component></vg></condition></connector></condition><condition value="2"><vg type="Optional"><vg type="Or"><vg type="Or"><component store="Composite" class="StaticCornerLight" name="SCL1" service="toggleLight"></component><component store="Composite" class="AdaptiveForwardLight" name="AFL1" service="toggleLight"></component></vg><connector type="F-Sequencer" name="F-SEQ1" data="" interaction=""><condition value="0"><component store="Atomic" class="Camera" name="Cam" service="detectCars"></component></condition><condition value="1"><vg type="Alternative"><component store="Atomic" class="LowBeamXenon" name="LBX2" service="toggleLight"></component><component store="Atomic" class="LowBeamHalogen" name="LBH2" service="toggleLight"></component></vg></condition><condition value="2"><vg type="Alternative"><component store="Atomic" class="HighBeamXenon" name="HBX2" service="toggleLight"></component><component store="Atomic" class="HighBeamHalogen" name="HBH2" service="toggleLight"></component></vg></condition></connector><connector type="F-Sequencer" name="F-SEQ2" data="" interaction=""><condition value="0"><component store="Atomic" class="LightSensor" name="LS" service="getLightLevel"></component></condition><condition value="1"><vg type="Alternative"><component store="Atomic" class="LowBeamXenon" name="LBX3" service="toggleLight"></component><component store="Atomic" class="LowBeamHalogen" name="LBH3" service="toggleLight"></component></vg></condition><condition value="2"><vg type="Or"><component store="Composite" class="StaticCornerLight" name="SCL2" service="toggleLight"></component><component store="Composite" class="AdaptiveForwardLight" name="AFL2" service="toggleLight"></component></vg></condition></connector></vg></vg></condition><condition value="3"><vg type="Optional"><component store="Atomic" class="FogLight" name="Fog" service="toggleLight"></component></vg></condition><condition value="1"><vg type="Optional"><vg type="Alternative"><component store="Atomic" class="DRL_LowBeam" name="LB" service="toggleLight"></component><vg type="Alternative"><component store="Atomic" class="DRL_LED" name="LED" service="toggleLight"></component><component store="Atomic" class="DRL_Bulb" name="Bulb" service="toggleLight"></component></vg></vg></vg></condition></connector><dataChannel><inputs list="high_or_low,request_beam,request_power,request_cornering,request_fog,request_DRL"></inputs><outputs list=""></outputs><channel from="request_beam" to="LBX1.request"></channel><channel from="request_beam" to="LBH1.request"></channel><channel from="request_beam" to="HBX1.request"></channel><channel from="request_power" to="LBH1.power"></channel><channel from="request_power" to="HBH2.power"></channel><channel from="Cam.request_low" to="LBX2.request"></channel><channel from="Cam.request_low" to="LBH2.request"></channel><channel from="request_power" to="LBH2.power"></channel><channel from="Cam.request_high" to="HBX2.request"></channel><channel from="request_power" to="HBH1.power"></channel><channel from="request_cornering" to="SCFL1.request"></channel><channel from="request_cornering" to="SCFL2.request"></channel><channel from="request_cornering" to="SCL1.request"></channel><channel from="request_cornering" to="AFL1.request"></channel><channel from="request_fog" to="Fog.request"></channel><channel from="LS.trigger" to="LBX3.request"></channel><channel from="LS.trigger" to="LBH3.request"></channel><channel from="LS.trigger" to="SCL2.request"></channel><channel from="LS.trigger" to="AFL2.request"></channel><channel from="request_power" to="LBH3.power"></channel><channel from="request_DRL" to="LB.request"></channel><channel from="request_DRL" to="LED.request"></channel><channel from="request_DRL" to="Bulb.request"></channel><channel from="request_beam" to="HBH1.request"></channel><channel from="Cam.request_high" to="HBH2.request"></channel></dataChannel><constraints><constraint type="require" from="LBX2" to="LBX1"></constraint><constraint type="require" from="LBH2" to="LBH1"></constraint><constraint type="require" from="HBX2" to="HBX1"></constraint><constraint type="require" from="HBH2" to="HBH1"></constraint><constraint type="require" from="LBX3" to="LBX1"></constraint><constraint type="require" from="LBH3" to="LBH1"></constraint><constraint type="require" from="SCL2" to="SCL1"></constraint><constraint type="require" from="AFL2" to="AFL1"></constraint></constraints><interactions><fi store="Composite" class="StaticCornerFogLight" name="SCFL1" service="toggleLight"></fi><fi store="Composite" class="StaticCornerFogLight" name="SCFL2" service="toggleLight"></fi></interactions></family>`;
+    xmlDoc = `<family class="CarLight" service="activate"><connector type="F-Sequencer" name="F-SEQ3" data="" interaction="(StaticCornerLight)SCL2->(StaticCornerFogLight)SCFL2,(FogLight)Fog->|"><condition value="0"><connector type="F-Selector" name="F-SEL1" data="high_or_low" interaction=""><condition value="high_or_low==&quot;high&quot;"><vg type="Alternative"><component store="Atomic" class="LowBeamXenon" name="LBX1" service="toggleLight"></component><component store="Atomic" class="LowBeamHalogen" name="LBH1" service="toggleLight"></component></vg></condition><condition value="high_or_low==&quot;low&quot;"><vg type="Alternative"><component store="Atomic" class="HighBeamXenon" name="HBX1" service="toggleLight"></component><component store="Atomic" class="HighBeamHalogen" name="HBH1" service="toggleLight"></component></vg></condition></connector></condition><condition value="2"><vg type="Optional"><vg type="Or"><vg type="Or"><component store="Composite" class="StaticCornerLight" name="SCL1" service="toggleLight"></component><component store="Composite" class="AdaptiveForwardLight" name="AFL1" service="toggleLight"></component></vg><connector type="F-Sequencer" name="F-SEQ1" data="" interaction=""><condition value="0"><component store="Atomic" class="Camera" name="Cam" service="detectCars"></component></condition><condition value="1"><vg type="Alternative"><component store="Atomic" class="LowBeamXenon" name="LBX2" service="toggleLight"></component><component store="Atomic" class="LowBeamHalogen" name="LBH2" service="toggleLight"></component></vg></condition><condition value="2"><vg type="Alternative"><component store="Atomic" class="HighBeamXenon" name="HBX2" service="toggleLight"></component><component store="Atomic" class="HighBeamHalogen" name="HBH2" service="toggleLight"></component></vg></condition></connector><connector type="F-Sequencer" name="F-SEQ2" data="" interaction=""><condition value="0"><component store="Atomic" class="LightSensor" name="LS" service="getLightLevel"></component></condition><condition value="1"><vg type="Alternative"><component store="Atomic" class="LowBeamXenon" name="LBX3" service="toggleLight"></component><component store="Atomic" class="LowBeamHalogen" name="LBH3" service="toggleLight"></component></vg></condition><condition value="2"><vg type="Or"><component store="Composite" class="StaticCornerLight" name="SCL2" service="toggleLight"></component><component store="Composite" class="AdaptiveForwardLight" name="AFL2" service="toggleLight"></component></vg></condition></connector></vg></vg></condition><condition value="3"><vg type="Optional"><component store="Atomic" class="FogLight" name="Fog" service="toggleLight"></component></vg></condition><condition value="1"><vg type="Optional"><vg type="Alternative"><component store="Atomic" class="DRL_LowBeam" name="LB" service="toggleLight"></component><vg type="Alternative"><component store="Atomic" class="DRL_LED" name="LED" service="toggleLight"></component><component store="Atomic" class="DRL_Bulb" name="Bulb" service="toggleLight"></component></vg></vg></vg></condition></connector><dataChannel><inputs list="high_or_low,request_beam,request_power,request_cornering,request_fog,request_DRL"></inputs><outputs list=""></outputs><channel from="request_beam" to="LBX1.request"></channel><channel from="request_beam" to="LBH1.request"></channel><channel from="request_beam" to="HBX1.request"></channel><channel from="request_power" to="LBH1.power"></channel><channel from="request_power" to="HBH2.power"></channel><channel from="Cam.request_low" to="LBX2.request"></channel><channel from="Cam.request_low" to="LBH2.request"></channel><channel from="request_power" to="LBH2.power"></channel><channel from="Cam.request_high" to="HBX2.request"></channel><channel from="request_power" to="HBH1.power"></channel><channel from="request_cornering" to="SCFL1.request"></channel><channel from="request_cornering" to="SCFL2.request"></channel><channel from="request_cornering" to="SCL1.request"></channel><channel from="request_cornering" to="AFL1.request"></channel><channel from="request_fog" to="Fog.request"></channel><channel from="LS.trigger" to="LBX3.request"></channel><channel from="LS.trigger" to="LBH3.request"></channel><channel from="LS.trigger" to="SCL2.request"></channel><channel from="LS.trigger" to="AFL2.request"></channel><channel from="request_power" to="LBH3.power"></channel><channel from="request_DRL" to="LB.request"></channel><channel from="request_DRL" to="LED.request"></channel><channel from="request_DRL" to="Bulb.request"></channel><channel from="request_beam" to="HBH1.request"></channel><channel from="Cam.request_high" to="HBH2.request"></channel></dataChannel><constraints><constraint type="require" from="LBX2" to="LBX1"></constraint><constraint type="require" from="LBH2" to="LBH1"></constraint><constraint type="require" from="HBX2" to="HBX1"></constraint><constraint type="require" from="HBH2" to="HBH1"></constraint><constraint type="require" from="LBX3" to="LBX1"></constraint><constraint type="require" from="LBH3" to="LBH1"></constraint><constraint type="require" from="SCL2" to="SCL1"></constraint><constraint type="require" from="AFL2" to="AFL1"></constraint></constraints><interactions><fi store="Composite" class="StaticCornerFogLight" name="SCFL1" service="toggleLight"></fi><fi store="Composite" class="StaticCornerFogLight" name="SCFL2" service="toggleLight"></fi></interactions></family>`;
 
     var xmlTree = $(xmlDoc);
     var depthMap = assessDepth(xmlTree);
@@ -25,7 +25,11 @@ $(document).ready(function () {
     var root = $(xmlTree).children("connector").attr("name");
     var rootSet = connectorMap.get(root);
     connectorMap.delete(root);
-    var finalSet = combineComposition(connectorMap, rootSet);
+    var finalSet = filterOut($(xmlTree).children("connector"), combineComposition(connectorMap, rootSet), $(xmlTree).children("constraints"));
+    let interactions = $(xmlTree).children("connector").attr("interaction");
+    if (interactions != "") {
+        finalSet = setInteraction(interactions, finalSet);
+    }
     generateProductsXML(finalSet, xmlTree);
     $("#product_summary>span").append(`${$(xmlTree).attr("class")}: ${finalSet.size} products`);
     showExplorer();
@@ -76,13 +80,11 @@ function combineComposition(connectorMap, rootSet) {
             isToEnd = false;
             for (let str of rootSet) {
                 if (str.includes(key)) {
+                    rootSet.delete(str);
                     for (let arr of value) {
                         let result = str.replace(key, arr);
-                        newSet.add(result);
+                        rootSet.add(result);
                     }
-                }
-                else {
-                    newSet.add(str);
                 }
             }
         }
@@ -91,7 +93,7 @@ function combineComposition(connectorMap, rootSet) {
         return rootSet;
     }
     else {
-        return combineComposition(connectorMap, newSet);
+        return combineComposition(connectorMap, rootSet);
     }
 }
 
@@ -101,7 +103,7 @@ function generateComposition(depthMap, xmlTree) {
         let valueArr = depthMap.get(key);
         for (let connectorName of valueArr) {
             let setArray = generateSubComposition(connectorName, xmlTree);
-            let oneSet = filterOut(doCartesian(setArray), $(xmlTree).children("constraints"));
+            let oneSet = filterOut($(xmlTree).find(`connector[name='${connectorName}']`), doCartesian(setArray), $(xmlTree).children("constraints"));
             let interactions = $(xmlTree).find(`connector[name="${connectorName}"]`).attr("interaction");
             if (interactions != "") {
                 oneSet = setInteraction(interactions, oneSet);
@@ -254,24 +256,30 @@ function CartesianProducts(set1, set2) {
     return set3;
 }
 
-function filterOut(oneSet, constraintsTree) {
+function filterOut(connectorList, oneSet, constraintsTree) {
+    let leaves = [];
+    for (let leaf of $(connectorList).find("component")) {
+        leaves.push($(leaf).attr("name"));
+    }
     for (let constraint of $(constraintsTree).children()) {
         let type = $(constraint).attr("type");
         let from = $(constraint).attr("from");
         let to = $(constraint).attr("to");
-        if (type == "require") {
-            for (let str of oneSet) {
-                let arr = str.split(/\+|,/);
-                if (arr.includes(from) && !arr.includes(to)) {
-                    oneSet.delete(str);
+        if (leaves.includes(from) && leaves.includes(to)) {
+            if (type == "require") {
+                for (let str of oneSet) {
+                    let arr = str.split(/\+|,/);
+                    if (arr.includes(from) && !arr.includes(to)) {
+                        oneSet.delete(str);
+                    }
                 }
             }
-        }
-        if (type == "exclude") {
-            for (let str of oneSet) {
-                let arr = str.split(/\+|,/);
-                if (arr.includes(from) && arr.includes(to)) {
-                    oneSet.delete(str);
+            if (type == "exclude") {
+                for (let str of oneSet) {
+                    let arr = str.split(/\+|,/);
+                    if (arr.includes(from) && arr.includes(to)) {
+                        oneSet.delete(str);
+                    }
                 }
             }
         }
@@ -367,7 +375,12 @@ function generateProductsXML(finalSet, xmlTree) {
         for (let vgObj of vgArray) {
             if ($(vgObj).attr("type") == "Or") {
                 for (let orkid of $(vgObj).children()) {
-                    $(orkid).wrap(`<condition value="${$(orkid).attr("name")}"></condition>`);
+                    if ($(orkid)[0].hasAttribute("name")) {
+                        $(orkid).wrap(`<condition value="${$(orkid).attr("name")}"></condition>`);
+                    }
+                    else {
+                        $(orkid).wrap(`<condition value="Agg${index + 1}"></condition>`);
+                    }
                 }
                 $(vgObj).wrapInner(`<connector type="Aggregator" name="Agg${index}" data="agg${index}"></connector>`);
                 index++;
@@ -514,7 +527,7 @@ function showProduct(num) {
                     }
                 }
                 drawPicture($(tree).children("connector"), componentArray);
-                scene.doLayout(JTopo.layout.TreeLayout("down", 200, 107));
+                scene.doLayout(JTopo.layout.TreeLayout("down", 50, 107));
                 for (let channelNode of $(tree).find("channel")) {
                     let fromArr = $(channelNode).attr("from").split(".");
                     let toArr = $(channelNode).attr("to").split(".");

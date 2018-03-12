@@ -195,7 +195,7 @@ function addNewLink() {
         link.text = "MAN" + manIndex;
         manIndex++;
     }
-    scene.doLayout(JTopo.layout.TreeLayout("right", 65, 250));
+    scene.doLayout(JTopo.layout.TreeLayout("right", 45, 150));
 }
 
 function setGroup() {
