@@ -241,13 +241,13 @@ function addNewConstraint(constraint) {
 }
 
 function drawLink(nodeA, nodeZ, text) {
-    var link = new JTopo.Link(nodeA, nodeZ, text);
+    var link = new JTopo.FoldLink(nodeA, nodeZ, text);
     link.lineWidth = 3;
     link.dashedPattern = 1.5;
     link.fontColor = '8, 100, 0';
     link.strokeColor = '10, 130, 0';
     link.font = "14px Verdana bolder";
-    link.direction = 'horizontal' || 'vertical';
+    link.direction = "vertical";
     link.arrowsRadius = 15;
     link.bundleOffset = 60;
     link.bundleGap = 20;
