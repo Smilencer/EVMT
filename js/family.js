@@ -362,7 +362,7 @@ function InsertNewNode(node) {
     var nodeStr = "";
     if (node.objectType == "connector") {
         var dataStr = "";
-        var interactionStr = "";
+        let interactionSet = new Set();
         if (node.childs.length > 0) {
             var dataNameArr = [];
             for (let data of node.childs) {
@@ -370,11 +370,12 @@ function InsertNewNode(node) {
                     dataNameArr.push(data.objectInstance);
                 }
                 else if (data.objectType == "interaction") {
-                    interactionStr = data.objectInstance;
+                    interactionSet.add(data.objectInstance);
                 }
             }
             dataStr = dataNameArr.join(",");
         }
+        var interactionStr = [...interactionSet].join("@");
         nodeStr += `<connector type="${node.objectName}" name="${node.objectInstance}" data="${dataStr}" interaction="${interactionStr}">`;
         for (let link of node.outLinks) {
             nodeStr += `<condition value="${link.text.replaceAll()}">${InsertNewNode(link.nodeZ)}</condition>`;
@@ -590,7 +591,7 @@ function setCardinality() {
     });
 }
 
-function restoreCardinality(){
+function restoreCardinality() {
     var orNode = scene.currentElement;
     orNode.objectCardinality = null;
     orNode.alarm = `<1..*>`;

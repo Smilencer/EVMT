@@ -411,7 +411,7 @@ function drawVariationEdge(source, target) {
         link.direction = "vertical";
         link.dashedPattern = 3;
         link.arrowsRadius = 0;
-        link.lineWidth = 2; // line width
+        link.lineWidth = 5; // line width
         link.offsetGap = 20;
         link.bundleGap = 15; // space between lines
         link.fontColor = "22, 160, 133";
@@ -472,7 +472,7 @@ function drawConstraintEdge(source, target, constraint) {
         var link = new JTopo.Link(source, target, constraint.toUpperCase() + "S");
         link.direction = "horizontal";
         link.arrowsRadius = 10;
-        link.lineWidth = 2.5; // line width
+        link.lineWidth = 1; // line width
         link.offsetGap = 20;
         link.bundleGap = 15; // space between lines
         link.fontColor = "200,60,196";
