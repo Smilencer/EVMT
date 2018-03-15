@@ -397,12 +397,7 @@ function generateProductsXML(finalSet, xmlTree) {
         for (let vgObj of vgArray) {
             if ($(vgObj).attr("type") == "Or") {
                 for (let orkid of $(vgObj).children()) {
-                    if ($(orkid)[0].hasAttribute("name")) {
-                        $(orkid).wrap(`<condition value="${$(orkid).attr("name")}"></condition>`);
-                    }
-                    else {
-                        $(orkid).wrap(`<condition value="Agg${index + 1}"></condition>`);
-                    }
+                    $(orkid).wrap(`<condition value=""></condition>`);
                 }
                 $(vgObj).wrapInner(`<connector type="Aggregator" name="Agg${index}" data="agg${index}"></connector>`);
                 index++;
@@ -422,6 +417,13 @@ function generateProductsXML(finalSet, xmlTree) {
                     $(conditionObj).children().unwrap();
                     $(connectorObj).children().unwrap();
                 }
+            }
+        }
+        let AggArray = $(productXML).find("connector[type='Aggregator']");
+        for (let aggObj of AggArray) {
+            let AggConditionArray = $(aggObj).children();
+            for (let aggCondition of AggConditionArray) {
+                $(aggCondition).attr("value", $(aggCondition).children().attr("name"));
             }
         }
         products.push($(productXML)[0].outerHTML);
@@ -446,7 +448,7 @@ function cleanJunkNode(productXML) {
 
 function mergeInteraction(oneTree) {
     var interactionList = collectInteraction(oneTree);
-    for(let interactionItem of interactionList){
+    for (let interactionItem of interactionList) {
         let interactionArray = interactionItem.split(",");
         for (let item of interactionArray) {
             let itemArr = item.split("->");
