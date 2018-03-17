@@ -564,9 +564,9 @@ function intersectionSet(ancestorArray) {
 function explorer() {
     if (xmlDoc == "") {
         alert("Please generate the composite component first.");
-        return false;
+        return;
     }
-    return true;
+    window.open("explorer.html", "explorer", `location=no,toolbar=no,height=${screen.height},width=${screen.width}`);
 }
 
 function setCardinality() {
@@ -614,4 +614,15 @@ function confirmCardinality() {
     orNode.objectCardinality = content;
     orNode.alarm = `<${content}>`;
     closeDialog();
+}
+
+function switchButton(){
+    if($("#explorer").is(":visible")){
+        $("#explorer").hide();
+        $("#annotation").show();
+    }
+    else{
+        $("#annotation").hide();
+        $("#explorer").show();
+    }
 }

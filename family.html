@@ -55,11 +55,13 @@
             <button type="button" id="exportImage" onclick="stage.saveImageInfo()">
                 <object data="css/images/screenshot.svg" type="image/svg+xml"></object>
                 Export Image</button>
-            <a onclick="return explorer();" href="explorer.html" target="_blank">
-                <button type="button" id="explorer">
-                    <object data="css/images/explorer.svg" type="image/svg+xml"></object>
-                    Product Explorer</button>
-            </a>
+            <button type="button" id="switchButton" onclick="switchButton()"></button>
+            <button type="button" id="explorer" onclick="explorer()">
+                <object data="css/images/explorer.svg" type="image/svg+xml"></object>
+                Product Explorer</button>
+            <button type="button" id="annotation" onclick="downloadCodeBase()">
+                <object data="css/images/pv.jpg" type="image/jpeg"></object>
+                Annotative Codebase</button>
         </div>
         <div id="codingArea">
             <div class="partArea">
