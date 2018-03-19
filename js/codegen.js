@@ -40,7 +40,7 @@ function generateService(xmlTree) {
     var tree = $(obj).children().eq(0);
     var dataflow = $(obj).children().eq(1);
     var code = "";
-    var parseTree = function (node) {
+    var parseTree = function(node) {
         if ($(node).is("connector")) {
             var condition = $(node).children("condition");
             var single = $(condition).eq(0);
@@ -55,8 +55,7 @@ function generateService(xmlTree) {
                     for (let item of condition) {
                         if ($(item).index(condition) == 0) {
                             code += `if(${$(item).attr("value")}){`;
-                        }
-                        else {
+                        } else {
                             code += `else if(${$(item).attr("value")}){`;
                         }
                         parseTree($(item).children().eq(0));
@@ -81,8 +80,7 @@ function generateService(xmlTree) {
                     }
                     break;
             }
-        }
-        else if ($(node).is("component")) {
+        } else if ($(node).is("component")) {
             code += `this.${$(node).attr("name")}.${$(node).attr("service")}();`;
             code += `${generateDataFlow(xmlTree, $(node).attr("name"))}`;
         }
@@ -92,7 +90,7 @@ function generateService(xmlTree) {
 }
 
 function compareUp() {
-    return function (obj1, obj2) {
+    return function(obj1, obj2) {
         var value1 = Number($(obj1).attr("value"));
         var value2 = Number($(obj2).attr("value"));
         return value1 - value2;
@@ -106,7 +104,9 @@ function initDataflow(xmlTree) {
         var channelArray = $(xmlTree).find(`channel[from='${inputName}']`);
         if (channelArray.length > 0) {
             for (let channel of channelArray) {
-                str += `this.${$(channel).attr("to")}=this.${$(channel).attr("to")}==null?this.${$(channel).attr("from")}:this.${$(channel).attr("to")}+this.${$(channel).attr("from")};`;
+                let start = $(channel).attr("from");
+                let end = $(channel).attr("to");
+                str += `this.${end}=this.${end}==null?this.${start}:this.${end}+this.${start};\n`;
             }
         }
     }
