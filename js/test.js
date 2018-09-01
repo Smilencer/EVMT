@@ -1,6 +1,6 @@
 var tester;
 
-$(document).ready(function () {
+$(document).ready(function() {
     tester = CodeMirror.fromTextArea(document.getElementById("testArea"), {
         mode: "javascript",
         lineNumbers: true,
@@ -14,11 +14,11 @@ $(document).ready(function () {
     });
     tester.setSize(414, 230);
     tester.setValue("//Test your code here...");
-    String.prototype.compress = function () {
+    String.prototype.compress = function() {
         return this.replace(/\s+/g, " ");
     }
     initCode();
-    console.log = function (str) {
+    console.log = function(str) {
         if ($("#feedback").val() == "") {
             $("#feedback").val(str);
             return;
@@ -30,20 +30,19 @@ $(document).ready(function () {
 
 function initCode() {
     var path = window.opener.location.pathname;
-    if (path == "/explorer.html") {
+    if (path.includes("/explorer.html")) {
         var name = $(window.opener.xmlDoc).attr("class");
         let num;
         if ($("#product_main", window.opener.document).is(":visible")) {
             num = $(".tickproduct", window.opener.document).index($(".tickproduct:checked", window.opener.document));
-        }
-        else {
+        } else {
             $("#product_summary>a", window.opener.document).clone().children().remove();
             let arr = $("#product_summary>a", window.opener.document).text().split(/[\s,:]/);
             num = parseInt(arr[1], 10) - 1;
         }
         $("#componentName").empty().append(`Product: <font id="cname">${name}_${num + 1}</font>`);
         let productXML = window.opener.products[num];
-        opener.downloadProduct($(productXML).find("component"), function (codeSet) {
+        opener.downloadProduct($(productXML).find("component"), function(codeSet) {
             var codeArray = Array.from(codeSet);
             var code = opener.generateCode($(productXML)) + " " + codeArray.join(" ");
             code = code.replace(/^\s+/, '');
@@ -52,12 +51,11 @@ function initCode() {
             $("#code").setTextareaCount();
             $(".textarea-group").width(537);
         });
-    }
-    else {
+    } else {
         var name = $(".highlight", window.opener.document).text();
         var storeName = $(".highlight", window.opener.document).attr("store");
         $("#cname").empty().append(name);
-        opener.downloadCode(name, storeName, function (codeSet) {
+        opener.downloadCode(name, storeName, function(codeSet) {
             var codeArray = Array.from(codeSet);
             var code = codeArray.join(" ");
             code = code.replace(/^\s+/, '');
