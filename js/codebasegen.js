@@ -58,10 +58,10 @@ function generateInitDataflow(xmlTree) {
             let end = $(channel).attr("to");
             if ($(item).is("fi")) {
                 str += pv_getAnnotationForFI(item) + "\n"
-                str += `this.${end}=this.${end}==null?this.${start}:this.${end}+this.${start};\n`;
+                str += `this.${end}=this.${start};\n`;
             } else {
                 str += pv_getAnnotationForComponent(item) + "\n";
-                str += `this.${end}=this.${end}==null?this.${start}:this.${end}+this.${start};\n`;
+                str += `this.${end}this.${start};\n`;
                 str += "// PV:ENDCOND\n";
             }
         }
@@ -151,7 +151,7 @@ function generateAnnotativeDataFlow(xmlTree, componentInstance) {
             } else {
                 annotation = pv_getAnnotationForComponent($(endObj));
             }
-            str += "\n" + annotation + "\n" + `this.${end}=this.${end}==null?this.${start}:this.${end}+this.${start};` + "\n// PV:ENDCOND\n";
+            str += "\n" + annotation + "\n" + `this.${end}this.${start};` + "\n// PV:ENDCOND\n";
         }
     }
     return str;

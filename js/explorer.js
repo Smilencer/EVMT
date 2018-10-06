@@ -5,11 +5,18 @@ var zoomlevel = 1;
 var stage;
 var scene;
 
-$(document).ready(function () {
-    String.prototype.abbr = function () {
-        return this.substr(0, 3).toUpperCase();
+$(document).ready(function() {
+    String.prototype.abbr = function() {
+        var strAbbr = this.substr(0, 3).toUpperCase();
+        if (strAbbr == "LOO") {
+            strAbbr = "LOOP";
+        }
+        if (strAbbr == "GUR") {
+            strAbbr = "GUD";
+        }
+        return strAbbr;
     }
-    String.prototype.trimComma = function () {
+    String.prototype.trimComma = function() {
         if (this.charAt(this.length - 1) == ',') {
             return this.slice(0, -1);
         }
@@ -17,7 +24,7 @@ $(document).ready(function () {
     }
 
     // xmlDoc = window.opener.xmlDoc;
-    xmlDoc = `<family class="ExternalCarLight" service="activate"><connector type="F-Sequencer" name="F-SEQ3" data="" interaction="(StaticCornerLight)SCL1->(StaticCornerFogLight)SCFL1,(FogLight)Fog->|@(StaticCornerLight)SCL2->(StaticCornerFogLight)SCFL2,(FogLight)Fog->|"><condition value="0"><connector type="F-Selector" name="F-SEL1" data="high_or_low" interaction=""><condition value="this.high_or_low==&quot;high&quot;"><vg type="Alternative"><component store="Atomic" class="LowBeamXenon" name="LBX1" service="toggleLight"></component><component store="Atomic" class="LowBeamHalogen" name="LBH1" service="toggleLight"></component></vg></condition><condition value="this.high_or_low==&quot;low&quot;"><vg type="Alternative"><component store="Atomic" class="HighBeamXenon" name="HBX1" service="toggleLight"></component><component store="Atomic" class="HighBeamHalogen" name="HBH1" service="toggleLight"></component></vg></condition></connector></condition><condition value="2"><vg type="Optional"><vg type="Or"><vg type="Or"><component store="Composite" class="StaticCornerLight" name="SCL1" service="toggleLight"></component><component store="Composite" class="AdaptiveForwardLight" name="AFL1" service="toggleLight"></component></vg><connector type="F-Sequencer" name="F-SEQ1" data="" interaction=""><condition value="0"><component store="Atomic" class="Camera" name="Cam" service="detectCars"></component></condition><condition value="1"><vg type="Alternative"><component store="Atomic" class="LowBeamXenon" name="LBX2" service="toggleLight"></component><component store="Atomic" class="LowBeamHalogen" name="LBH2" service="toggleLight"></component></vg></condition><condition value="2"><vg type="Alternative"><component store="Atomic" class="HighBeamXenon" name="HBX2" service="toggleLight"></component><component store="Atomic" class="HighBeamHalogen" name="HBH2" service="toggleLight"></component></vg></condition></connector><connector type="F-Sequencer" name="F-SEQ2" data="" interaction=""><condition value="0"><component store="Atomic" class="LightSensor" name="LS" service="getLightLevel"></component></condition><condition value="1"><vg type="Alternative"><component store="Atomic" class="LowBeamXenon" name="LBX3" service="toggleLight"></component><component store="Atomic" class="LowBeamHalogen" name="LBH3" service="toggleLight"></component></vg></condition><condition value="2"><vg type="Or"><component store="Composite" class="StaticCornerLight" name="SCL2" service="toggleLight"></component><component store="Composite" class="AdaptiveForwardLight" name="AFL2" service="toggleLight"></component></vg></condition></connector></vg></vg></condition><condition value="3"><vg type="Optional"><component store="Atomic" class="FogLight" name="Fog" service="toggleLight"></component></vg></condition><condition value="1"><vg type="Optional"><vg type="Alternative"><component store="Atomic" class="DRL_LowBeam" name="LB" service="toggleLight"></component><vg type="Alternative"><component store="Atomic" class="DRL_LED" name="LED" service="toggleLight"></component><component store="Atomic" class="DRL_Bulb" name="Bulb" service="toggleLight"></component></vg></vg></vg></condition></connector><dataChannel><inputs list="high_or_low,request_beam,request_power,request_cornering,request_fog,request_DRL"></inputs><outputs list=""></outputs><channel from="request_beam" to="LBX1.request"></channel><channel from="request_beam" to="LBH1.request"></channel><channel from="request_beam" to="HBX1.request"></channel><channel from="request_power" to="LBH1.power"></channel><channel from="request_power" to="HBH2.power"></channel><channel from="Cam.request_low" to="LBX2.request"></channel><channel from="Cam.request_low" to="LBH2.request"></channel><channel from="request_power" to="LBH2.power"></channel><channel from="Cam.request_high" to="HBX2.request"></channel><channel from="request_power" to="HBH1.power"></channel><channel from="request_cornering" to="SCFL1.request"></channel><channel from="request_cornering" to="SCFL2.request"></channel><channel from="request_cornering" to="SCL1.request"></channel><channel from="request_cornering" to="AFL1.request"></channel><channel from="request_fog" to="Fog.request"></channel><channel from="LS.trigger" to="LBX3.request"></channel><channel from="LS.trigger" to="LBH3.request"></channel><channel from="LS.trigger" to="SCL2.request"></channel><channel from="LS.trigger" to="AFL2.request"></channel><channel from="request_power" to="LBH3.power"></channel><channel from="request_DRL" to="LB.request"></channel><channel from="request_DRL" to="LED.request"></channel><channel from="request_DRL" to="Bulb.request"></channel><channel from="request_beam" to="HBH1.request"></channel><channel from="Cam.request_high" to="HBH2.request"></channel></dataChannel><constraints><constraint type="require" from="LBX2" to="LBX1"></constraint><constraint type="require" from="LBH2" to="LBH1"></constraint><constraint type="require" from="HBX2" to="HBX1"></constraint><constraint type="require" from="HBH2" to="HBH1"></constraint><constraint type="require" from="LBX3" to="LBX1"></constraint><constraint type="require" from="LBH3" to="LBH1"></constraint><constraint type="require" from="SCL2" to="SCL1"></constraint><constraint type="require" from="AFL2" to="AFL1"></constraint></constraints><interactions><fi store="Composite" class="StaticCornerFogLight" name="SCFL1" service="toggleLight"></fi><fi store="Composite" class="StaticCornerFogLight" name="SCFL2" service="toggleLight"></fi></interactions></family>`;
+    xmlDoc = `<family class="ExternalCarLight" service="activate"><connector type="F-Loop" name="F-LOP" data="cmd" interaction=""><condition value="cmd!=null"><connector type="F-Selector" name="F-SEL1" data="cmd" interaction="(LowBeamXenon)LBX->(XenonDRL)XDRL,(DRL_LowBeam)LB->|@(LowBeamHalogen)LBH->(HalogenDRL)HDRL,(DRL_LowBeam)LB->|"><condition value="cmd==&quot;Fog&quot;"><connector type="F-Sequencer" name="F-SEQ1" data="" interaction=""><condition value="0"><vg type="Alternative"><component store="Atomic" class="HighBeamXenon" name="HBX" service="toggleLight"></component><component store="Atomic" class="HighBeamHalogen" name="HBL" service="toggleLight"></component></vg></condition><condition value="1"><vg type="Alternative"><component store="Atomic" class="LowBeamXenon" name="LBX" service="toggleLight"></component><component store="Atomic" class="LowBeamHalogen" name="LBH" service="toggleLight"></component></vg></condition></connector></condition><condition value="cmd==&quot;Fog&quot;"><vg type="Optional"><component store="Atomic" class="FogLight" name="Fog" service="toggleLight"></component></vg></condition><condition value="cmd==&quot;Assistance&quot;"><vg type="Optional"><vg type="Or"><component store="Atomic" class="AutomaticHighLowBeam" name="AHLB" service="toggleLight"></component><vg type="Or"><component store="Composite" class="StaticCornerLight" name="SCL" service="toggleLight"></component><component store="Atomic" class="AdaptiveForwardLight" name="AFL" service="toggleLight"></component></vg><component store="Atomic" class="AutomaticLight" name="AL" service="toggleLight"></component></vg></vg></condition><condition value="cmd==&quot;Daytime&quot;"><vg type="Optional"><vg type="Alternative"><component store="Atomic" class="DRL_LowBeam" name="LB" service="toggleLight"></component><vg type="Alternative"><component store="Atomic" class="DRL_LED" name="LED" service="toggleLight"></component><component store="Atomic" class="DRL_Bulb" name="Bulb" service="toggleLight"></component></vg></vg></vg></condition></connector></condition></connector><dataChannel><inputs list="cmd,cmd"></inputs><outputs list=""></outputs></dataChannel><constraints><constraint type="require" from="SCL" to="Fog"></constraint></constraints><interactions><fi store="Atomic" class="XenonDRL" name="XDRL" service="toggleLight"></fi><fi store="Atomic" class="HalogenDRL" name="HDRL" service="toggleLight"></fi></interactions></family>`;
 
     var xmlTree = $(xmlDoc);
     var depthMap = assessDepth(xmlTree);
@@ -36,12 +43,12 @@ $(document).ready(function () {
     stage = new JTopo.Stage(canvas);
     scene = new JTopo.Scene();
     stage.add(scene);
-    scene.mousedown(function (event) {
+    scene.mousedown(function(event) {
         if (currentObject != null) {
             currentObject.visible = false;
         }
     });
-    scene.mouseup(function (event) {
+    scene.mouseup(function(event) {
         if (currentObject != null) {
             relocate();
         }
@@ -59,8 +66,7 @@ function assessDepth(xmlTree) {
             let arr = depthMap.get(len);
             arr.push($(connectorNode).attr("name"));
             depthMap.set(len, arr);
-        }
-        else {
+        } else {
             let arr = [];
             arr.push($(connectorNode).attr("name"));
             depthMap.set(len, arr);
@@ -88,8 +94,7 @@ function combineComposition(connectorMap, rootSet) {
     }
     if (isToEnd) {
         return rootSet;
-    }
-    else {
+    } else {
         return combineComposition(connectorMap, rootSet);
     }
 }
@@ -114,13 +119,11 @@ function generateSubComposition(connectorName, xmlTree) {
     for (let item of condition) {
         if ($(item).children().is("vg")) {
             setArray.push(digNode($(item).children()));
-        }
-        else if ($(item).children().is("connector")) {
+        } else if ($(item).children().is("connector")) {
             let set = new Set();
             set.add($(item).children().attr("name"));
             setArray.push(set);
-        }
-        else if ($(item).children().is("component")) {
+        } else if ($(item).children().is("component")) {
             let set = new Set();
             set.add($(item).children().attr("name"));
             setArray.push(set);
@@ -134,13 +137,11 @@ function digNode(node) {
         let set = new Set();
         set.add($(node).attr("name"));
         return set;
-    }
-    else if ($(node).is("connector")) {
+    } else if ($(node).is("connector")) {
         let set = new Set();
         set.add($(node).attr("name"));
         return set;
-    }
-    else if ($(node).is("vg")) {
+    } else if ($(node).is("vg")) {
         switch ($(node).attr("type")) {
             case "Optional":
                 return expandOptional(digNode($(node).children().eq(0)));
@@ -168,8 +169,7 @@ function digNode(node) {
                             finalSet.add(item);
                         }
                     }
-                }
-                else {
+                } else {
                     finalSet = expandedSet;
                 }
                 return finalSet;
@@ -237,11 +237,9 @@ function CartesianProducts(set1, set2) {
         for (let s2 of set2.values()) {
             if (s1 == "") {
                 set3.add(s2);
-            }
-            else if (s2 == "") {
+            } else if (s2 == "") {
                 set3.add(s1);
-            }
-            else {
+            } else {
                 set3.add(s1 + "+" + s2);
             }
         }
@@ -371,20 +369,16 @@ function generateProductsXML(finalSet, xmlTree) {
             if (fromArray.length == 1) {
                 if (!configArray.includes(toClass)) {
                     $(channelObj).remove();
-                }
-                else if (inputArray.includes(fromArray[0])) {
+                } else if (inputArray.includes(fromArray[0])) {
                     inputSet.add(fromArray[0]);
                 }
-            }
-            else if (toArray.length == 1) {
+            } else if (toArray.length == 1) {
                 if (!configArray.includes(fromClass)) {
                     $(channelObj).remove();
-                }
-                else if (outputArray.includes(toArray[0])) {
+                } else if (outputArray.includes(toArray[0])) {
                     outputSet.add(toArray[0]);
                 }
-            }
-            else {
+            } else {
                 if (!configArray.includes(fromClass) || !configArray.includes(toClass)) {
                     $(channelObj).remove();
                 }
@@ -458,7 +452,7 @@ function generateProductsXML(finalSet, xmlTree) {
 }
 
 function cleanJunkNode(productXML) {
-    var doClean = function (tagName) {
+    var doClean = function(tagName) {
         let subNodes = $(productXML).find(tagName);
         for (let obj of subNodes) {
             let result = $(obj).has("component");
@@ -517,8 +511,7 @@ function digDeeper(connector, str) {
         let child = $(condition).children();
         if ($(child).is("component")) {
             result += `<i>${$(child).attr("name")}</i>,`;
-        }
-        else if ($(child).is("connector")) {
+        } else if ($(child).is("connector")) {
             result += digDeeper(child, result);
         }
     }
@@ -543,9 +536,9 @@ function exportImage() {
 
 function showProduct(num) {
     $("#product_summary>a").append($("#product_list>li").eq(num - 1).children("a").html());
-    $("#product_main").hide("slide", 500, function () {
-        $("#box").show("fade", 500, function () {
-            $("#product_summary>span").hide("fade", 100, function () {
+    $("#product_main").hide("slide", 500, function() {
+        $("#box").show("fade", 500, function() {
+            $("#product_summary>span").hide("fade", 100, function() {
                 $("#product_summary>a").show("fade", 100);
             });
             var tree = $(products[num - 1]);
@@ -562,8 +555,8 @@ function showProduct(num) {
                     drawDataInComposite("Output", outputData);
                 }
             }
-            getAllComponent($(tree).find("component"), function (componentArray) {
-                var drawPicture = function (node, array) {
+            getAllComponent($(tree).find("component"), function(componentArray) {
+                var drawPicture = function(node, array) {
                     if ($(node).is("connector")) {
                         let connectorObj = drawConnector($(node).attr("type"), $(node).attr("name"));
                         if ($(node).attr("data") != "") {
@@ -578,8 +571,7 @@ function showProduct(num) {
                             drawCompositionEdge(connectorObj, endObj, $(conditionNode).attr("value"));
                         }
                         return connectorObj;
-                    }
-                    else if ($(node).is("component")) {
+                    } else if ($(node).is("component")) {
                         return array.find(x => x.objectName == $(node).attr("class") && x.objectInstance == $(node).attr("name"));
                     }
                 }
@@ -591,21 +583,19 @@ function showProduct(num) {
                     let target;
                     let source;
                     if (fromArr.length == 1) {
-                        let result = scene.findElements(function (e) {
+                        let result = scene.findElements(function(e) {
                             return e.objectType == "data" && e.objectInstance == fromArr[0];
                         });
                         source = result[0];
-                    }
-                    else {
+                    } else {
                         source = componentArray.find(x => x.objectInstance == fromArr[0]);
                     }
                     if (toArr.length == 1) {
-                        let result = scene.findElements(function (e) {
+                        let result = scene.findElements(function(e) {
                             return e.objectType == "data" && e.objectInstance == toArr[0];
                         });
                         target = result[0];
-                    }
-                    else {
+                    } else {
                         target = componentArray.find(x => x.objectInstance == toArr[0]);
                     }
                     drawDataChannel(source, target, `${$(channelNode).attr("from")}->${$(channelNode).attr("to")}`);
@@ -617,9 +607,9 @@ function showProduct(num) {
 }
 
 function hideProduct() {
-    $("#box").hide("slide", { direction: "right" }, 500, function () {
-        $("#product_main").show("fade", 500, function () {
-            $("#product_summary>a").hide("fade", 100, function () {
+    $("#box").hide("slide", { direction: "right" }, 500, function() {
+        $("#product_main").show("fade", 500, function() {
+            $("#product_summary>a").hide("fade", 100, function() {
                 $("#product_summary>span").show("fade", 100);
             });
             scene.clear();
@@ -637,14 +627,13 @@ function download() {
             return;
         }
         num = $(".tickproduct:checked").index(".tickproduct");
-    }
-    else {
+    } else {
         $("#product_summary>a").clone().children().remove();
         let arr = $("#product_summary>a").text().split(/[\s,:]/);
         num = parseInt(arr[1], 10) - 1;
     }
     let productXML = products[num];
-    downloadProduct($(productXML).find("component"), function (codeSet) {
+    downloadProduct($(productXML).find("component"), function(codeSet) {
         var codeArray = Array.from(codeSet);
         var code = generateCode($(productXML)) + " " + codeArray.join(" ");
         downloadFile(`${$(xmlDoc).attr("class")}_${num + 1}.js`, code);
@@ -662,9 +651,9 @@ function batchdownload() {
             let num = $(item).index(".tickproduct");
             productXMLMap.set(`${$(xmlDoc).attr("class")}_${num + 1}`, products[num]);
         }
-        downloadBatch(productXMLMap, function (batchMap) {
+        downloadBatch(productXMLMap, function(batchMap) {
             zip.workerScriptsPath = "js/";
-            zip.createWriter(new zip.BlobWriter("application/zip"), function (writer) {
+            zip.createWriter(new zip.BlobWriter("application/zip"), function(writer) {
                 var titles = [];
                 var files = [];
                 for (let [key, value] of batchMap) {
@@ -672,17 +661,19 @@ function batchdownload() {
                     files.push(value);
                 }
                 var f = 0;
+
                 function nextFile(f) {
                     fblob = new Blob([files[f]], { type: "text/javascript" });
-                    writer.add(titles[f], new zip.BlobReader(fblob), function () {
+                    writer.add(titles[f], new zip.BlobReader(fblob), function() {
                         f++;
                         if (f < files.length) {
                             nextFile(f);
                         } else close();
                     });
                 }
+
                 function close() {
-                    writer.close(function (blob) {
+                    writer.close(function(blob) {
                         var eleLink = document.createElement('a');
                         eleLink.download = $(xmlDoc).attr("class") + ".zip";
                         eleLink.style.display = 'none';

@@ -4,27 +4,27 @@ var currentObject = null;
 var zoomlevel = 1;
 var xmlDoc = "";
 
-$(document).ready(function (e) {
+$(document).ready(function(e) {
     OpenDB();
     var canvas = document.getElementById("canvas");
     stage = new JTopo.Stage(canvas);
     scene = new JTopo.Scene();
     stage.add(scene);
-    scene.mousedown(function (event) {
+    scene.mousedown(function(event) {
         if (currentObject != null) {
             currentObject.visible = false;
         }
     });
-    scene.mouseup(function (event) {
+    scene.mouseup(function(event) {
         if (currentObject != null) {
             relocate();
         }
     });
     extendJTopo();
-    String.prototype.replaceAll = function () {
-        return this.replace(/&/g, "&amp;").replace(/</g, "&lt;	").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+    String.prototype.replaceAll = function() {
+        return this.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
     }
-    String.prototype.compress = function () {
+    String.prototype.compress = function() {
         return this.replace(/\s+/g, " ");
     }
 });
@@ -34,8 +34,7 @@ function reset() {
     if (confirm(msg) == true) {
         scene.clear();
         currentObject = null;
-    }
-    else {
+    } else {
         return false;
     }
 }
@@ -62,8 +61,7 @@ function generateServiceName(obj) {
     if ($("#ipt_srvdefault").is(":checked")) {
         if ($(obj).val().trim() == "") {
             $("#ipt_srvname").val("");
-        }
-        else {
+        } else {
             $("#ipt_srvname").val($(obj).val().trim() + "Svc");
         }
     }
@@ -74,12 +72,10 @@ function nodefault() {
         $("#ipt_srvname").attr("readonly", "true");
         if ($("#ipt_sname").val().trim() == "") {
             $("#ipt_srvname").val("");
-        }
-        else {
+        } else {
             $("#ipt_srvname").val($("#ipt_sname").val().trim() + "Svc");
         }
-    }
-    else {
+    } else {
         $("#ipt_srvname").removeAttr("readonly");
     }
 }
@@ -205,8 +201,7 @@ function addNewInput() {
                 cursor: "default"
             }
         });
-    }
-    else if (element.objectType == "composite") {
+    } else if (element.objectType == "composite") {
         $("#NewDataDialog").find("font").text("Input");
         $("#NewDataDialog").find("button").show();
         $("#draw1").hide();
@@ -303,18 +298,15 @@ function addNewChannel() {
             flow += "->" + target.objectContainer.objectInstance + "." + target.objectInstance;
             var channel = drawDataChannel(source, target.objectContainer, flow);
         }
-    }
-    else if (source.objectName == "output" && source.objectContainer.objectType == "subcomponent") {
+    } else if (source.objectName == "output" && source.objectContainer.objectType == "subcomponent") {
         var flow = source.objectContainer.objectInstance + "." + source.objectInstance;
         if (target.objectName == "input" && target.objectContainer.objectType == "subcomponent") {
             flow += "->" + target.objectContainer.objectInstance + "." + target.objectInstance;
             var channel = drawDataChannel(source.objectContainer, target.objectContainer, flow);
-        }
-        else if (target.objectName == "input" && target.objectContainer.objectType == "connector") {
+        } else if (target.objectName == "input" && target.objectContainer.objectType == "connector") {
             flow += "->" + target.objectInstance;
             var channel = drawDataChannel(source.objectContainer, target.objectContainer, flow);
-        }
-        else if (target.objectName == "output" && target.objectContainer == currentObject) {
+        } else if (target.objectName == "output" && target.objectContainer == currentObject) {
             flow += "->" + target.objectInstance;
             var channel = drawDataChannel(source.objectContainer, target, flow);
         }
@@ -322,7 +314,7 @@ function addNewChannel() {
 }
 
 function generateXML() {
-    var result = scene.findElements(function (e) {
+    var result = scene.findElements(function(e) {
         return e.objectType == "connector" && e.inLinks.length == 0;
     });
     if (result.length != 1) {
@@ -353,8 +345,7 @@ function InsertNewNode(node) {
             nodeStr += "</condition>";
         }
         nodeStr += "</connector>";
-    }
-    else if (node.objectType == "subcomponent") {
+    } else if (node.objectType == "subcomponent") {
         nodeStr += "<component store='" + node.objectStore + "' class='" + node.objectName + "' name='" + node.objectInstance + "' service='" + node.objectService + "'></component>";
     }
     return nodeStr;
@@ -362,7 +353,7 @@ function InsertNewNode(node) {
 
 function generateChannels() {
     var channelStr = "<dataChannel>";
-    var result = scene.findElements(function (e) {
+    var result = scene.findElements(function(e) {
         return e.objectType == "data" && (e.objectContainer == currentObject || e.objectContainer.objectType == "connector");
     });
     if (result.length > 0) {
@@ -371,15 +362,14 @@ function generateChannels() {
         for (let data of result) {
             if (data.objectName == "input") {
                 inputArray.push(data.objectInstance);
-            }
-            else if (data.objectName == "output") {
+            } else if (data.objectName == "output") {
                 outputArray.push(data.objectInstance);
             }
         }
         channelStr += `<inputs list="${inputArray.join(",")}"></inputs>`;
         channelStr += `<outputs list="${outputArray.join(",")}"></outputs>`;
     }
-    var result = scene.findElements(function (e) {
+    var result = scene.findElements(function(e) {
         return e.elementType == "link" && e.objectType == "channel";
     });
     if (result.length > 0) {
@@ -426,4 +416,3 @@ function deposit() {
     };
     insertComposite(pack);
 }
-
