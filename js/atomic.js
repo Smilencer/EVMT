@@ -1,7 +1,7 @@
 var editor;
 var mydb;
 
-$(document).ready(function () {
+$(document).ready(function() {
     editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         mode: "javascript",
         lineNumbers: true,
@@ -14,8 +14,8 @@ $(document).ready(function () {
         extraKeys: { "Ctrl-Space": "autocomplete" }
     });
     OpenDB();
-    String.prototype.compress = function () {
-        return this.replace(/\s+/g," ");
+    String.prototype.compress = function() {
+        return this.replace(/\s+/g, " ");
     }
 });
 
@@ -41,8 +41,7 @@ function generateServiceName(obj) {
     if ($("#ipt_srvdefault").is(":checked")) {
         if ($(obj).val().trim() == "") {
             $("#ipt_srvname").val("");
-        }
-        else {
+        } else {
             $("#ipt_srvname").val($(obj).val().trim() + "Svc");
         }
     }
@@ -53,12 +52,10 @@ function nodefault() {
         $("#ipt_srvname").attr("readonly", "true");
         if ($("#ipt_sname").val().trim() == "") {
             $("#ipt_srvname").val("");
-        }
-        else {
+        } else {
             $("#ipt_srvname").val($("#ipt_sname").val().trim() + "Svc");
         }
-    }
-    else {
+    } else {
         $("#ipt_srvname").removeAttr("readonly");
     }
 }
@@ -84,7 +81,26 @@ function addData() {
         alert("Select input or output for the data.");
         return;
     }
-    $("#tabler>table").children("tbody").append("<tr><td><a href='javascript:void(0)' onclick='removeIOData(this)'><img src='css/images/delete.svg' width='15' /></a></td><td>" + dname + "</td><td>" + $(".ipt_radio:checked").val() + "</td></tr>");
+    if ($(".ipt_radio:checked").val() == "input") {
+        $("#tabler>table").children("tbody").append("<tr><td><a href='javascript:void(0)' onclick='removeIOData(this)'><img src='css/images/delete.svg' width='15' /></a></td><td>" + dname + "</td><td>" + $(".ipt_radio:checked").val() + "</td><td title='click to change' onclick='changeDefaultValue(this)'>null</td></tr>");
+    } else {
+        $("#tabler>table").children("tbody").append("<tr><td><a href='javascript:void(0)' onclick='removeIOData(this)'><img src='css/images/delete.svg' width='15' /></a></td><td>" + dname + "</td><td>" + $(".ipt_radio:checked").val() + "</td><td>null</td></tr>");
+    }
+}
+
+function changeDefaultValue(obj) {
+    var oldValue = $(obj).text().trim();
+    var newIpt = $(`<input type="text" value="${oldValue}" onblur="setNewDefaultValue(this)">`);
+    $(obj).empty().append(newIpt);
+    newIpt.focus();
+}
+
+function setNewDefaultValue(obj) {
+    var newValue = $(obj).val().trim();
+    if (newValue == "") {
+        newValue = "null";
+    }
+    $(obj).parent().empty().append(newValue);
 }
 
 function removeIOData(obj) {
@@ -110,7 +126,7 @@ function startCoding() {
     str += "\tconstructor() {\n";
 
     for (let i = 1; i < rows.length; i++) {
-        str += "\t\tthis." + $(rows[i]).children("td").eq(1).text() + "=null;\n"
+        str += "\t\tthis." + $(rows[i]).children("td").eq(1).text() + "=" + $(rows[i]).children("td").eq(3).text() + ";\n"
     }
     str += "\t}\n";
 
@@ -153,8 +169,7 @@ function deposit() {
         var dio = $(rows[i]).children("td").eq(2).text();
         if (dio == "input") {
             arr_in.push(dname);
-        }
-        else if (dio == "output") {
+        } else if (dio == "output") {
             arr_out.push(dname);
         }
     }
