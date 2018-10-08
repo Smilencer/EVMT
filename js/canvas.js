@@ -1,21 +1,22 @@
 ﻿function extendJTopo() {
-    JTopo.TextNode.prototype.objectType = null;  //family or composite
-    JTopo.TextNode.prototype.objectName = null;   //composite component name
-    JTopo.TextNode.prototype.objectService = null;  //service name
-    JTopo.Container.prototype.objectName = null;   //component name (class name) || sequencer etc.
-    JTopo.Container.prototype.objectInstance = null;    //instance of component/connector name
-    JTopo.Container.prototype.objectStore = null;    //atomic or composite
-    JTopo.Container.prototype.objectType = null;   //subcomponent || connector
-    JTopo.Container.prototype.objectService = null;   //service name
-    JTopo.CircleNode.prototype.objectType = null;   //data
-    JTopo.CircleNode.prototype.objectName = null;   //input or output
-    JTopo.CircleNode.prototype.objectInstance = null;   //the name of input/output
-    JTopo.CircleNode.prototype.objectContainer = null;  //container
-    JTopo.Link.prototype.objectType = null;    //coordinator or channel or diversity or constraint
-    JTopo.Link.prototype.objectName = null;    //reuqires or excludes
-    JTopo.Node.prototype.objectType = null;    //generator (abbr. for variation generator)
-    JTopo.Node.prototype.objectName = null;    //Optional etc.
-    JTopo.Node.prototype.objectCardinality = null;    //Or's Cardinality
+    JTopo.TextNode.prototype.objectType = null; //family or composite
+    JTopo.TextNode.prototype.objectName = null; //composite component name
+    JTopo.TextNode.prototype.objectService = null; //service name
+    JTopo.Container.prototype.objectName = null; //component name (class name) || sequencer etc.
+    JTopo.Container.prototype.objectInstance = null; //instance of component/connector name
+    JTopo.Container.prototype.objectStore = null; //atomic or composite
+    JTopo.Container.prototype.objectType = null; //subcomponent || connector
+    JTopo.Container.prototype.objectService = null; //service name
+    JTopo.CircleNode.prototype.objectType = null; //data
+    JTopo.CircleNode.prototype.objectName = null; //input or output
+    JTopo.CircleNode.prototype.objectInstance = null; //the name of input/output
+    JTopo.CircleNode.prototype.objectValue = null; //the default value of input/output
+    JTopo.CircleNode.prototype.objectContainer = null; //container
+    JTopo.Link.prototype.objectType = null; //coordinator or channel or diversity or constraint
+    JTopo.Link.prototype.objectName = null; //reuqires or excludes
+    JTopo.Node.prototype.objectType = null; //generator (abbr. for variation generator)
+    JTopo.Node.prototype.objectName = null; //Optional etc.
+    JTopo.Node.prototype.objectCardinality = null; //Or's Cardinality
 }
 
 function zoomIn() {
@@ -57,7 +58,7 @@ function drawCurrentObject(name, service, objType) {
     obj.objectName = name;
     obj.objectService = service;
     scene.add(obj);
-    obj.dbclick(function (event) {
+    obj.dbclick(function(event) {
         if (event.target == null) { return; }
         scene.remove(currentObject);
         currentObject = null;
@@ -93,7 +94,7 @@ function drawComponentBlock(name, storeName, instance, service) {
     block.objectType = "subcomponent";
     block.objectService = service;
     scene.add(block);
-    block.mouseup(function (event) {
+    block.mouseup(function(event) {
         if (event.button == 2) {
             $("#canvasContext").css({
                 top: event.pageY,
@@ -101,7 +102,7 @@ function drawComponentBlock(name, storeName, instance, service) {
             }).show();
         }
     });
-    stage.click(function (event) {
+    stage.click(function(event) {
         if (event.button == 0) {
             $(".contextmenu").hide();
         }
@@ -113,22 +114,20 @@ function checkData(container, io, name) {
     var flag;
     if (io == "i") {
         flag = "input";
-    }
-    else if (io == "o") {
+    } else if (io == "o") {
         flag = "output";
     }
-    var result = scene.findElements(function (e) {
+    var result = scene.findElements(function(e) {
         return e.objectType == "data" && e.objectName == flag && e.objectInstance == name && e.container == container;
     });
-    if (result == 0) { return null; }
-    else { return result[0]; }
+    if (result == 0) { return null; } else { return result[0]; }
 }
 
 function drawDataInFamily(io, name) {
     return drawDataInComposite(io, name);
 }
 
-function drawDataInComposite(io, name) {
+function drawDataInComposite(io, name, dval) {
     var feedback = checkData(currentObject, io, name);
     if (feedback != null) { return feedback };
     var data = new JTopo.Node(name);
@@ -137,29 +136,29 @@ function drawDataInComposite(io, name) {
     if (io == "Input") {
         data.setImage("css/images/input.png");
         data.objectName = "input";
-    }
-    else if (io == "Output") {
+    } else if (io == "Output") {
         data.setImage("css/images/output.png");
         data.objectName = "output";
     }
     data.fontColor = "0,0,0";
     data.objectInstance = name;
+    data.objectValue = dval;
     data.objectType = "data";
     data.objectContainer = currentObject;
     scene.add(data);
-    data.mouseover(function (event) {
-        $("#IOdiv").append(name)
+    data.mouseover(function(event) {
+        $("#IOdiv").append(name + "=" + dval)
         $("#IOdiv").css({
             top: event.pageY + 20,
             left: event.pageX
         }).show();
     });
-    data.mouseout(function (event) {
+    data.mouseout(function(event) {
         $("#IOdiv").hide();
         $("#IOdiv").children().remove();
         $("#IOdiv").text("");
     });
-    data.mouseup(function (event) {
+    data.mouseup(function(event) {
         if (event.button == 2) {
             $("#canvasContext").css({
                 top: event.pageY,
@@ -167,7 +166,7 @@ function drawDataInComposite(io, name) {
             }).show();
         }
     });
-    stage.click(function (event) {
+    stage.click(function(event) {
         if (event.button == 0) {
             $(".contextmenu").hide();
         }
@@ -186,8 +185,7 @@ function drawDataInBlock(container, io, name) {
     if (io == "i") {
         data.fillColor = "27,236,10";
         data.objectName = "input";
-    }
-    else if (io == "o") {
+    } else if (io == "o") {
         data.fillColor = "96,149,255";
         data.objectName = "output";
     }
@@ -199,19 +197,19 @@ function drawDataInBlock(container, io, name) {
     data.objectContainer = container;
     scene.add(data);
     container.add(data);
-    data.mouseover(function (event) {
+    data.mouseover(function(event) {
         $("#IOdiv").append(name);
         $("#IOdiv").css({
             top: event.pageY + 20,
             left: event.pageX
         }).show();
     });
-    data.mouseout(function (event) {
+    data.mouseout(function(event) {
         $("#IOdiv").hide();
         $("#IOdiv").children().remove();
         $("#IOdiv").text("");
     });
-    data.mouseup(function (event) {
+    data.mouseup(function(event) {
         if (event.button == 2 && container.objectType == "connector") {
             $("#canvasContext").css({
                 top: event.pageY,
@@ -219,7 +217,7 @@ function drawDataInBlock(container, io, name) {
             }).show();
         }
     });
-    stage.click(function (event) {
+    stage.click(function(event) {
         if (event.button == 0) {
             $(".contextmenu").hide();
         }
@@ -235,12 +233,58 @@ function drawOutputInBlock(container, name) {
     return drawDataInBlock(container, "o", name);
 }
 
+function drawInputInConnector(container, name, dval) {
+    var feedback = checkData(container, "i", name);
+    if (feedback != null) { return feedback };
+    var data = new JTopo.CircleNode("i");
+    data.font = "bold 8pt Verdana";
+    data.textOffsetY = -2;
+    data.radius = 8;
+    data.alpha = 1.0;
+    data.fillColor = "27,236,10";
+    data.objectName = "input";
+    data.borderColor = "0,0,0";
+    data.fontColor = "0,0,0";
+    data.textPosition = "Middle_Center";
+    data.objectInstance = name;
+    data.objectValue = dval;
+    data.objectType = "data";
+    data.objectContainer = container;
+    scene.add(data);
+    container.add(data);
+    data.mouseover(function(event) {
+        $("#IOdiv").append(name + "=" + dval);
+        $("#IOdiv").css({
+            top: event.pageY + 20,
+            left: event.pageX
+        }).show();
+    });
+    data.mouseout(function(event) {
+        $("#IOdiv").hide();
+        $("#IOdiv").children().remove();
+        $("#IOdiv").text("");
+    });
+    data.mouseup(function(event) {
+        if (event.button == 2 && container.objectType == "connector") {
+            $("#canvasContext").css({
+                top: event.pageY,
+                left: event.pageX
+            }).show();
+        }
+    });
+    stage.click(function(event) {
+        if (event.button == 0) {
+            $(".contextmenu").hide();
+        }
+    });
+    return data;
+}
+
 function checkFeatureInteraction(container, content) {
-    var result = scene.findElements(function (e) {
+    var result = scene.findElements(function(e) {
         return e.objectType == "interaction" && e.objectInstance == content && e.container == container;
     });
-    if (result == 0) { return null; }
-    else { return result[0]; }
+    if (result == 0) { return null; } else { return result[0]; }
 }
 
 function drawFeatureInteraction(container, content) {
@@ -260,7 +304,7 @@ function drawFeatureInteraction(container, content) {
     interaction.objectContainer = container;
     scene.add(interaction);
     container.add(interaction);
-    interaction.mouseup(function (event) {
+    interaction.mouseup(function(event) {
         if (event.button == 2 && container.objectType == "connector") {
             $("#canvasContext").css({
                 top: event.pageY,
@@ -268,15 +312,15 @@ function drawFeatureInteraction(container, content) {
             }).show();
         }
     });
-    interaction.mouseover(function (event) {
+    interaction.mouseover(function(event) {
         interaction.alarm = content;
         interaction.alarmFont = "16px Consolas";
         interaction.alarmColor = "255, 119, 119";
     });
-    interaction.mouseout(function (event) {
+    interaction.mouseout(function(event) {
         interaction.alarm = null;
     });
-    stage.click(function (event) {
+    stage.click(function(event) {
         if (event.button == 0) {
             $(".contextmenu").hide();
         }
@@ -302,7 +346,7 @@ function drawConnector(name, instance) {
     fcon.objectName = name;
     fcon.objectInstance = instance;
     scene.add(fcon);
-    fcon.dbclick(function (event) {
+    fcon.dbclick(function(event) {
         if (event.target == null) { return; }
         var e = event.target;
         textfield.css({
@@ -312,7 +356,7 @@ function drawConnector(name, instance) {
         e.text = "";
         textfield[0].JTopoNode = e;
     });
-    fcon.mouseup(function (event) {
+    fcon.mouseup(function(event) {
         if (event.button == 2) {
             $("#canvasContext").css({
                 top: event.pageY,
@@ -320,12 +364,12 @@ function drawConnector(name, instance) {
             }).show();
         }
     });
-    stage.click(function (event) {
+    stage.click(function(event) {
         if (event.button == 0) {
             $(".contextmenu").hide();
         }
     });
-    $("#jtopo_textfield").blur(function () {
+    $("#jtopo_textfield").blur(function() {
         textfield[0].JTopoNode.text = textfield.hide().val();
     });
     return fcon;
@@ -346,19 +390,17 @@ function removeElementFromCanvas() {
 }
 
 function checkConnectionEdge(source, target) {
-    var result = scene.findElements(function (e) {
+    var result = scene.findElements(function(e) {
         return e.elementType == "link" && e.nodeA == source && e.nodeZ == target;
     });
-    if (result == 0) { return true; }
-    else { return false; }
+    if (result == 0) { return true; } else { return false; }
 }
 
 function checkConnectionEdge(source, target, flow) {
-    var result = scene.findElements(function (e) {
+    var result = scene.findElements(function(e) {
         return e.elementType == "link" && e.nodeA == source && e.nodeZ == target && e.text == flow;
     });
-    if (result == 0) { return true; }
-    else { return false; }
+    if (result == 0) { return true; } else { return false; }
 }
 
 function drawCompositionEdge(source, target, condition) {
@@ -375,7 +417,7 @@ function drawCompositionEdge(source, target, condition) {
         link.font = "italic 10pt Arial";
         link.objectType = "coordinator";
         scene.add(link);
-        link.dbclick(function (event) {
+        link.dbclick(function(event) {
             if (event.target == null) { return; }
             var e = event.target;
             textfield.css({
@@ -385,7 +427,7 @@ function drawCompositionEdge(source, target, condition) {
             e.text = "";
             textfield[0].JTopoNode = e;
         });
-        link.mouseup(function (event) {
+        link.mouseup(function(event) {
             if (event.button == 2) {
                 $("#canvasContext").css({
                     top: event.pageY,
@@ -393,12 +435,12 @@ function drawCompositionEdge(source, target, condition) {
                 }).show();
             }
         });
-        stage.click(function (event) {
+        stage.click(function(event) {
             if (event.button == 0) {
                 $(".contextmenu").hide();
             }
         });
-        $("#jtopo_textfield").blur(function () {
+        $("#jtopo_textfield").blur(function() {
             textfield[0].JTopoNode.text = textfield.hide().val();
         });
         return link;
@@ -419,7 +461,7 @@ function drawVariationEdge(source, target) {
         link.textOffsetY = 20;
         scene.add(link);
         link.objectType = "diversity";
-        link.mouseup(function (event) {
+        link.mouseup(function(event) {
             if (event.button == 2) {
                 $("#canvasContext").css({
                     top: event.pageY,
@@ -427,7 +469,7 @@ function drawVariationEdge(source, target) {
                 }).show();
             }
         });
-        stage.click(function (event) {
+        stage.click(function(event) {
             if (event.button == 0) {
                 $(".contextmenu").hide();
             }
@@ -450,7 +492,7 @@ function drawFeatureInteractionEdge(source, target) {
         link.textOffsetY = 20;
         scene.add(link);
         link.objectType = "fiEdge";
-        link.mouseup(function (event) {
+        link.mouseup(function(event) {
             if (event.button == 2) {
                 $("#canvasContext").css({
                     top: event.pageY,
@@ -458,7 +500,7 @@ function drawFeatureInteractionEdge(source, target) {
                 }).show();
             }
         });
-        stage.click(function (event) {
+        stage.click(function(event) {
             if (event.button == 0) {
                 $(".contextmenu").hide();
             }
@@ -481,38 +523,38 @@ function drawConstraintEdge(source, target, constraint) {
         scene.add(link);
         link.objectType = "constraint";
         link.objectName = constraint;
-        link.getStartPosition = function () {
+        link.getStartPosition = function() {
             var a;
-            return (a = (function (thisl) {
-                var b = thisl.nodeA;
-                var c = thisl.nodeZ;
-                var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
-                var e = b.getBound();
-                var f = JTopo.util.intersectionLineBound(d, e);
-                return f;
-            })(this)),
+            return (a = (function(thisl) {
+                    var b = thisl.nodeA;
+                    var c = thisl.nodeZ;
+                    var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
+                    var e = b.getBound();
+                    var f = JTopo.util.intersectionLineBound(d, e);
+                    return f;
+                })(this)),
                 null == a && (a = {
                     x: this.nodeZ.cx,
                     y: this.nodeZ.cy
                 }), a
         };
-        link.getEndPosition = function () {
+        link.getEndPosition = function() {
             var a;
-            return (a = (function (thisl) {
-                var b = thisl.nodeZ;
-                var c = thisl.nodeA;
-                var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
-                var e = b.getBound();
-                var f = JTopo.util.intersectionLineBound(d, e);
-                return f;
-            })(this)),
+            return (a = (function(thisl) {
+                    var b = thisl.nodeZ;
+                    var c = thisl.nodeA;
+                    var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
+                    var e = b.getBound();
+                    var f = JTopo.util.intersectionLineBound(d, e);
+                    return f;
+                })(this)),
                 null == a && (a = {
                     x: this.nodeZ.cx,
                     y: this.nodeZ.cy
                 }), a
         };
         if (constraint == "exclude") {
-            link.paintPath = function (a, b) {
+            link.paintPath = function(a, b) {
                 if (this.nodeA === this.nodeZ) return void this.paintLoop(a);
                 a.beginPath(),
                     a.moveTo(b[0].x, b[0].y);
@@ -529,7 +571,7 @@ function drawConstraintEdge(source, target, constraint) {
                 }
             };
         }
-        link.mouseup(function (event) {
+        link.mouseup(function(event) {
             if (event.button == 2) {
                 $("#canvasContext").css({
                     top: event.pageY,
@@ -537,7 +579,7 @@ function drawConstraintEdge(source, target, constraint) {
                 }).show();
             }
         });
-        stage.click(function (event) {
+        stage.click(function(event) {
             if (event.button == 0) {
                 $(".contextmenu").hide();
             }
@@ -557,38 +599,38 @@ function drawDataChannel(source, target, flow) {
         link.strokeColor = "255, 48, 48";
         link.fontColor = "0,0,0";
         link.objectType = "channel";
-        link.getStartPosition = function () {
+        link.getStartPosition = function() {
             var a;
-            return (a = (function (thisl) {
-                var b = thisl.nodeA;
-                var c = thisl.nodeZ;
-                var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
-                var e = b.getBound();
-                var f = JTopo.util.intersectionLineBound(d, e);
-                return f;
-            })(this)),
+            return (a = (function(thisl) {
+                    var b = thisl.nodeA;
+                    var c = thisl.nodeZ;
+                    var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
+                    var e = b.getBound();
+                    var f = JTopo.util.intersectionLineBound(d, e);
+                    return f;
+                })(this)),
                 null == a && (a = {
                     x: this.nodeZ.cx,
                     y: this.nodeZ.cy
                 }), a
         };
-        link.getEndPosition = function () {
+        link.getEndPosition = function() {
             var a;
-            return (a = (function (thisl) {
-                var b = thisl.nodeZ;
-                var c = thisl.nodeA;
-                var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
-                var e = b.getBound();
-                var f = JTopo.util.intersectionLineBound(d, e);
-                return f;
-            })(this)),
+            return (a = (function(thisl) {
+                    var b = thisl.nodeZ;
+                    var c = thisl.nodeA;
+                    var d = JTopo.util.lineF(b.cx, b.cy, c.cx, c.cy);
+                    var e = b.getBound();
+                    var f = JTopo.util.intersectionLineBound(d, e);
+                    return f;
+                })(this)),
                 null == a && (a = {
                     x: this.nodeZ.cx,
                     y: this.nodeZ.cy
                 }), a
         };
         scene.add(link);
-        link.mouseup(function (event) {
+        link.mouseup(function(event) {
             if (event.button == 2) {
                 $("#canvasContext").css({
                     top: event.pageY,
@@ -596,7 +638,7 @@ function drawDataChannel(source, target, flow) {
                 }).show();
             }
         });
-        stage.click(function (event) {
+        stage.click(function(event) {
             if (event.button == 0) {
                 $(".contextmenu").hide();
             }
@@ -631,15 +673,14 @@ function drawVariationGenerator(name) {
     node.objectName = name;
     node.text = "";
     scene.add(node);
-    node.mouseup(function (event) {
+    node.mouseup(function(event) {
         if (event.button == 2) {
             if (node.objectName == "Or") {
                 if ($("#canvasContext .or-card").length == 0) {
                     $("#canvasContext>li").append(`<a class="or-card" href="javascript:void(0)" onclick="setCardinality()">Set Cardinality</a>`);
                     $("#canvasContext>li").append(`<a class="or-card" href="javascript:void(0)" onclick="restoreCardinality()">Restore Cardinality</a>`);
                 }
-            }
-            else {
+            } else {
                 $(".or-card").remove();
             }
             $("#canvasContext").css({
@@ -648,7 +689,7 @@ function drawVariationGenerator(name) {
             }).show();
         }
     });
-    stage.click(function (event) {
+    stage.click(function(event) {
         if (event.button == 0) {
             $(".contextmenu").hide();
         }

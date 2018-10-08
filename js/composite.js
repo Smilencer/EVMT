@@ -184,6 +184,7 @@ function addNewInput() {
         }
         $("#NewDataDialog").find("font").text("Input");
         $("#NewDataDialog").find("button").show();
+        $("#NewDataDialog").find("#ipt_datavalue").val("null").prop("disabled", false);
         $("#draw2").hide();
         $.blockUI({
             message: $("#NewDataDialog"),
@@ -192,7 +193,7 @@ function addNewInput() {
             css: {
                 textAlign: "unset",
                 width: "295px",
-                height: "157px",
+                height: "187px",
                 top: "35%",
                 left: "40%",
                 cursor: "default"
@@ -204,6 +205,7 @@ function addNewInput() {
     } else if (element.objectType == "composite") {
         $("#NewDataDialog").find("font").text("Input");
         $("#NewDataDialog").find("button").show();
+        $("#NewDataDialog").find("#ipt_datavalue").val("null").prop("disabled", false);
         $("#draw1").hide();
         $.blockUI({
             message: $("#NewDataDialog"),
@@ -212,7 +214,7 @@ function addNewInput() {
             css: {
                 textAlign: "unset",
                 width: "295px",
-                height: "157px",
+                height: "187px",
                 top: "35%",
                 left: "40%",
                 cursor: "default"
@@ -226,22 +228,24 @@ function addNewInput() {
 
 function addInputInConnector() {
     var name = $("#ipt_dataname").val().trim();
+    var dval = $("#ipt_datavalue").val().trim();
     if (name == "") {
         alert("Input name is required.");
         return;
     }
-    var data = drawInputInBlock(scene.currentElement, name);
+    var data = drawInputInConnector(scene.currentElement, name, dval);
     closeDialog();
 }
 
 function addDataInComposite(obj) {
     var io = $(obj).parents("#NewDataDialog").find("font").eq(0).text().trim();
     var name = $("#ipt_dataname").val().trim();
+    var dval = $("#ipt_datavalue").val().trim();
     if (name == "") {
         alert(io + " name is required.");
         return;
     }
-    var data = drawDataInComposite(io, name);
+    var data = drawDataInComposite(io, name, dval);
     closeDialog();
 }
 
@@ -254,6 +258,7 @@ function addNewOutput() {
     if (element.objectType == "composite") {
         $("#NewDataDialog").find("font").text("Output");
         $("#NewDataDialog").find("button").show();
+        $("#NewDataDialog").find("#ipt_datavalue").val("null").prop("disabled", true);
         $("#draw1").hide();
         $.blockUI({
             message: $("#NewDataDialog"),
@@ -262,7 +267,7 @@ function addNewOutput() {
             css: {
                 textAlign: "unset",
                 width: "295px",
-                height: "157px",
+                height: "187px",
                 top: "35%",
                 left: "40%",
                 cursor: "default"
