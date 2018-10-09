@@ -366,9 +366,9 @@ function generateChannels() {
         var outputArray = [];
         for (let data of result) {
             if (data.objectName == "input") {
-                inputArray.push(data.objectInstance);
+                inputArray.push(data.objectInstance + "=" + data.objectValue);
             } else if (data.objectName == "output") {
-                outputArray.push(data.objectInstance);
+                outputArray.push(data.objectInstance + "=null");
             }
         }
         channelStr += `<inputs list="${inputArray.join(",")}"></inputs>`;

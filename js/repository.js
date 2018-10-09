@@ -1,21 +1,21 @@
-$(document).contextmenu(function () {
+$(document).contextmenu(function() {
     return false;
 });
 
-$(document).click(function () {
+$(document).click(function() {
     $(".contextmenu").hide();
 });
 
 function OpenDB() {
     var request = indexedDB.open("Component Store");
-    request.onerror = function (e) {
+    request.onerror = function(e) {
         console.log("Fail to open DB.");
     }
-    request.onsuccess = function (e) {
+    request.onsuccess = function(e) {
         mydb = request.result;
         getAll();
     }
-    request.onupgradeneeded = function (e) {
+    request.onupgradeneeded = function(e) {
         mydb = request.result;
         if (!mydb.objectStoreNames.contains("Atomic")) {
             var objectStore = mydb.createObjectStore("Atomic", { keyPath: "name" });
@@ -38,7 +38,7 @@ function insertData(data, storeName) {
     var transaction = mydb.transaction(storeName, "readwrite");
     var objectStore = transaction.objectStore(storeName);
     var request = objectStore.put(data);
-    request.onsuccess = function (e) {
+    request.onsuccess = function(e) {
         growl("Component is deposited!");
     }
 }
@@ -47,22 +47,22 @@ function getData(name, storeName, instance) {
     var transaction = mydb.transaction(storeName, "readwrite");
     var objectStore = transaction.objectStore(storeName);
     var request = objectStore.get(name);
-    request.onsuccess = function (e) {
+    request.onsuccess = function(e) {
         var data = e.target.result;
         var componentBlock = drawComponentBlock(data.name, storeName, instance, data.service);
         for (let i = 0, len = data.input.length; i < len; i++) {
             if (data.input[i] != "") {
-                drawInputInBlock(componentBlock, data.input[i]);
+                drawInputInBlock(componentBlock, (data.input[i].split("="))[0]);
             }
         }
         for (let i = 0, len = data.output.length; i < len; i++) {
             if (data.output[i] != "") {
-                drawOutputInBlock(componentBlock, data.output[i]);
+                drawOutputInBlock(componentBlock, (data.output[i].split("="))[0]);
             }
         }
         growl("Component is retrieved!");
     }
-    request.onerror = function (e) {
+    request.onerror = function(e) {
         console.log("Retrieve failed.");
     }
 }
@@ -77,11 +77,10 @@ function getAllComponent(domArray, feedbackMethod) {
         let request;
         if (storeName == "Composite") {
             request = CompositeStore.get($(componentNode).attr("class"));
-        }
-        else if (storeName == "Atomic") {
+        } else if (storeName == "Atomic") {
             request = AtomicStore.get($(componentNode).attr("class"));
         }
-        request.onsuccess = function (e) {
+        request.onsuccess = function(e) {
             let data = e.target.result;
             componentBlock = drawComponentBlock(data.name, storeName, $(componentNode).attr("name"), data.service);
             for (let i = 0, len = data.input.length; i < len; i++) {
@@ -96,11 +95,11 @@ function getAllComponent(domArray, feedbackMethod) {
             }
             componentArray.push(componentBlock);
         }
-        request.onerror = function (e) {
+        request.onerror = function(e) {
             console.log("Retrieve failed.");
         }
     }
-    transaction.oncomplete = function () {
+    transaction.oncomplete = function() {
         feedbackMethod(componentArray);
     }
 }
@@ -111,15 +110,14 @@ function downloadProduct(domArray, feedbackMethod) {
     var CompositeStore = transaction.objectStore("Composite");
     var AtomicStore = transaction.objectStore("Atomic");
     for (let componentNode of domArray) {
-        var getCode = function (name, storeName) {
+        var getCode = function(name, storeName) {
             let request;
             if (storeName == "Composite") {
                 request = CompositeStore.get(name);
-            }
-            else if (storeName == "Atomic") {
+            } else if (storeName == "Atomic") {
                 request = AtomicStore.get(name);
             }
-            request.onsuccess = function (e) {
+            request.onsuccess = function(e) {
                 let data = e.target.result;
                 code.add(data.code);
                 if (storeName == "Composite") {
@@ -128,13 +126,13 @@ function downloadProduct(domArray, feedbackMethod) {
                     }
                 }
             }
-            request.onerror = function (e) {
+            request.onerror = function(e) {
                 console.log("Retrieve failed.");
             }
         }
         getCode($(componentNode).attr("class"), $(componentNode).attr("store"));
     }
-    transaction.oncomplete = function () {
+    transaction.oncomplete = function() {
         feedbackMethod(code);
     }
 }
@@ -147,15 +145,14 @@ function downloadBatch(productXMLMap, feedbackMethod) {
     for (let [productName, productXML] of productXMLMap) {
         let code = new Set();
         for (let componentNode of $(productXML).find("component")) {
-            var getCode = function (name, storeName) {
+            var getCode = function(name, storeName) {
                 let request;
                 if (storeName == "Composite") {
                     request = CompositeStore.get(name);
-                }
-                else if (storeName == "Atomic") {
+                } else if (storeName == "Atomic") {
                     request = AtomicStore.get(name);
                 }
-                request.onsuccess = function (e) {
+                request.onsuccess = function(e) {
                     let data = e.target.result;
                     code.add(data.code);
                     if (storeName == "Composite") {
@@ -164,7 +161,7 @@ function downloadBatch(productXMLMap, feedbackMethod) {
                         }
                     }
                 }
-                request.onerror = function (e) {
+                request.onerror = function(e) {
                     console.log("Retrieve failed.");
                 }
             }
@@ -174,7 +171,7 @@ function downloadBatch(productXMLMap, feedbackMethod) {
         let codeStr = generateCode($(productXML)) + " " + codeArray.join(" ");
         batchMap.set(`${productName}.js`, codeStr);
     }
-    transaction.oncomplete = function () {
+    transaction.oncomplete = function() {
         feedbackMethod(batchMap);
     }
 }
@@ -184,33 +181,32 @@ function downloadCode(componentName, componentStoreName, feedbackMethod) {
     var transaction = mydb.transaction(["Composite", "Atomic"], IDBTransaction.READ_ONLY);
     var CompositeStore = transaction.objectStore("Composite");
     var AtomicStore = transaction.objectStore("Atomic");
-    var getCode = function (name, storeName) {
+    var getCode = function(name, storeName) {
         if (storeName == "Composite") {
             let request = CompositeStore.get(name);
-            request.onsuccess = function (e) {
+            request.onsuccess = function(e) {
                 let data = e.target.result;
                 code.add(data.code);
                 for (let [key, value] of data.subComponent) {
                     getCode(key, value);
                 }
             }
-            request.onerror = function (e) {
+            request.onerror = function(e) {
                 console.log("Download failed.");
             }
-        }
-        else if (storeName == "Atomic") {
+        } else if (storeName == "Atomic") {
             let request = AtomicStore.get(name);
-            request.onsuccess = function (e) {
+            request.onsuccess = function(e) {
                 let data = e.target.result;
                 code.add(data.code);
             }
-            request.onerror = function (e) {
+            request.onerror = function(e) {
                 console.log("Download failed.");
             }
         }
     }
     getCode(componentName, componentStoreName);
-    transaction.oncomplete = function () {
+    transaction.oncomplete = function() {
         feedbackMethod(code);
     }
 }
@@ -235,7 +231,7 @@ function removeData(name, storeName) {
     var transaction = mydb.transaction(storeName, "readwrite");
     var objectStore = transaction.objectStore(storeName);
     var request = objectStore.delete(name);
-    request.onsuccess = function (e) {
+    request.onsuccess = function(e) {
         growl("Component is deleted!");
         getAll();
     }
@@ -246,7 +242,7 @@ function cursorStore(storeName) {
     var transaction = mydb.transaction(storeName, "readwrite");
     var objectStore = transaction.objectStore(storeName);
     var request = objectStore.openCursor();
-    request.onsuccess = function (e) {
+    request.onsuccess = function(e) {
         var cursor = e.target.result;
         if (cursor) {
             var name = cursor.value.name;
@@ -263,8 +259,7 @@ function expandTab(obj) {
     if (state == "off") {
         $(obj).attr("state", "on");
         $(obj).parents(".db-table").next("ul").show("blind", 500);
-    }
-    else {
+    } else {
         $(obj).attr("state", "off");
         $(obj).parents(".db-table").next("ul").hide("blind", 500);
     }
@@ -302,7 +297,7 @@ function godownload() {
         alert("Please select a component in the repository.")
         return;
     }
-    downloadCode($(".highlight").text(), $(".highlight").attr("store"), function (codeSet) {
+    downloadCode($(".highlight").text(), $(".highlight").attr("store"), function(codeSet) {
         var codeArray = Array.from(codeSet);
         var code = codeArray.join(" ");
         downloadFile($(".highlight").text() + ".js", code);

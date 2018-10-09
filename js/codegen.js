@@ -26,7 +26,7 @@ function generateConstructor(xmlTree) {
     }
     var dataArray = inputArray.concat(outputArray);
     for (let data of dataArray) {
-        str += `this.${data}=null;\n`;
+        str += `this.${data};\n`;
     }
     var result = $(xmlTree).find("component");
     for (let item of result) {
@@ -73,11 +73,13 @@ function generateService(xmlTree) {
                     code += "}";
                     break;
                 case "Aggregator":
+                    code += `for(let item of this.${$(node).attr("data")}){`;
                     for (let item of condition) {
-                        code += `if(this.${$(node).attr("data")}.split(",").includes("${$(item).attr("value")}")){`;
+                        code += `if(item==${$(item).attr("value")}){`;
                         parseTree($(item).children().eq(0));
                         code += "}";
                     }
+                    code += "}";
                     break;
             }
         } else if ($(node).is("component")) {
