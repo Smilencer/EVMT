@@ -123,8 +123,8 @@ function checkData(container, io, name) {
     if (result == 0) { return null; } else { return result[0]; }
 }
 
-function drawDataInFamily(io, name) {
-    return drawDataInComposite(io, name);
+function drawDataInFamily(io, name, dval) {
+    return drawDataInComposite(io, name, dval);
 }
 
 function drawDataInComposite(io, name, dval) {
