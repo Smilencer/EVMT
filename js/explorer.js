@@ -23,8 +23,7 @@ $(document).ready(function() {
         return this;
     }
 
-    // xmlDoc = window.opener.xmlDoc;
-    xmlDoc = `<family class="ExternalCarLight" service="activate"><connector type="F-Loop" name="F-LOP" data="cmd" interaction=""><condition value="cmd!=null"><connector type="F-Selector" name="F-SEL1" data="cmd" interaction="(LowBeamXenon)LBX->(XenonDRL)XDRL,(DRL_LowBeam)LB->|@(LowBeamHalogen)LBH->(HalogenDRL)HDRL,(DRL_LowBeam)LB->|"><condition value="cmd==&quot;Fog&quot;"><connector type="F-Sequencer" name="F-SEQ1" data="" interaction=""><condition value="0"><vg type="Alternative"><component store="Atomic" class="HighBeamXenon" name="HBX" service="toggleLight"></component><component store="Atomic" class="HighBeamHalogen" name="HBL" service="toggleLight"></component></vg></condition><condition value="1"><vg type="Alternative"><component store="Atomic" class="LowBeamXenon" name="LBX" service="toggleLight"></component><component store="Atomic" class="LowBeamHalogen" name="LBH" service="toggleLight"></component></vg></condition></connector></condition><condition value="cmd==&quot;Fog&quot;"><vg type="Optional"><component store="Atomic" class="FogLight" name="Fog" service="toggleLight"></component></vg></condition><condition value="cmd==&quot;Assistance&quot;"><vg type="Optional"><vg type="Or"><component store="Atomic" class="AutomaticHighLowBeam" name="AHLB" service="toggleLight"></component><vg type="Or"><component store="Composite" class="StaticCornerLight" name="SCL" service="toggleLight"></component><component store="Atomic" class="AdaptiveForwardLight" name="AFL" service="toggleLight"></component></vg><component store="Atomic" class="AutomaticLight" name="AL" service="toggleLight"></component></vg></vg></condition><condition value="cmd==&quot;Daytime&quot;"><vg type="Optional"><vg type="Alternative"><component store="Atomic" class="DRL_LowBeam" name="LB" service="toggleLight"></component><vg type="Alternative"><component store="Atomic" class="DRL_LED" name="LED" service="toggleLight"></component><component store="Atomic" class="DRL_Bulb" name="Bulb" service="toggleLight"></component></vg></vg></vg></condition></connector></condition></connector><dataChannel><inputs list="cmd,cmd"></inputs><outputs list=""></outputs></dataChannel><constraints><constraint type="require" from="SCL" to="Fog"></constraint></constraints><interactions><fi store="Atomic" class="XenonDRL" name="XDRL" service="toggleLight"></fi><fi store="Atomic" class="HalogenDRL" name="HDRL" service="toggleLight"></fi></interactions></family>`;
+    xmlDoc = window.opener.xmlDoc;
 
     var xmlTree = $(xmlDoc);
     var depthMap = assessDepth(xmlTree);
@@ -369,14 +368,19 @@ function generateProductsXML(finalSet, xmlTree) {
             if (fromArray.length == 1) {
                 if (!configArray.includes(toClass)) {
                     $(channelObj).remove();
-                } else if (inputArray.includes(fromArray[0])) {
-                    inputSet.add(fromArray[0]);
+                } else if (inputArray.some(x => x.includes(fromArray[0] + "="))) {
+                    var newinputArray = inputArray.filter(function(item) {
+                        return item.includes(fromArray[0] + "=");
+                    });
+                    for (var ElementInNewinputArray of newinputArray) {
+                        inputSet.add(ElementInNewinputArray);
+                    }
                 }
             } else if (toArray.length == 1) {
                 if (!configArray.includes(fromClass)) {
                     $(channelObj).remove();
-                } else if (outputArray.includes(toArray[0])) {
-                    outputSet.add(toArray[0]);
+                } else if (outputArray.some(x => x.includes(toArray[0] + "=null"))) {
+                    outputSet.add(toArray[0] + "=null");
                 }
             } else {
                 if (!configArray.includes(fromClass) || !configArray.includes(toClass)) {
@@ -399,7 +403,8 @@ function generateProductsXML(finalSet, xmlTree) {
                         }
                     }
                     if (isInput) {
-                        inputSet.add(connectorInput);
+                        let connectorInputArray = inputArray.filter(x => x.includes(connectorInput + "="));
+                        connectorInputArray.forEach(x => inputSet.add(x));
                     }
                 }
             }
@@ -546,13 +551,17 @@ function showProduct(num) {
             var inputDataArray = $(tree).find("inputs").attr("list").split(",");
             for (let inputData of inputDataArray) {
                 if (inputData != "") {
-                    drawDataInComposite("Input", inputData);
+                    let inputPair = inputData.split("=");
+                    if (!isInputInConnector(inputPair[0], tree)) {
+                        drawDataInComposite("Input", inputPair[0], inputPair[1]);
+                    }
                 }
             }
             var outputDataArray = $(tree).find("outputs").attr("list").split(",");
             for (let outputData of outputDataArray) {
                 if (outputData != "") {
-                    drawDataInComposite("Output", outputData);
+                    let outputPair = outputData.split("=");
+                    drawDataInComposite("Output", outputPair[0], "=");
                 }
             }
             getAllComponent($(tree).find("component"), function(componentArray) {
@@ -562,7 +571,12 @@ function showProduct(num) {
                         if ($(node).attr("data") != "") {
                             let dataArray = $(node).attr("data").split(",");
                             for (let dataNode of dataArray) {
-                                drawInputInBlock(connectorObj, dataNode);
+                                for (let inputData of inputDataArray) {
+                                    let inputPair = inputData.split("=");
+                                    if (inputPair[0] == dataNode) {
+                                        drawInputInConnector(connectorObj, dataNode, inputPair[1]);
+                                    }
+                                }
                             }
                         }
                         for (let conditionNode of $(node).children("condition")) {
@@ -604,6 +618,13 @@ function showProduct(num) {
             });
         });
     });
+}
+
+function isInputInConnector(iname, tree) {
+    if ($(tree).find("connector[data='" + iname + "']").length > 0) {
+        return true;
+    }
+    return false;
 }
 
 function hideProduct() {
