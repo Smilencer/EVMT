@@ -427,6 +427,9 @@ function generateProductsXML(finalSet, xmlTree) {
                     $(orkid).wrap(`<condition value=""></condition>`);
                 }
                 $(vgObj).wrapInner(`<connector type="Aggregator" name="Agg${index}" data="agg${index}"></connector>`);
+                let inputsList = $(productXML).find("inputs").attr("list").split(",");
+                inputsList.push(`agg${index}=null`);
+                $(productXML).find("inputs").attr("list", inputsList.join(","));
                 index++;
             }
             $(vgObj).children().unwrap();
